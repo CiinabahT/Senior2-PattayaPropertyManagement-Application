@@ -6,8 +6,16 @@
     "start": "next start"
   },
   "dependencies": {
+    "@nextui-org/button": "^2.0.9",
+    "@nextui-org/react": "^1.0.0-beta.13",
+    "axios": "^1.4.0",
+    "framer-motion": "^10.15.1",
     "next": "latest",
+    "next-themes": "^0.2.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-modal": "^3.16.1",
+    "react-select": "^5.7.4",
+    "react-table": "^7.8.0"
   }
 }

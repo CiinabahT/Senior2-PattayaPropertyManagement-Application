@@ -1,0 +1,149 @@
+{
+    "statusCode": 200,
+    "message": "Success",
+    "data": [
+        {
+            "place_id": 1,
+            "place_name": "Grand Avenue",
+            "Buildings": [
+                {
+                    "building_id": 1,
+                    "building_name": "A",
+                    "floors": [
+                        {
+                            "floor_id": 1,
+                            "floor_number": "G",
+                            "rooms": [
+                                {
+                                    "room_id": 1,
+                                    "room_name": ""
+                                },
+                                {
+                                    "room_id": 9,
+                                    "room_name": "Donnelly-McClure"
+                                }
+                            ]
+                        },
+                        {
+                            "floor_id": 2,
+                            "floor_number": "1",
+                            "rooms": [
+                                {
+                                    "room_id": 2,
+                                    "room_name": "Upton Inc"
+                                },
+                                {
+                                    "room_id": 10,
+                                    "room_name": "Dickinson, Hansen and Hane"
+                                }
+                            ]
+                        },
+                        {
+                            "floor_id": 3,
+                            "floor_number": "2",
+                            "rooms": [
+                                {
+                                    "room_id": 3,
+                                    "room_name": "Crona, Brown and Nader"
+                                },
+                                {
+                                    "room_id": 11,
+                                    "room_name": "Test create"
+                                }
+                            ]
+                        },
+                        {
+                            "floor_id": 4,
+                            "floor_number": "3",
+                            "rooms": [
+                                {
+                                    "room_id": 4,
+                                    "room_name": "Grady Inc"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "building_id": 2,
+                    "building_name": "B",
+                    "floors": [
+                        {
+                            "floor_id": 5,
+                            "floor_number": "1",
+                            "rooms": [
+                                {
+                                    "room_id": 5,
+                                    "room_name": "Hauck, Jerde and Ortiz"
+                                }
+                            ]
+                        },
+                        {
+                            "floor_id": 6,
+                            "floor_number": "2",
+                            "rooms": [
+                                {
+                                    "room_id": 6,
+                                    "room_name": "Macejkovic-Schamberger"
+                                }
+                            ]
+                        },
+                        {
+                            "floor_id": 7,
+                            "floor_number": "3",
+                            "rooms": [
+                                {
+                                    "room_id": 7,
+                                    "room_name": "Gusikowski-Schinner"
+                                }
+                            ]
+                        },
+                        {
+                            "floor_id": 8,
+                            "floor_number": "4",
+                            "rooms": [
+                                {
+                                    "room_id": 8,
+                                    "room_name": "Abbott Inc"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "place_id": 2,
+            "place_name": "Centric Sea",
+            "Buildings": [
+                {
+                    "building_id": 3,
+                    "building_name": "A",
+                    "floors": [
+                        {
+                            "floor_id": 9,
+                            "floor_number": "20",
+                            "rooms": null
+                        }
+                    ]
+                },
+                {
+                    "building_id": 4,
+                    "building_name": "B",
+                    "floors": null
+                },
+                {
+                    "building_id": 5,
+                    "building_name": "testpostman",
+                    "floors": null
+                }
+            ]
+        },
+        {
+            "place_id": 3,
+            "place_name": "Toon",
+            "Buildings": null
+        }
+    ],
+    "error": null
+}

@@ -34,29 +34,29 @@ function RoomTable({ rooms, buildingName }) {
       },
       {
         Header: 'Room No.',
-        accessor: 'room_id',
+        accessor: 'room_number',
       },
       {
         Header: 'Size(sq.m)',
-        accessor: 'size',
+        accessor: 'room_size',
       },
       {
         Header: 'Price',
-        accessor: 'price',
+        accessor: 'room_price',
       },
       {
         Header: 'Owner',
-        accessor: 'room_name',
+        accessor: 'owner_name',
         Cell: ({ value }) => truncateText(value),
       },
       {
         Header: 'Contact',
-        accessor: 'contact',
+        accessor: 'owner_contacts',
         
       },
       {
         Header: 'Sale/Rent',
-        accessor: 'saleOrRent',
+        accessor: 'status_of_room',
         Filter: SaleRentFilter,
         filter: 'includes',
       },
@@ -106,7 +106,7 @@ function RoomTable({ rooms, buildingName }) {
         <input value={searchValue} onChange={handleSearchChange} style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none',border: '1px solid #ccc' }} />
         <label style={{ marginLeft: '10px' }}>Sale/Rent: </label>
         <select
-  onChange={(e) => setFilter('saleOrRent', e.target.value === 'all' ? undefined : e.target.value)}
+  onChange={(e) => setFilter('status_of_room', e.target.value === 'all' ? undefined : e.target.value)}
   style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none',border: '1px solid #ccc'  }}
 >
   <option value="all">All</option>

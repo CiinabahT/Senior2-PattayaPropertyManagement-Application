@@ -5,6 +5,7 @@ const BUILDING_URL = 'http://146.190.98.250:8080/api/rooms';
 const ROOM_URL = 'http://146.190.98.250:8080/api/rooms/room';
 const FLOOR_URL = 'http://146.190.98.250:8080/api/rooms/floor';
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 export const fetchPlaces = async () => {
   try {
@@ -67,4 +68,6 @@ export const addFloor = async (building_id, floor_number) => {
   }
 };
 
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
 

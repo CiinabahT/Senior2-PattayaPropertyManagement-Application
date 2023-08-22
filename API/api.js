@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://146.190.98.250:8080/api/rooms/places';
+const BASE_URL = 'https://www.pattayaavenueproperty.xyz/api/rooms/places';
 const BUILDING_URL = 'http://146.190.98.250:8080/api/rooms';
 const ROOM_URL = 'http://146.190.98.250:8080/api/rooms/room';
 const FLOOR_URL = 'http://146.190.98.250:8080/api/rooms/floor';

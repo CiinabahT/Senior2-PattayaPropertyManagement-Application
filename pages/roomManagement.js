@@ -4,23 +4,24 @@ import RoomTable from '../components/RoomTables.js';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { fetchPlaces } from '../API/api.js';
-import RoomEdit from '../pages/roomEdit.js';  
+import RoomEdit from '../pages/roomEdit.js';
+import { addRoom } from '../API/api.js';
+import { addFloor } from '../API/api.js';
+import Link from 'next/link';
+
 
 export default function RoomManagement() {
   const router = useRouter();
   const [buildingName, setBuildingName] = useState('');
+  const [buildingId, setBuildingId] = useState(null);
   const [isAddRoomModalOpen, setIsAddRoomModalOpen] = useState(false);
   const [isAddFloorModalOpen, setIsAddFloorModalOpen] = useState(false);
   const [sRoomTable, setRoomTable] = useState({});
   const [placeId, setPlaceId] = useState(null);
-  const [selectedFloor, setSelectedFloor] = useState(null);
-  {buildingName && (
-    <>
-      <RoomEdit buildingName={buildingName} />
-    </>
-  )}
-  
-  
+  const [floorSelectError, setFloorSelectError] = useState(false);
+  const [roomName, setRoomName] = useState('');
+  const [floorId, setFloorId] = useState('');
+  const [floorNumber, setFloorNumber] = useState('');
 
   
 
@@ -44,7 +45,12 @@ export default function RoomManagement() {
       if (router.query.placeId !== undefined) {
         setPlaceId(Number(router.query.placeId));
       }
-    }, [router.query.buildingName, router.query.placeId]);
+      if (router.query.buildingId !== undefined) {
+        setBuildingId(Number(router.query.buildingId));
+      }
+    }, [router.query.buildingName, router.query.placeId, router.query.buildingId]);
+
+    
 
 
     let roomsToDisplay = [];
@@ -68,25 +74,74 @@ export default function RoomManagement() {
   };
 
   const handleCloseModal = () => {
+    // Reset the form fields
+    setRoomName('');
+    setFloorId('');
+  
     setIsAddRoomModalOpen(false);
+    setFloorSelectError(false); 
   };
 
-  const handleAddRoom = (roomData) => {
-    // Handle the logic for adding the room
-    // You can use roomData and update the rooms state or API
-    setIsAddRoomModalOpen(false); // Close the modal after adding
+  const handleAddRoom = () => {
+    // Check if the floor has been selected
+    if (!floorId || floorId === '') {
+      setFloorSelectError(true);
+      return;
+    }
+  
+    const data = {
+      room_name: roomName,
+      floor_id: parseInt(floorId),
+    };
+  
+    addRoom(data)
+      .then((newRoom) => {
+        setRoomName('');
+        setFloorId('');
+        setFloorSelectError(false); // Reset the error state
+        setIsAddRoomModalOpen(false);
+        fetchData(); // Fetch the data again
+      })
+      .catch((error) => {
+        console.error('Failed to add room:', error);
+      });
   };
+  
+  
+  
+  
   
   const handleAddFloorClick = () => {
     setIsAddFloorModalOpen(true);
   };
+
   
-  const handleAddFloor = (floorData) => {
-    // Handle the logic for adding the floor
-    // You can use floorData and update the floors state or API
-    setIsAddFloorModalOpen(false); // Close the modal after adding
+  const handleAddFloor = () => {
+  console.log('router.query', router.query);
+  console.log('Building ID inside handleAddFloor:', buildingId); // Debugging line
+
+  const floorData = {
+    building_id: parseInt(buildingId),
+    floor_number: floorNumber,
+  };
+      
+    addFloor(floorData)
+      .then(() => {
+        setIsAddFloorModalOpen(false);
+        fetchData(); // Fetch the data again
+      })
+      .catch((error) => {
+        console.error('Failed to add floor:', error);
+      });
   };
   
+  
+  
+
+
+  
+ 
+
 
   return (
     <>
@@ -135,11 +190,13 @@ export default function RoomManagement() {
     <div style={{ backgroundColor: 'white', width: '400px', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', borderRadius: '10px', fontFamily: 'Kanit, sans-serif',}}>
       <h2>Add Room</h2>
       {/* Add your form fields here */}
-      <label htmlFor="owner">Owner:</label>
+      <label htmlFor="owner">Room Name:</label>
       <input 
         id="owner" 
         type="text" 
-        placeholder="Owner's Name.." 
+        placeholder="Room's Name.." 
+        value={roomName}
+        onChange={(e) => setRoomName(e.target.value)}
         style={{ 
           fontFamily: 'Kanit, sans-serif', 
           color: 'black', 
@@ -155,16 +212,23 @@ export default function RoomManagement() {
       />
       <select
         id="floorSelect"
-        value={selectedFloor}
-        onChange={(e) => setSelectedFloor(e.target.value)}
-        style={{ margin: '10px 0', padding: '5px', width: '100%', fontFamily: 'Kanit', outline: 'none',border: '1px solid #ccc', borderRadius: '5px' }}
+        value={floorId}
+        onChange={(e) => {
+          setFloorId(e.target.value);
+          setFloorSelectError(false); // Reset the error state when a new value is selected
+        }}
+        style={{ margin: '10px 0', padding: '5px', width: '100%', fontFamily: 'Kanit', outline: 'none', border: '1px solid #ccc', borderRadius: '5px' }}
       >
+        <option value="">Select the Floor</option>
         {roomsToDisplay.map((floor) => (
           <option key={floor.floor_id} value={floor.floor_id}>
             Floor {floor.floor_number}
           </option>
         ))}
       </select>
+      {floorSelectError && <p style={{ color: 'red', marginTop: '-5px', marginBottom: '10px' }}>* Please select the floor</p>}
+
+
       {/* Add your other form fields for the room's details here */}
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '10px', }}>
   <button onClick={handleCloseModal} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', borderRadius: '5px', border: 'none', marginRight: '10px', marginLeft: '5px', width: '60px' }}>Close</button>
@@ -184,6 +248,8 @@ export default function RoomManagement() {
         id="floor" 
         type="text" 
         placeholder="Floor's Name.." 
+        value={floorNumber}
+        onChange={(e) => setFloorNumber(e.target.value)}
         style={{ 
           fontFamily: 'Kanit, sans-serif', 
           color: 'black', 

@@ -156,8 +156,9 @@ useEffect(() => {
           place.Buildings.map((building) => (
             <div key={building.building_id} style={{ flex: '0 0 auto', width: '238px', height: '162px' }}>
               <CustomBuildingCards
-                placeId={place.place_id} // <-- Here's where you add the placeId prop
+                placeId={place.place_id}
                 buildingName={building.building_name}
+                buildingId={building.building_id} // Passing the buildingId here
                 onDelete={() => handleDeleteBuilding(building.building_name, building.floor)}
               />
             </div>

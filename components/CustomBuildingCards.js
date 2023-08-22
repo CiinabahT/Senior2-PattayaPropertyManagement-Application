@@ -2,7 +2,7 @@ import { Card, Grid, Text, Link, Button } from "@nextui-org/react";
 import data from '../pages/data.json';
 import { useRouter } from 'next/router';
 
-export default function CustomBuildingCards({ buildingName, onDelete, placeId}) {
+export default function CustomBuildingCards({ buildingName, onDelete, placeId, buildingId}) {
   const truncatedName = buildingName.length > 20 ? buildingName.slice(0, 20) + "..." : buildingName;
   const router = useRouter();
 
@@ -15,7 +15,8 @@ export default function CustomBuildingCards({ buildingName, onDelete, placeId}) 
       pathname: '/roomManagement',
       query: {
         buildingName: encodeURIComponent(buildingName),
-        placeId: placeId // Pass placeId as a query parameter
+        placeId: placeId,
+        buildingID: buildingId
       }
     });
   };

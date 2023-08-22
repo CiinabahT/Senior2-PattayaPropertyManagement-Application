@@ -7,12 +7,19 @@ import CustomCards from '../components/CustomCard.js';
 export default function Building() {
   const router = useRouter();
   const [buildingName, setBuildingName] = useState('');
+  const [buildingId, setBuildingId] = useState(null);
 
   useEffect(() => {
     if (router.query.buildingName) {
       setBuildingName(router.query.buildingName);
     }
-  }, [router.query.buildingName]);
+
+    if (router.query.building_id) { // Make sure to match the name used in the URL
+      setBuildingId(router.query.building_id);
+    }
+  }, [router.query.buildingName, router.query.building_id]); // Add building_id to the dependency
+
+  
 
   return (
     <>

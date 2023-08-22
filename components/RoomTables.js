@@ -17,7 +17,7 @@ function RoomTable({ rooms, buildingName }) {
       pathname: '/roomEdit',
       query: {
         buildingName: encodeURIComponent(buildingName),
-        roomNumber: roomData.room_id, // Add room number to the query parameters
+        roomNumber: roomData.room_number, // Add room number to the query parameters
       },
     });
   };

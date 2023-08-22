@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const BASE_URL = 'http://146.190.98.250:8080/api/rooms/places';
 const BUILDING_URL = 'http://146.190.98.250:8080/api/rooms';
+const ROOM_URL = 'http://146.190.98.250:8080/api/rooms/room';
+const FLOOR_URL = 'http://146.190.98.250:8080/api/rooms/floor';
 
 
 export const fetchPlaces = async () => {
@@ -41,4 +43,28 @@ export const createBuilding = async (buildingData) => {
     throw error; // Re-throw the error if you want to handle it later
   }
 };
+
+export const addRoom = async (roomData) => {
+  try {
+    const response = await axios.post(ROOM_URL, roomData); // ROOM_URL = 'http://146.190.98.250:8080/api/rooms/room'
+    return response.data;
+  } catch (error) {
+    console.error('Error adding room:', error);
+    throw error;
+  }
+};
+
+export const addFloor = async (building_id, floor_number) => {
+  try {
+    const response = await axios.post(FLOOR_URL, {
+      building_id,
+      floor_number
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding floor:', error);
+    throw error;
+  }
+};
+
 

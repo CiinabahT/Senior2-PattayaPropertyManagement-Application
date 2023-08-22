@@ -57,12 +57,9 @@ export const addRoom = async (roomData) => {
   }
 };
 
-export const addFloor = async (building_id, floor_number) => {
+export const addFloor = async (floorData) => {
   try {
-    const response = await axios.post(FLOOR_URL, {
-      building_id,
-      floor_number
-    });
+    const response = await axios.post(FLOOR_URL, floorData);
     return response.data;
   } catch (error) {
     console.error('Error adding floor:', error);

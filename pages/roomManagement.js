@@ -22,6 +22,8 @@ export default function RoomManagement() {
   const [roomName, setRoomName] = useState('');
   const [floorId, setFloorId] = useState('');
   const [floorNumber, setFloorNumber] = useState('');
+  const [isFloorNumberEmpty, setIsFloorNumberEmpty] = useState(false);
+  const [floorNumberError, setFloorNumberError] = useState('');
 
   
 
@@ -45,10 +47,11 @@ export default function RoomManagement() {
       if (router.query.placeId !== undefined) {
         setPlaceId(Number(router.query.placeId));
       }
-      if (router.query.buildingId !== undefined) {
-        setBuildingId(Number(router.query.buildingId));
+      if (router.query.buildingID !== undefined) {
+        setBuildingId(Number(router.query.buildingID));
+        console.log (buildingId)
       }
-    }, [router.query.buildingName, router.query.placeId, router.query.buildingId]);
+    }, [router.query.buildingName, router.query.placeId, router.query.buildingID]);
 
     
 
@@ -67,7 +70,19 @@ export default function RoomManagement() {
       }
     }
     
-    
+
+    const handleCloseFloorModal = () => {
+      setIsAddFloorModalOpen(false);
+      setFloorNumber(''); // Reset floorNumber when closing the modal
+      setFloorNumberError(''); // Reset the error state when closing the modal
+    };
+     
+  
+    const resetAddFloorModal = () => {
+      setIsAddFloorModalOpen(false);
+      setFloorNumber(''); // Reset the floor number
+      setFloorNumberError(''); // Clear the error message
+    };
 
   const handleAddRoomClick = () => {
     setIsAddRoomModalOpen(true);
@@ -113,35 +128,38 @@ export default function RoomManagement() {
   
   const handleAddFloorClick = () => {
     setIsAddFloorModalOpen(true);
+    setFloorNumber(''); // Reset floorNumber when opening the modal
+    setFloorNumberError(''); // Reset the error state when opening the modal
   };
+  
 
   
   const handleAddFloor = () => {
-  console.log('router.query', router.query);
-  console.log('Building ID inside handleAddFloor:', buildingId); // Debugging line
+    // Check if the floor number has been provided
+    if (!floorNumber || floorNumber === '') {
+      setFloorNumberError('* Please input the floor name');
+      return; // Return early if there is no floor number
+    }
 
-  const floorData = {
-    building_id: parseInt(buildingId),
-    floor_number: floorNumber,
-  };
-      
+    console.log('router.query', router.query);
+    console.log('Building ID inside handleAddFloor:', router.query.buildingID);
+    console.log(buildingId);
+
+    const floorData = {
+      building_id: buildingId,
+      floor_number: floorNumber,
+    };
+
     addFloor(floorData)
-      .then(() => {
-        setIsAddFloorModalOpen(false);
-        fetchData(); // Fetch the data again
-      })
-      .catch((error) => {
-        console.error('Failed to add floor:', error);
-      });
+    .then(() => {
+      resetAddFloorModal(); // Reset the Add Floor Modal state
+      fetchData(); // Fetch the data again
+    })
+    .catch((error) => {
+      console.error('Failed to add floor:', error);
+    });
+    handleCloseFloorModal();
   };
-  
-  
-  
-
-
-  
- 
-
 
   return (
     <>
@@ -239,9 +257,31 @@ export default function RoomManagement() {
   </div>
 )}
 
-{isAddFloorModalOpen && (
-  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1000 }}>
-    <div style={{ backgroundColor: 'white', width: '400px', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', borderRadius: '10px', fontFamily: 'Kanit, sans-serif',}}>
+     {isAddFloorModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              width: '400px',
+              padding: '20px',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '10px',
+              fontFamily: 'Kanit, sans-serif',
+            }}
+          >
       <h2>Add Floor</h2>
       <label htmlFor="floor">Floor:</label>
       <input 
@@ -249,7 +289,10 @@ export default function RoomManagement() {
         type="text" 
         placeholder="Floor's Name.." 
         value={floorNumber}
-        onChange={(e) => setFloorNumber(e.target.value)}
+        onChange={(e) => {
+          setFloorNumber(e.target.value);
+          setFloorNumberError(''); // Reset the error state when a value is entered
+        }}        
         style={{ 
           fontFamily: 'Kanit, sans-serif', 
           color: 'black', 
@@ -263,8 +306,15 @@ export default function RoomManagement() {
           marginTop: '5px'
         }} 
       />
+      {floorNumberError && <p style={{ color: 'red', marginTop: '-5px', marginBottom: '10px' }}>{floorNumberError}</p>}
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '10px' }}>
-        <button onClick={() => setIsAddFloorModalOpen(false)} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', borderRadius: '5px', border: 'none', marginRight: '10px', marginLeft: '0px', width: '60px' }}>Close</button>
+      <button
+  onClick={handleCloseFloorModal}
+  style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', borderRadius: '5px', border: 'none', marginRight: '10px', marginLeft: '0px', width: '60px' }}
+>
+  Close
+</button>
+
         <button onClick={handleAddFloor} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius: '5px', color: 'white', width: '60px' }}>Add</button>
       </div>
     </div>

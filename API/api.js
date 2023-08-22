@@ -1,14 +1,16 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://www.pattayaavenueproperty.xyz/api/rooms/places';
+const BASE_URL = 'https://www.pattayaavenueproperty.xyz/api/rooms/places'; //www.pattayaavenueproperty.xyz/api/rooms/places
 const BUILDING_URL = 'http://146.190.98.250:8080/api/rooms';
 const ROOM_URL = 'http://146.190.98.250:8080/api/rooms/room';
 const FLOOR_URL = 'http://146.190.98.250:8080/api/rooms/floor';
 
+// Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 export const fetchPlaces = async () => {
   try {
+    console.log(BASE_URL);
     const response = await axios.get(BASE_URL);
     return response.data.data;
   } catch (error) {

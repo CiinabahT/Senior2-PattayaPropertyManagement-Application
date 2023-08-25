@@ -5,6 +5,8 @@ import Sidebar from '../components/Sidebar.js'; // Import the Sidebar component
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import RecordTable from '../components/RecordTables.js';
+import { getRoomById } from '../API/api.js';
+import { fetchOwner } from '../API/api.js';
 
 
 export default function RoomEdit() {
@@ -18,50 +20,134 @@ export default function RoomEdit() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 6;
   const [roomNumber, setRoomNumber] = useState('');
+  const [roomID, setRoomID] = useState('');
+  const [roomData, setRoomData] = useState(null);
+  const [roomNumbera, setRoomNumbera] = useState('');
+  const [roomAddress, setroomAddress] = useState('');
+  const [electricNumber, setElectricNumber] = useState('');
+  const [meterNumber, setMeterNumber] = useState('');
+  const [roomSize, setRoomSize] = useState('');
+  const [bedRoom, setbedRoom] = useState('');
+  const [toiletAmount, setToiletAmount] = useState('');
+  const [livingRoomAmount, setLivingRoomAmount] = useState('');
+  const [selectedViews, setSelectedViews] = useState(null);
+  const [owner, setOwner] = useState({});
+  const [owners, setOwners] = useState([]); // holds the array of owner objects
+  const [ownerOptions, setOwnerOptions] = useState([]); // holds the dropdown options
+  const [selectedOwners, setSelectedOwners] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+
+
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-const records = [
-  { startDate: '2021-08-01', endDate: '2021-08-30', price: 1000, deposit: 500, renter: 'John Doe', contact: '1234567890', status: 'Active' },
-  { startDate: '2021-09-01', endDate: '2021-09-30', price: 1200, deposit: 600, renter: 'Jane Smith', contact: '0987654321', status: 'Pending' },
-  { startDate: '2021-10-01', endDate: '2021-10-31', price: 1100, deposit: 550, renter: 'James Brown', contact: '1122334455', status: 'Active' },
-  { startDate: '2021-11-01', endDate: '2021-11-30', price: 1300, deposit: 650, renter: 'Jessica Lee', contact: '2233445566', status: 'Expired' },
-  { startDate: '2021-12-01', endDate: '2021-12-31', price: 900, deposit: 450, renter: 'Jim White', contact: '3344556677', status: 'Active' },
-  { startDate: '2022-01-01', endDate: '2022-01-31', price: 800, deposit: 400, renter: 'Jenny Black', contact: '4455667788', status: 'Pending' },
-  { startDate: '2022-02-01', endDate: '2022-02-28', price: 1500, deposit: 750, renter: 'Jack Green', contact: '5566778899', status: 'Active' },
-  { startDate: '2022-03-01', endDate: '2022-03-31', price: 950, deposit: 475, renter: 'Jill Gray', contact: '6677889900', status: 'Expired' },
-  { startDate: '2022-04-01', endDate: '2022-04-30', price: 1000, deposit: 500, renter: 'Joe Teal', contact: '7788990011', status: 'Active' },
-  { startDate: '2022-05-01', endDate: '2022-05-31', price: 1200, deposit: 600, renter: 'Jasmine Silver', contact: '8899001122', status: 'Pending' },
-  { startDate: '2022-06-01', endDate: '2022-06-30', price: 1400, deposit: 700, renter: 'Jerry Gold', contact: '9900112233', status: 'Active' },
-  { startDate: '2022-07-01', endDate: '2022-07-31', price: 1600, deposit: 800, renter: 'Julie Rose', contact: '0011223344', status: 'Expired' },
-  { startDate: '2021-08-01', endDate: '2021-08-30', price: 1000, deposit: 500, renter: 'John Doe', contact: '1234567890', status: 'Active' },
-  { startDate: '2021-09-01', endDate: '2021-09-30', price: 1200, deposit: 600, renter: 'Jane Smith', contact: '0987654321', status: 'Pending' },
-  { startDate: '2021-10-01', endDate: '2021-10-31', price: 1100, deposit: 550, renter: 'James Brown', contact: '1122334455', status: 'Active' },
-  { startDate: '2021-11-01', endDate: '2021-11-30', price: 1300, deposit: 650, renter: 'Jessica Lee', contact: '2233445566', status: 'Expired' },
-  { startDate: '2021-12-01', endDate: '2021-12-31', price: 900, deposit: 450, renter: 'Jim White', contact: '3344556677', status: 'Active' },
-  { startDate: '2022-01-01', endDate: '2022-01-31', price: 800, deposit: 400, renter: 'Jenny Black', contact: '4455667788', status: 'Pending' },
-  { startDate: '2022-02-01', endDate: '2022-02-28', price: 1500, deposit: 750, renter: 'Jack Green', contact: '5566778899', status: 'Active' },
-  { startDate: '2022-03-01', endDate: '2022-03-31', price: 950, deposit: 475, renter: 'Jill Gray', contact: '6677889900', status: 'Expired' },
-  { startDate: '2022-04-01', endDate: '2022-04-30', price: 1000, deposit: 500, renter: 'Joe Teal', contact: '7788990011', status: 'Active' },
-  { startDate: '2022-05-01', endDate: '2022-05-31', price: 1200, deposit: 600, renter: 'Jasmine Silver', contact: '8899001122', status: 'Pending' },
-  { startDate: '2022-06-01', endDate: '2022-06-30', price: 1400, deposit: 700, renter: 'Jerry Gold', contact: '9900112233', status: 'Active' },
-  { startDate: '2022-07-01', endDate: '2022-07-31', price: 1600, deposit: 800, renter: 'Julie Rose', contact: '0011223344', status: 'Expired' },
-  
-  
-];
-
-
   const lastRowIndex = currentPage * rowsPerPage;
   const firstRowIndex = lastRowIndex - rowsPerPage;
-  const currentRows = records.slice(firstRowIndex, lastRowIndex);
-  
 
   useEffect(() => {
     const roomNumberFromQuery = router.query.roomNumber;
+    const roomIdFromQuery = router.query.roomId;
+  
     if (roomNumberFromQuery) {
       setRoomNumber(roomNumberFromQuery);
     }
-  }, [router.query.roomNumber]);
+
+    if (roomIdFromQuery) {
+      setLoading(true); // Start loading
+      getRoomById(roomIdFromQuery)
+      .then(data => {
+        console.log('API Response:', data);
+        setRoomData(data);
+        const matchedOption = viewOptions.find(option => option.label === data.type_of_view);
+        console.log ('match' + matchedOption)        
+        if (matchedOption) {
+            setSelectedViews(matchedOption);
+        }
+
+        setLoading(false); // End loading after processing data
+    })
+    .catch(error => {
+        console.error("Error fetching data: ", error);
+        setLoading(false); 
+    });
+      setRoomID(roomIdFromQuery);
+    }
+    // Fetch owners
+    fetchOwnerData()
+    .then(() => {
+        setLoading(false);
+    })
+    .catch(error => {
+        console.error("Error fetching owners: ", error);
+        setLoading(false); // End loading even if there's an error
+    });
+
+}, [router.query.roomNumber, router.query.roomId]);
+
+
+
+  useEffect(() => {
+    if (roomData && roomData.room_number) {
+       setRoomNumbera(roomData.room_number);
+    }
+    if (roomData && roomData.room_address) {
+      setroomAddress(roomData.room_address);
+   }
+    if (roomData && roomData.electric_user_number) {
+      setElectricNumber(roomData.electric_user_number);
+    }
+    if (roomData && roomData.electric_number) {
+      setMeterNumber(roomData.electric_number);
+    }
+    if (roomData && roomData.size_sqm) {
+      setRoomSize(roomData.size_sqm);
+    }
+    if (roomData && roomData.amount_of_bed_room) {
+      setbedRoom(roomData.amount_of_bed_room);
+    }
+    if (roomData && roomData.amount_of_toilet_room) {
+      setToiletAmount(roomData.amount_of_toilet_room);
+    }
+    if (roomData && roomData.amount_of_living_room) {
+      setLivingRoomAmount(roomData.amount_of_living_room);
+    }
+
+ }, [roomData]);
+ 
+ const fetchOwnerData = async () => {
+  setLoading(true);  // Start loading for owner fetch
+  try {
+      const data = await fetchOwner();
+      setOwners(data);  // set owners state
+      const ownerMatchedOption = ownerOptions.find(option => option.label === roomData.owner_name);
+      if (ownerMatchedOption) {
+        setSelectedOwners(ownerMatchedOption);
+    }
+      setLoading(false);
+  } catch (err) {
+      console.log(err);
+      setLoading(false);
+  }
+};
+
+
+useEffect(() => {
+  fetchOwnerData();
+}, []);  // This useEffect will call fetchData when the component mounts.
+
+// New useEffect to listen for changes in owners state
+useEffect(() => {
+  // Generate ownerOptions from owners state
+  const options = owners.map(owner => ({
+    value: owner.id,  // Assuming each owner has a unique 'id'
+    label: owner.full_name // Use the 'full_name' property for the option label
+  }));
+  
+  setOwnerOptions(options);
+}, [owners]);
+
+  console.log ("room ID" + roomID)
 
   const [images, setImages] = useState([null, null, null]); // To hold three images
 
@@ -97,6 +183,7 @@ const handleDocumentChange = (e) => {
   setDocumentObj({ name: file.name, previewUrl });
 };
 
+
   const tabStyle = {
     fontWeight: activeTab === 'room' ? 'bold' : 'normal',
     fontFamily: 'Kanit, sans-serif',
@@ -107,13 +194,14 @@ const handleDocumentChange = (e) => {
   };
 
   const viewOptions = [
-    { value: 'option1', label: 'Option 1' },
-    { value: 'option2', label: 'Option 2' },
+    { value: 'option1', label: 'Sea' },
+    { value: 'option2', label: 'City' },
+    { value: 'option3', label: 'Sea-City' },
   ];
-  const ownerOptions = [
-    { value: 'owner1', label: 'Owner 1' },
-    { value: 'owner2', label: 'Owner 2' },
-  ];
+  // const ownerOptions = [
+  //   { value: 'owner1', label: 'Owner 1' },
+  //   { value: 'owner2', label: 'Owner 2' },
+  // ];
   
   const roomStatusOptions = [
     { value: 'Sale', label: 'Sale' },
@@ -140,8 +228,40 @@ const handleDocumentChange = (e) => {
     fontSize: '20px',
     fontWeight: 'bold',
   };
-  
 
+  const handleRoomNumberChange = (event) => {
+    setRoomNumbera(event.target.value);
+ };
+
+ const handleRoomAddressChange = (event) => {
+  setroomAddress(event.target.value);
+};
+
+const handleElectricNumberChange = (event) => {
+  setElectricNumber(event.target.value);
+};
+
+const handleMeterNumberChange = (event) => {
+  setMeterNumber(event.target.value);
+};
+
+const handleRoomSizeChange = (event) => {
+  setRoomSize(event.target.value);
+};
+
+const handleBedRoomChange = (event) => {
+  setbedRoom(event.target.value);
+};
+
+const handleToiletAmountChange = (event) => {
+  setToiletAmount(event.target.value);
+};
+
+const handleLivingRoomAmountChange = (event) => {
+  setLivingRoomAmount(event.target.value);
+};
+ 
+  
 
   return (
     <>
@@ -153,6 +273,10 @@ const handleDocumentChange = (e) => {
           rel="stylesheet"
         />
       </Head>
+      {loading ? (
+            <div>Loading...</div>
+        ) : (
+            <div>
       <div style={{ display: 'flex', fontFamily: 'Kanit, sans-serif' }}>
         <div style={{ flex: '0 0 250px', position: 'fixed' }}>
           <Sidebar />
@@ -179,7 +303,6 @@ const handleDocumentChange = (e) => {
           <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px', marginTop: '10px', fontWeight: 'bold' }}>
       
     </div>
-
 
 
 {activeTab === 'room' && (
@@ -235,63 +358,114 @@ const handleDocumentChange = (e) => {
 
 
 
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%', marginLeft: '113px'}}>
-    <label style={ commonLabelStyle }>Room No:</label>
-    <input type="text" placeholder=" Room No.." style={commonInputStyle} />
-  </div>
+<div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%', marginLeft: '113px'}}>
+  <label style={commonLabelStyle}>Room No:</label>
+  <input 
+      type="text" 
+      placeholder=" Room No.." 
+      style={commonInputStyle} 
+      value={roomNumbera} 
+      onChange={handleRoomNumberChange} 
+  />
+</div>
+
   <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
     <label style={commonLabelStyle}>Room Address:</label>
-    <input type="text" placeholder=" Room Address.."style={commonInputStyle} />
-  </div>
+  <input 
+      type="text" 
+      placeholder=" Room Address.." 
+      style={commonInputStyle} 
+      value={roomAddress} 
+      onChange={handleRoomAddressChange} 
+  />
+</div>
+
     <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
       <label style={commonLabelStyle}>Electric No:</label>
-      <input type="text" placeholder=" Electric No.."style={commonInputStyle} />
-    </div>
+      <input 
+      type="text" 
+      placeholder=" Electric No.." 
+      style={commonInputStyle} 
+      value={electricNumber} 
+      onChange={handleElectricNumberChange} 
+  />
+</div>
     <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
       <label style={commonLabelStyle}>Meter No:</label>
-      <input type="text" placeholder=" Meter No.." style={commonInputStyle}/>
-    </div>
+      <input 
+      type="text" 
+      placeholder=" Meter No.." 
+      style={commonInputStyle} 
+      value={meterNumber} 
+      onChange={handleMeterNumberChange} 
+  />
+</div>
     <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
       <label style={commonLabelStyle}>Room Size:</label>
-      <input type="text" placeholder=" Room Size.."style={commonInputStyle} />
-    </div>
+      <input 
+      type="text" 
+      placeholder=" Room Size.." 
+      style={commonInputStyle} 
+      value={roomSize} 
+      onChange={handleRoomSizeChange} 
+  />
+</div>
     <div style={{marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
-      <label style={commonLabelStyle}>Room Address:</label>
-      <input type="text" placeholder=" Bed Room Amount.." style={commonInputStyle}/>
-    </div>
+      <label style={commonLabelStyle}>Bedroom Amount:</label>
+      <input 
+      type="text" 
+      placeholder=" Bedroom Amount.." 
+      style={commonInputStyle} 
+      value={bedRoom} 
+      onChange={handleBedRoomChange} 
+  />
+</div>
     <div style={{marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
       <label style={commonLabelStyle}>Toilet Amount:</label>
-      <input type="text" placeholder=" Toilet Amount.." style={commonInputStyle}/>
-    </div>
+      <input 
+      type="text" 
+      placeholder=" Toilet Amount.." 
+      style={commonInputStyle} 
+      value={toiletAmount} 
+      onChange={handleToiletAmountChange} 
+  />
+</div>
     <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
       <label style={commonLabelStyle}>Living Room Amount:</label>
-      <input type="text" placeholder=" Living Room Amount.."style={commonInputStyle} />
-    </div>
+      <input 
+      type="text" 
+      placeholder=" Living Room Amount.." 
+      style={commonInputStyle} 
+      value={livingRoomAmount} 
+      onChange={handleLivingRoomAmountChange} 
+  />
+</div>
     
     <div style={{ marginBottom: '30px', flex: '0 0 100%' }}> {/* Parent div */}
   <div style={{ display: 'flex', flex: '0 0 100%' }}> {/* Flex div for horizontal alignment */}
     <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold' }}>
-      <label style={commonLabelStyle}>View:</label>
-      <Select
-        options={viewOptions}
-        value={selectedView}
-        onChange={setSelectedView}
-        isSearchable={false}
-        placeholder="Select View"
-        styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px'}) }}
-      />
-    </div>
+    <label style={commonLabelStyle}>View:</label>
+                    <Select
+                        options={viewOptions}
+                        value={selectedViews}
+                        onChange={setSelectedViews}
+                        isSearchable={false}
+                        placeholder="Select View"
+                        styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px' }) }}
+                    />
+                </div>
 
     <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold' }}>
-      <label style={{ display: 'block', }}>Owner:</label>
-      <CreatableSelect
-        options={ownerOptions}
-        value={selectedOwner}
-        onChange={setSelectedOwner}
-        isSearchable={true}
-        placeholder="Select Owner or Type a New One"
-        styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px'}) }}
-      />
+      <label style={{commonLabelStyle}}>Owner:</label>
+<Select
+  options={ownerOptions}
+  value={selectedOwners}
+  onChange={option => setSelectedOwners(option)}
+  placeholder="Owner"
+  styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px' }) }}
+/>
+
+
     </div>
   </div> 
   <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginTop: '40px' }} />
@@ -428,6 +602,8 @@ const handleDocumentChange = (e) => {
 
         </div>
       </div>
+      </div>
+        )}
     </>
   );
 }

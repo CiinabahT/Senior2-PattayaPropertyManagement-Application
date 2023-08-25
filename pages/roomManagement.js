@@ -19,7 +19,7 @@ export default function RoomManagement() {
   const [sRoomTable, setRoomTable] = useState({});
   const [placeId, setPlaceId] = useState(null);
   const [floorSelectError, setFloorSelectError] = useState(false);
-  const [roomName, setRoomName] = useState('');
+  const [roomNumber, setRoomNumber] = useState('');
   const [floorId, setFloorId] = useState('');
   const [floorNumber, setFloorNumber] = useState('');
   const [isFloorNumberEmpty, setIsFloorNumberEmpty] = useState(false);
@@ -90,7 +90,7 @@ export default function RoomManagement() {
 
   const handleCloseModal = () => {
     // Reset the form fields
-    setRoomName('');
+    setRoomNumber('');
     setFloorId('');
   
     setIsAddRoomModalOpen(false);
@@ -105,13 +105,13 @@ export default function RoomManagement() {
     }
   
     const data = {
-      room_name: roomName,
+      room_number: roomNumber,
       floor_id: parseInt(floorId),
     };
   
     addRoom(data)
       .then((newRoom) => {
-        setRoomName('');
+        setRoomNumber('');
         setFloorId('');
         setFloorSelectError(false); // Reset the error state
         setIsAddRoomModalOpen(false);
@@ -208,13 +208,13 @@ export default function RoomManagement() {
     <div style={{ backgroundColor: 'white', width: '400px', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', borderRadius: '10px', fontFamily: 'Kanit, sans-serif',}}>
       <h2>Add Room</h2>
       {/* Add your form fields here */}
-      <label htmlFor="owner">Room Name:</label>
+      <label htmlFor="owner">Room Number:</label>
       <input 
         id="owner" 
         type="text" 
-        placeholder="Room's Name.." 
-        value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
+        placeholder="Room's Number.." 
+        value={roomNumber}
+        onChange={(e) => setRoomNumber(e.target.value)}
         style={{ 
           fontFamily: 'Kanit, sans-serif', 
           color: 'black', 

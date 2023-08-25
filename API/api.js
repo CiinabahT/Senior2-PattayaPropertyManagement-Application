@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://www.pattayaavenueproperty.xyz/api/rooms/places'; //www.pattayaavenueproperty.xyz/api/rooms/places
-const BUILDING_URL = 'https://www.pattayaavenueproperty.xyz/api/rooms';
-const ROOM_URL = 'https://www.pattayaavenueproperty.xyz/api/rooms/room';
-const FLOOR_URL = 'https://www.pattayaavenueproperty.xyz/api/rooms/floor';
+const BASE_URL = 'https://pattayaavenueproperty.xyz/api/rooms/places'; //www.pattayaavenueproperty.xyz/api/rooms/places
+const BUILDING_URL = 'https://pattayaavenueproperty.xyz/api/rooms';
+const ROOM_URL = 'https://pattayaavenueproperty.xyz/api/rooms/room';
+const FLOOR_URL = 'https://pattayaavenueproperty.xyz/api/rooms/floor';
+const OWNERNOBANK_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles';
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -15,6 +16,17 @@ export const fetchPlaces = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching places:', error);
+    return [];
+  }
+};
+
+export const fetchOwner = async () => {
+  try {
+    console.log(OWNERNOBANK_URL);
+    const response = await axios.get(OWNERNOBANK_URL);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Owner:', error);
     return [];
   }
 };
@@ -66,6 +78,17 @@ export const addFloor = async (floorData) => {
     throw error;
   }
 };
+
+export const getRoomById = async (roomId) => {
+  try {
+    const response = await axios.get(`${ROOM_URL}/${roomId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching room by ID:', error);
+    throw error; // Propagate the error up so it can be handled by the calling function
+  }
+};
+
 
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';

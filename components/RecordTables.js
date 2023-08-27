@@ -3,41 +3,41 @@ import { useTable } from 'react-table';
 import RoomManagement from '../pages/roomManagement';
 
 function RecordTable({ records }) {
-    const rowsPerPage = 6;
-    const [pageNumber, setPageNumber] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('');
-    const [filteredRecords, setFilteredRecords] = useState(records);
+  const rowsPerPage = 6;
+  const [pageNumber, setPageNumber] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filteredRecords, setFilteredRecords] = useState(records);
 
-    const pageCount = filteredRecords ? Math.ceil(filteredRecords.length / rowsPerPage) : 0;
-    
-    
-    
+  const pageCount = filteredRecords ? Math.ceil(filteredRecords.length / rowsPerPage) : 0;
 
-    useEffect(() => {
-        let filtered = records;
-        if (searchTerm) {
-          filtered = filtered.filter((record) =>
-            Object.values(record).some((value) =>
-              value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-            )
-          );
-        }
-        if (filterStatus) {
-          filtered = filtered.filter(
-            (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
-          );
-        }
-        setFilteredRecords(filtered);
-        setPageNumber(0); // Reset the page number when filtering
-      }, [searchTerm, filterStatus, records]);
-    
-      const currentRows = (filteredRecords || []).slice(
-        pageNumber * rowsPerPage,
-        (pageNumber + 1) * rowsPerPage
+
+
+
+  useEffect(() => {
+    let filtered = records;
+    if (searchTerm) {
+      filtered = filtered.filter((record) =>
+        Object.values(record).some((value) =>
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
-      
-    
+    }
+    if (filterStatus) {
+      filtered = filtered.filter(
+        (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
+      );
+    }
+    setFilteredRecords(filtered);
+    setPageNumber(0); // Reset the page number when filtering
+  }, [searchTerm, filterStatus, records]);
+
+  const currentRows = (filteredRecords || []).slice(
+    pageNumber * rowsPerPage,
+    (pageNumber + 1) * rowsPerPage
+  );
+
+
 
   const columns = useMemo(
     () => [
@@ -91,19 +91,19 @@ function RecordTable({ records }) {
   const paginate = (page) => {
     setPageNumber(page - 1);
   };
-  
+
 
   return (
     <div style={{ fontFamily: 'Kanit, sans-serif', padding: '10px' }}>
       <div style={{ marginBottom: '10px' }}>
-      <label>Search bar : </label>
+        <label>Search bar : </label>
         <input
           type="text"
           placeholder=" Search.."
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ marginRight: '10px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', height: '25px'}}
+          style={{ marginRight: '10px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', height: '25px' }}
         />
-        <select onChange={(e) => setFilterStatus(e.target.value)} style={{ fontFamily: 'Kanit', width: '150px', outline: 'none', border: 'none', borderRadius: '5px', height: '28px'}}>
+        <select onChange={(e) => setFilterStatus(e.target.value)} style={{ fontFamily: 'Kanit', width: '150px', outline: 'none', border: 'none', borderRadius: '5px', height: '28px' }}>
           <option value="">Filter by Status</option>
           <option value="active">Active</option>
           <option value="pending">Pending</option>
@@ -135,27 +135,27 @@ function RecordTable({ records }) {
         </tbody>
       </table>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-  {Array.from({ length: pageCount }, (_, k) => (
-    <button
-      key={k}
-      onClick={() => paginate(k + 1)}
-      style={{
-        marginTop: '15px',
-        fontFamily: 'Kanit',
-        margin: '5px',
-        width: '30px',
-        height: '30px',
-        borderRadius: '50%',
-        backgroundColor: pageNumber === k ? '#326896' : '',
-        color: 'white',
-        border: 'none',
-        cursor: 'pointer',
-      }}
-    >
-      {k + 1}
-    </button>
-  ))}
-</div>
+        {Array.from({ length: pageCount }, (_, k) => (
+          <button
+            key={k}
+            onClick={() => paginate(k + 1)}
+            style={{
+              marginTop: '15px',
+              fontFamily: 'Kanit',
+              margin: '5px',
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              backgroundColor: pageNumber === k ? '#326896' : '',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {k + 1}
+          </button>
+        ))}
+      </div>
 
 
     </div>

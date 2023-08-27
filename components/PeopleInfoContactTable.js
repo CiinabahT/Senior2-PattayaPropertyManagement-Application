@@ -3,48 +3,48 @@ import { useTable } from 'react-table';
 import { useRouter } from 'next/router';
 
 function PeopleInfoContactTable({ records }) {
-    const rowsPerPage = 3;
-    const [pageNumber, setPageNumber] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('');
-    const [filteredRecords, setFilteredRecords] = useState(records);
-    const [isDeleteContactModalOpen, setIsDeleteContactModalOpen] = useState(false);
-    const router = useRouter();
+  const rowsPerPage = 3;
+  const [pageNumber, setPageNumber] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filteredRecords, setFilteredRecords] = useState(records);
+  const [isDeleteContactModalOpen, setIsDeleteContactModalOpen] = useState(false);
+  const router = useRouter();
 
-    useEffect(() => {
-        let filtered = records;
-        if (searchTerm) {
-          filtered = filtered.filter((record) =>
-            Object.values(record).some((value) =>
-              value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-            )
-          );
-        }
-        if (filterStatus) {
-          filtered = filtered.filter(
-            (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
-          );
-        }
-        setFilteredRecords(filtered);
-        setPageNumber(0); // Reset the page number when filtering
-      }, [searchTerm, filterStatus, records]);
-    
-      const currentRows = filteredRecords.slice(
-        pageNumber * rowsPerPage,
-        (pageNumber + 1) * rowsPerPage
+  useEffect(() => {
+    let filtered = records;
+    if (searchTerm) {
+      filtered = filtered.filter((record) =>
+        Object.values(record).some((value) =>
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
+    }
+    if (filterStatus) {
+      filtered = filtered.filter(
+        (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
+      );
+    }
+    setFilteredRecords(filtered);
+    setPageNumber(0); // Reset the page number when filtering
+  }, [searchTerm, filterStatus, records]);
 
-      const handleInfoClick = (info) => {
-        router.push(`/peopleInfo`);
-        console.log(info);
-      };
+  const currentRows = filteredRecords.slice(
+    pageNumber * rowsPerPage,
+    (pageNumber + 1) * rowsPerPage
+  );
 
-      const handleDeleteClick = (info) => {
-        setIsDeleteContactModalOpen(true)
-        console.log(info);
-      };
+  const handleInfoClick = (info) => {
+    router.push(`/peopleInfo`);
+    console.log(info);
+  };
 
-    
+  const handleDeleteClick = (info) => {
+    setIsDeleteContactModalOpen(true)
+    console.log(info);
+  };
+
+
 
   const columns = useMemo(
     () => [
@@ -65,9 +65,9 @@ function PeopleInfoContactTable({ records }) {
         Header: 'Delete',
         accessor: 'delete',
         Cell: ({ row }) => (
-            <button
+          <button
             onClick={() => handleDeleteClick(row.original)}
-            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D',border: 'none', borderRadius: '5px', outline: 'none', marginTop:'5px' }}
+            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px' }}
           >
             Delete
           </button>
@@ -88,7 +88,7 @@ function PeopleInfoContactTable({ records }) {
   const paginate = (page) => {
     setPageNumber(page - 1);
   };
-  
+
 
   return (
     <div style={{ fontFamily: 'Kanit, sans-serif', padding: '10px' }}>
@@ -132,39 +132,39 @@ function PeopleInfoContactTable({ records }) {
         </tbody>
       </table>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-  {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (
-    <button
-      key={k}
-      onClick={() => paginate(k + 1)}
-      style={{
-        marginTop: '15px',
-        fontFamily: 'Kanit',
-        margin: '5px',
-        width: '30px',
-        height: '30px',
-        borderRadius: '50%',
-        backgroundColor: pageNumber === k ? '#326896' : '',
-        color: 'white',
-        border: 'none',
-        cursor: 'pointer',
-      }}
-    >
-      {k + 1}
-    </button>
-  ))}
-</div>
-
-{isDeleteContactModalOpen && (
-  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <div style={{ backgroundColor: 'white', width: '600px', padding: '20px', borderRadius: '10px', fontFamily: 'Kanit, sans-serif', textAlign: 'center' }}>
-      <h1 style={{ textAlign: 'center' }}>Delete this Contact?</h1>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-        <button onClick={() => setIsDeleteContactModalOpen(false)} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', borderRadius: '5px', border: 'none', marginRight: '10px', width: '70px', height: '38px', fontSize: '16px' }}>Close</button>
-        <button onClick={() => setIsDeleteContactModalOpen(false)} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', color: 'white', width: '75px', height: '38px', fontSize: '16px' }}>Delete</button>
+        {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (
+          <button
+            key={k}
+            onClick={() => paginate(k + 1)}
+            style={{
+              marginTop: '15px',
+              fontFamily: 'Kanit',
+              margin: '5px',
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              backgroundColor: pageNumber === k ? '#326896' : '',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {k + 1}
+          </button>
+        ))}
       </div>
-    </div>
-  </div>
-)}
+
+      {isDeleteContactModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ backgroundColor: 'white', width: '600px', padding: '20px', borderRadius: '10px', fontFamily: 'Kanit, sans-serif', textAlign: 'center' }}>
+            <h1 style={{ textAlign: 'center' }}>Delete this Contact?</h1>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+              <button onClick={() => setIsDeleteContactModalOpen(false)} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', borderRadius: '5px', border: 'none', marginRight: '10px', width: '70px', height: '38px', fontSize: '16px' }}>Close</button>
+              <button onClick={() => setIsDeleteContactModalOpen(false)} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', color: 'white', width: '75px', height: '38px', fontSize: '16px' }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
 

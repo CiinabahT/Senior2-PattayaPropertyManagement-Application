@@ -21,7 +21,7 @@ const Sidebar = () => {
       </div>
 
       {/* New Links */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingLeft: '20px', gap: '5px',  }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingLeft: '20px', gap: '5px', }}>
         <Link href="/home" passHref>
           <button style={buttonStyle}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -64,8 +64,8 @@ const Sidebar = () => {
         </Link>
       </div>
       {/* End of New Links */}
-      <div style={{position: 'absolute', bottom: -10, width: '100%', padding: '0',}}>
-        <img src="/SidebarCondo.png" alt="Condo Sidebar" style={{width: '100%'}} />
+      <div style={{ position: 'absolute', bottom: -10, width: '100%', padding: '0', }}>
+        <img src="/SidebarCondo.png" alt="Condo Sidebar" style={{ width: '100%' }} />
       </div>
     </div>
   );

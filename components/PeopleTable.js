@@ -3,53 +3,53 @@ import { useTable } from 'react-table';
 import { useRouter } from 'next/router';
 
 function PeopleTable({ records }) {
-    const rowsPerPage = 8;
-    const [pageNumber, setPageNumber] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('');
-    const [filteredRecords, setFilteredRecords] = useState(records);
-    const router = useRouter();
+  const rowsPerPage = 8;
+  const [pageNumber, setPageNumber] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filteredRecords, setFilteredRecords] = useState(records);
+  const router = useRouter();
 
-    
 
-    useEffect(() => {
-        let filtered = records;
-        if (searchTerm) {
-          filtered = filtered.filter((record) =>
-          Object.values(record).some((value) =>
-            value ? value.toString().toLowerCase().includes(searchTerm.toLowerCase()) : false
-          )
-        );
-        
-        }
-        if (filterStatus) {
-          filtered = filtered.filter(
-            (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
-          );
-        }
-        setFilteredRecords(filtered);
-        setPageNumber(0); // Reset the page number when filtering
-      }, [searchTerm, filterStatus, records]);
-    
-      const currentRows = filteredRecords.slice(
-        pageNumber * rowsPerPage,
-        (pageNumber + 1) * rowsPerPage
+
+  useEffect(() => {
+    let filtered = records;
+    if (searchTerm) {
+      filtered = filtered.filter((record) =>
+        Object.values(record).some((value) =>
+          value ? value.toString().toLowerCase().includes(searchTerm.toLowerCase()) : false
+        )
       );
 
-      // const handleInfoClick = (info) => {
-      //   router.push(`/peopleInfo?id=${info.id}`);
-      // };
+    }
+    if (filterStatus) {
+      filtered = filtered.filter(
+        (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
+      );
+    }
+    setFilteredRecords(filtered);
+    setPageNumber(0); // Reset the page number when filtering
+  }, [searchTerm, filterStatus, records]);
 
-      const handleInfoClick = (Infodata) => {
-        router.push({
-          pathname: '/peopleInfo',
-          query: {
-            PersonId: Infodata.id, 
-          },
-        });
-      };
-      
-    
+  const currentRows = filteredRecords.slice(
+    pageNumber * rowsPerPage,
+    (pageNumber + 1) * rowsPerPage
+  );
+
+  // const handleInfoClick = (info) => {
+  //   router.push(`/peopleInfo?id=${info.id}`);
+  // };
+
+  const handleInfoClick = (Infodata) => {
+    router.push({
+      pathname: '/peopleInfo',
+      query: {
+        PersonId: Infodata.id,
+      },
+    });
+  };
+
+
 
   const columns = useMemo(
     () => [
@@ -70,9 +70,9 @@ function PeopleTable({ records }) {
         Header: 'More Info',
         accessor: 'info',
         Cell: ({ row }) => (
-            <button
+          <button
             onClick={() => handleInfoClick(row.original)}
-            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896',border: 'none', borderRadius: '5px', outline: 'none', marginTop:'5px' }}
+            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px' }}
           >
             information
           </button>
@@ -93,7 +93,7 @@ function PeopleTable({ records }) {
   const paginate = (page) => {
     setPageNumber(page - 1);
   };
-  
+
 
   return (
     <div style={{ fontFamily: 'Kanit, sans-serif', padding: '10px' }}>
@@ -137,27 +137,27 @@ function PeopleTable({ records }) {
         </tbody>
       </table>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-  {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (
-    <button
-      key={k}
-      onClick={() => paginate(k + 1)}
-      style={{
-        marginTop: '15px',
-        fontFamily: 'Kanit',
-        margin: '5px',
-        width: '30px',
-        height: '30px',
-        borderRadius: '50%',
-        backgroundColor: pageNumber === k ? '#326896' : '',
-        color: 'white',
-        border: 'none',
-        cursor: 'pointer',
-      }}
-    >
-      {k + 1}
-    </button>
-  ))}
-</div>
+        {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (
+          <button
+            key={k}
+            onClick={() => paginate(k + 1)}
+            style={{
+              marginTop: '15px',
+              fontFamily: 'Kanit',
+              margin: '5px',
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              backgroundColor: pageNumber === k ? '#326896' : '',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {k + 1}
+          </button>
+        ))}
+      </div>
 
 
     </div>

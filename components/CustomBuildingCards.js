@@ -2,7 +2,7 @@ import { Card, Grid, Text, Link, Button } from "@nextui-org/react";
 import data from '../pages/data.json';
 import { useRouter } from 'next/router';
 
-export default function CustomBuildingCards({ buildingName, onDelete, placeId, buildingId}) {
+export default function CustomBuildingCards({ buildingName, onDelete, placeId, buildingId }) {
   const truncatedName = buildingName.length > 20 ? buildingName.slice(0, 20) + "..." : buildingName;
   const router = useRouter();
 
@@ -43,13 +43,13 @@ export default function CustomBuildingCards({ buildingName, onDelete, placeId, b
         boxShadow: "none",
       }}
       // onClick={() => window.location.href = `/roomManagement?buildingName=${encodeURIComponent(buildingName), handleCardClick}`}
-      onClick = {handleCardClick}
-      
+      onClick={handleCardClick}
+
     >
       <Card.Header>
         <Grid.Container css={{ pl: "$6", pr: "$6", justify: "space-between", alignItems: "center" }}>
           <Grid xs={13}>
-            <Text h4 css={{ lineHeight: "$xs" , marginTop: '10px'}}>
+            <Text h4 css={{ lineHeight: "$xs", marginTop: '10px' }}>
               {truncatedName}
             </Text>
           </Grid>

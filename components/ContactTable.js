@@ -3,50 +3,50 @@ import { useTable } from 'react-table';
 import { useRouter } from 'next/router';
 
 function ContractTable({ records }) {
-    const rowsPerPage = 8;
-    const [pageNumber, setPageNumber] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('');
-    const [filteredRecords, setFilteredRecords] = useState(records);
-    const router = useRouter();
+  const rowsPerPage = 8;
+  const [pageNumber, setPageNumber] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filteredRecords, setFilteredRecords] = useState(records);
+  const router = useRouter();
 
-    useEffect(() => {
-        let filtered = records;
-        if (searchTerm) {
-          filtered = filtered.filter((record) =>
-            Object.values(record).some((value) =>
-              value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-            )
-          );
-        }
-        if (filterStatus) {
-          filtered = filtered.filter(
-            (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
-          );
-        }
-        setFilteredRecords(filtered);
-        setPageNumber(0); // Reset the page number when filtering
-      }, [searchTerm, filterStatus, records]);
-    
-      const currentRows = filteredRecords.slice(
-        pageNumber * rowsPerPage,
-        (pageNumber + 1) * rowsPerPage
+  useEffect(() => {
+    let filtered = records;
+    if (searchTerm) {
+      filtered = filtered.filter((record) =>
+        Object.values(record).some((value) =>
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
+    }
+    if (filterStatus) {
+      filtered = filtered.filter(
+        (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
+      );
+    }
+    setFilteredRecords(filtered);
+    setPageNumber(0); // Reset the page number when filtering
+  }, [searchTerm, filterStatus, records]);
 
-      const handleInfoClick = (info) => {
-        router.push({
-            pathname: '/contractInfo',
-          });
-        console.log(info);
-      };
+  const currentRows = filteredRecords.slice(
+    pageNumber * rowsPerPage,
+    (pageNumber + 1) * rowsPerPage
+  );
 
-      const handleEndContractClick = (info) => {
-        router.push({
-            pathname: '/endContract',
-          });
-        console.log(info);
-      };
-    
+  const handleInfoClick = (info) => {
+    router.push({
+      pathname: '/contractInfo',
+    });
+    console.log(info);
+  };
+
+  const handleEndContractClick = (info) => {
+    router.push({
+      pathname: '/endContract',
+    });
+    console.log(info);
+  };
+
 
   const columns = useMemo(
     () => [
@@ -89,9 +89,9 @@ function ContractTable({ records }) {
         Header: 'More Info',
         accessor: 'info',
         Cell: ({ row }) => (
-            <button
+          <button
             onClick={() => handleInfoClick(row.original)}
-            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896',border: 'none', borderRadius: '5px', outline: 'none', marginTop:'5px', }}
+            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px', }}
           >
             Information
           </button>
@@ -101,9 +101,9 @@ function ContractTable({ records }) {
         Header: 'End Contract',
         accessor: 'endContract',
         Cell: ({ row }) => (
-            <button
+          <button
             onClick={() => handleEndContractClick(row.original)}
-            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D',border: 'none', borderRadius: '5px', outline: 'none', marginTop:'5px' }}
+            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px' }}
           >
             End Contract
           </button>
@@ -124,24 +124,24 @@ function ContractTable({ records }) {
   const paginate = (page) => {
     setPageNumber(page - 1);
   };
-  
+
 
   return (
     <div style={{ fontFamily: 'Kanit, sans-serif', padding: '10px' }}>
       <div style={{ marginBottom: '10px' }}>
-      <label>Search bar : </label>
+        <label>Search bar : </label>
         <input
           type="text"
           placeholder=" Search.."
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ marginRight: '10px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', height: '25px'}}
+          style={{ marginRight: '10px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', height: '25px' }}
         />
         {/* <select onChange={(e) => setFilterStatus(e.target.value)} style={{ fontFamily: 'Kanit', width: '150px', outline: 'none', border: 'none', borderRadius: '5px', height: '28px'}}>
           <option value="">Filter by Status</option>
           <option value="active">Active</option>
           <option value="pending">Pending</option>
           <option value="expired">Expired</option> */}
-          {/* Add more options based on your available statuses */}
+        {/* Add more options based on your available statuses */}
         {/* </select> */}
       </div>
       <table style={styles.table} {...getTableProps()}>
@@ -168,27 +168,27 @@ function ContractTable({ records }) {
         </tbody>
       </table>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-  {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (
-    <button
-      key={k}
-      onClick={() => paginate(k + 1)}
-      style={{
-        marginTop: '15px',
-        fontFamily: 'Kanit',
-        margin: '5px',
-        width: '30px',
-        height: '30px',
-        borderRadius: '50%',
-        backgroundColor: pageNumber === k ? '#326896' : '',
-        color: 'white',
-        border: 'none',
-        cursor: 'pointer',
-      }}
-    >
-      {k + 1}
-    </button>
-  ))}
-</div>
+        {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (
+          <button
+            key={k}
+            onClick={() => paginate(k + 1)}
+            style={{
+              marginTop: '15px',
+              fontFamily: 'Kanit',
+              margin: '5px',
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              backgroundColor: pageNumber === k ? '#326896' : '',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {k + 1}
+          </button>
+        ))}
+      </div>
 
 
     </div>

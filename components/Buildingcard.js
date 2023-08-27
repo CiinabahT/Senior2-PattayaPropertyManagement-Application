@@ -42,12 +42,12 @@ export default function Buildingcard({ buildingName, onDelete, placeId }) {
       }}
     >
       <Card.Header>
-      <Grid.Container css={{ pl: "$6", pr: "$6", justify: "center", alignItems: "center" }}>
-  <Grid xs={12}>
-    <Text h4 css={{ lineHeight: "$xs", marginTop: '10px'}}>
-      {truncatedName}
-    </Text>
-  </Grid>
+        <Grid.Container css={{ pl: "$6", pr: "$6", justify: "center", alignItems: "center" }}>
+          <Grid xs={12}>
+            <Text h4 css={{ lineHeight: "$xs", marginTop: '10px' }}>
+              {truncatedName}
+            </Text>
+          </Grid>
           {/* <Button
   auto
   style={{
@@ -65,8 +65,8 @@ export default function Buildingcard({ buildingName, onDelete, placeId }) {
     backgroundColor: '#71797E',
   }}
 > */}
-  {/* <button onClick={handleDelete} style={{ background: 'none', border: 'none', fontSize: '16px' }}>X</button> */}
-{/* </Button> */}
+          {/* <button onClick={handleDelete} style={{ background: 'none', border: 'none', fontSize: '16px' }}>X</button> */}
+          {/* </Button> */}
         </Grid.Container>
       </Card.Header>
       <Card.Body css={{ py: "$2" }}>

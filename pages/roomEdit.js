@@ -43,7 +43,6 @@ export default function RoomEdit() {
   const [records, setRecords] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [selectedDoc, setSelectedDoc] = useState([]);
 
 
 
@@ -95,7 +94,7 @@ export default function RoomEdit() {
 
 
 
-          // Your existing logic to populate 'selectedDoc'
+          // Your existing logic to populate 'selectedFilesForDocument'
           if (data.room_documents && data.room_documents.length > 0) {
             const roomDoc = data.room_documents.map(document => {
               let preview;
@@ -109,7 +108,7 @@ export default function RoomEdit() {
                 preview: preview,
               };
             });
-            setSelectedDoc(roomDoc);
+            setSelectedFilesForDocument(roomDoc);
           }
 
 
@@ -263,7 +262,7 @@ export default function RoomEdit() {
       });
 
       // Remove the image from local state as well
-      setSelectedDoc(prevFiles => prevFiles.filter(file => file.id !== parseInt(documentId)));
+      setSelectedFilesForDocument(prevFiles => prevFiles.filter(file => file.id !== parseInt(documentId)));
 
       console.log(response.data);
     } catch (error) {
@@ -275,7 +274,7 @@ export default function RoomEdit() {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleFileChangeForDocument = async (event) => {
-    const newFiles = Array.from(event.target.files);
+    const files = Array.from(event.target.files);
 
     const base64Files = await Promise.all(files.map(async file => {
       const base64 = await toBase64file(file);
@@ -288,10 +287,7 @@ export default function RoomEdit() {
     }));
 
 
-    setSelectedFilesForDocument(prevFiles => [...prevFiles, ...filesWithPreviews]);
-
-
-    for (let file of newFiles) {
+    for (let file of base64Files) {
       const apiResponse = await sendDocumentToAPI(file, roomID);
 
       if (apiResponse && apiResponse.data && apiResponse.data.id) {
@@ -299,28 +295,12 @@ export default function RoomEdit() {
         file.id = apiResponse.data.id;
       }
       console.log("apiResponse" + apiResponse.data)
-      // console.log ("apiResponse" +apiResponse.data)
-      // console.log ("apiResponse" +apiResponse.data.id)
 
-
-      try {
-        const base64 = await toBase64file(file);
-        const fileWithBase64 = {
-          id: Date.now(),
-          name: file.name,
-          preview: URL.createObjectURL(file),
-          base64
-        };
-
-        // Add this line to update the selectedDoc state.
-        setSelectedDoc(prevDocs => [...prevDocs, fileWithBase64]);
-      } catch (error) {
-        console.error("Error converting file to Base64:", error);
-      }
     }
-
+    setSelectedFilesForDocument(prevFiles => [...prevFiles, ...base64Files]);
+    
     // Reset the value of the file input to allow re-uploading the same file
-    event.target.value = null;
+    // event.target.value = null;
   };
 
   const handleFileChange = async (e) => {
@@ -395,7 +375,6 @@ export default function RoomEdit() {
 
   const sendDocumentToAPI = async (file, roomID) => {
     const apiUrl = 'https://pattayaavenueproperty.xyz/api/rooms/roomdocument';
-    // const apiUrl = ''
 
     try {
       const response = await axios.post(apiUrl, {
@@ -408,7 +387,7 @@ export default function RoomEdit() {
         }
       });
 
-      console.log(response.data); // Log the API response if needed
+      return response.data;  // Return API response data
     } catch (error) {
       console.error('There was a problem uploading the document:', error.message);
     }
@@ -828,8 +807,6 @@ export default function RoomEdit() {
                         <img src="upload.png" alt="Upload" style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                         Select Images
                       </button>
-
-
                       <input
                         id="fileInput"
                         type="file"
@@ -865,7 +842,6 @@ export default function RoomEdit() {
                               }}
                               onClick={() => deleteImageFromAPI(file.id)}
                             />
-
                           </div>
                         ))}
                       </div>
@@ -880,56 +856,23 @@ export default function RoomEdit() {
                         style={{ fontFamily: 'Kanit, sans-serif', marginBottom: '30px', backgroundColor: '#326896', outline: 'none', border: 'none', borderRadius: '5px', width: '180px', height: '45px', fontSize: '17px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         onClick={() => document.getElementById('fileInputForDocument').click()}
                       >
-                        <input
-                          id="fileInputForDocument"
-                          type="file"
-                          multiple
-                          style={{ display: 'none' }}
-                          onChange={handleFileChangeForDocument}
-                        />
-
                         <img src="upload.png" alt="Upload" style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                         Select File
                       </button>
+                      <input
+                        id="fileInputForDocument"
+                        type="file"
+                        multiple
+                        style={{ display: 'none' }}
+                        onChange={handleFileChangeForDocument}
+                      />
 
-                      {console.log('About to map over selected files:', selectedDoc)}
 
-                      {selectedDoc.map((fileObj, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            position: 'relative',
-                            display: 'inline-block',
-                            marginRight: '10px'
-                          }}
-                        >
-
-                          {/* { fileObj.name.endsWith('.pdf') ?
-      <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px' }} />
-      :
-      <img src={fileObj.preview} alt="File" style={{ width: '100px', height: '100px' }} />
-    } */}
-
+                      {/* </button> */}
+                      <div>
+                      {selectedFilesForDocument.map((fileObj, index) => (
+                        <div key={index} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} >
                           <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px' }} />
-
-                          {/* <img src={fileObj.preview} alt="File" style={{ width: '100px', height: '100px' }} /> */}
-
-
-
-
-                          {/* Display file name */}
-
-                          {/* <div style={{ 
-      whiteSpace: 'nowrap', 
-      overflow: 'hidden', 
-      textOverflow: 'ellipsis', 
-      textAlign: 'center',
-      maxWidth: '150px' 
-    }}>
-      {fileObj.name.length > 15 ? `${fileObj.name.substring(0, 15)}...` : fileObj.name}
-    </div> */}
-
-                          {/* Display delete button */}
                           <img
                             src="X.png"
                             alt="Close"
@@ -947,6 +890,7 @@ export default function RoomEdit() {
                           />
                         </div>
                       ))}
+                      </div>
 
                       {showModal && (
                         <div style={{
@@ -1003,4 +947,3 @@ export default function RoomEdit() {
     </>
   );
 }
-

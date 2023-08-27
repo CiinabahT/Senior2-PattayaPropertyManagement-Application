@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Grid, Text } from '@nextui-org/react';
 import Buildingcard from './Buildingcard.js';
-import {Spinner} from "@nextui-org/react";
-import { fetchPlaces, createPlace } from '../API/api.js'; 
+import { Spinner } from "@nextui-org/react";
+import { fetchPlaces, createPlace } from '../API/api.js';
 // import data from '../pages/data.json';
 import axios from 'axios';
 
-export  default function Cards({ onSaveBuildingName, onCloseModal }) {
+export default function Cards({ onSaveBuildingName, onCloseModal }) {
   const [showModal, setShowModal] = useState(false);
   const [buildingName, setBuildingName] = useState('');
   const [buildingCards, setBuildingCards] = useState([]);
@@ -30,7 +30,7 @@ export  default function Cards({ onSaveBuildingName, onCloseModal }) {
       console.error('An error occurred:', error);
     }
   };
-  
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedBuildingCards = localStorage.getItem('cardBuildingCards');
@@ -73,24 +73,24 @@ export  default function Cards({ onSaveBuildingName, onCloseModal }) {
         floor: 0,
       };
       setBuildingCards((prevCards) => [...prevCards, newBuildingCard]);
-      
+
       // Post the data
       await postData(buildingName);
-  
+
       // Fetch the updated data
       await fetchData();
-  
+
       setShowModal(false);
       setBuildingName('');
     }
   };
 
-  
 
-  
-  
-  
-  
+
+
+
+
+
 
 
   // const handleDeleteBuilding = (name, floor) => {
@@ -101,63 +101,63 @@ export  default function Cards({ onSaveBuildingName, onCloseModal }) {
 
   return (
     <>
-    {Object.keys(smt).length > 0 ? (
-      <Grid.Container gap={0.5}>
-        <Grid key="create" xs={2}>
-          <Card
-            variant="flat"
-            bordered
-            shadow={false}
-            flat
-            isPressable
-            style={{
-              width: '268px',
-              height: '154px',
-              padding: '5px',
-              borderRadius: '30px',
-              border: '2px dashed #D9D9D9',
-              backgroundColor: 'white',
-              boxShadow: 'none',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontFamily: 'Kanit, Arial, sans-serif',
-              fontWeight: 350,
-            }}
-            onClick={handleCardClick}
-          >
-            <Card.Header style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <img
-                src="Vector.png"
-                alt="Image"
-                style={{ maxWidth: '100%', maxHeight: '100%', marginTop: '17px' }}
-              />
-            </Card.Header>
-            <Card.Body
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'hidden' }}
+      {Object.keys(smt).length > 0 ? (
+        <Grid.Container gap={0.5}>
+          <Grid key="create" xs={2}>
+            <Card
+              variant="flat"
+              bordered
+              shadow={false}
+              flat
+              isPressable
+              style={{
+                width: '268px',
+                height: '154px',
+                padding: '5px',
+                borderRadius: '30px',
+                border: '2px dashed #D9D9D9',
+                backgroundColor: 'white',
+                boxShadow: 'none',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontFamily: 'Kanit, Arial, sans-serif',
+                fontWeight: 350,
+              }}
+              onClick={handleCardClick}
             >
-              <Text style={{ fontFamily: 'Kanit, Arial, sans-serif', fontSize: '18px', color: 'black' }}>
-                Create Condo
-              </Text>
-            </Card.Body>
-          </Card>
+              <Card.Header style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <img
+                  src="Vector.png"
+                  alt="Image"
+                  style={{ maxWidth: '100%', maxHeight: '100%', marginTop: '17px' }}
+                />
+              </Card.Header>
+              <Card.Body
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'hidden' }}
+              >
+                <Text style={{ fontFamily: 'Kanit, Arial, sans-serif', fontSize: '18px', color: 'black' }}>
+                  Create Condo
+                </Text>
+              </Card.Body>
+            </Card>
           </Grid>
-                { smt.map((place) => (
-        <Grid key={place.place_id} xs={2} style={{ width: '268px', height: '162px', padding: '7px' }}>
-          <Buildingcard
-            buildingName={place.place_name}
-            placeId={place.place_id} // passing the place_id
-            onDelete={() => handleDeleteBuilding(place.place_id, place.place_name)}
-          />
-        </Grid>
-      ))}
+          {smt.map((place) => (
+            <Grid key={place.place_id} xs={2} style={{ width: '268px', height: '162px', padding: '7px' }}>
+              <Buildingcard
+                buildingName={place.place_name}
+                placeId={place.place_id} // passing the place_id
+                onDelete={() => handleDeleteBuilding(place.place_id, place.place_name)}
+              />
+            </Grid>
+          ))}
 
-      </Grid.Container>
-          ) : (
-            <div className="flex gap-4">
-            <Spinner size="lg" />
-            </div> 
-          )}
+        </Grid.Container>
+      ) : (
+        <div className="flex gap-4">
+          <Spinner size="lg" />
+        </div>
+      )}
       {showModal && (
         <div
           style={{
@@ -186,7 +186,7 @@ export  default function Cards({ onSaveBuildingName, onCloseModal }) {
             }}
           >
             <h1 style={{ fontSize: '25px', fontFamily: 'Kanit, sans-serif', marginBottom: '10px', marginTop: '10px' }}>Create Condo</h1>
-            
+
             <textarea
               value={buildingName}
               onChange={handleBuildingNameChange}

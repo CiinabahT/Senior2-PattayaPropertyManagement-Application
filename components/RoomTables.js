@@ -9,8 +9,8 @@ function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
   const truncateText = (text, limit = 20) => {
     return text.length > limit ? text.substring(0, limit) + "..." : text;
   };
-  
-  
+
+
   const handleEditRoom = (roomData) => {
     router.push({
       pathname: '/roomEdit',
@@ -21,7 +21,7 @@ function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
       },
     });
   };
-  
+
 
 
   const columns = useMemo(
@@ -30,7 +30,7 @@ function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
         Header: '#',
         accessor: (row, index) => index + 1,
         id: 'index',
-        
+
       },
       {
         Header: 'Room No.',
@@ -52,7 +52,7 @@ function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
       {
         Header: 'Contact',
         accessor: 'owner_contacts',
-        
+
       },
       {
         Header: 'Room Status',
@@ -66,7 +66,7 @@ function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
         Cell: ({ row }) => (
           <button
             onClick={() => handleEditRoom(row.original)}
-            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius:'5px', outline: 'none'}}
+            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius: '5px', outline: 'none' }}
           >
             Edit Room
           </button>
@@ -108,18 +108,18 @@ function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
     <div style={{ fontFamily: 'Kanit, sans-serif', padding: '10px' }}>
       <div style={{ marginBottom: '10px' }}>
         <label>Search Room No.: </label>
-        <input value={searchValue} onChange={handleSearchChange} style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none',border: '1px solid #ccc' }} />
+        <input value={searchValue} onChange={handleSearchChange} style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none', border: '1px solid #ccc' }} />
         <label style={{ marginLeft: '10px' }}>Room Status: </label>
         <select
-  onChange={(e) => setFilter('status_of_room', e.target.value === 'all' ? undefined : e.target.value)}
-  style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none',border: '1px solid #ccc'  }}
->
-  <option value="all">All</option>
-  <option value="Sell">Sell</option>
-  <option value="Rent">Rent</option>
-  <option value="Sell/Rent">Sell/Rent</option>
-  <option value="Returned">Returned</option>
-</select>
+          onChange={(e) => setFilter('status_of_room', e.target.value === 'all' ? undefined : e.target.value)}
+          style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none', border: '1px solid #ccc' }}
+        >
+          <option value="all">All</option>
+          <option value="Sell">Sell</option>
+          <option value="Rent">Rent</option>
+          <option value="Sell/Rent">Sell/Rent</option>
+          <option value="Returned">Returned</option>
+        </select>
 
       </div>
       <table style={styles.table} {...getTableProps()}>
@@ -152,17 +152,17 @@ function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
 // Custom filter component for Sale/Rent
 function SaleRentFilter({ column: { filterValue, setFilter } }) {
   return (
-<select
-  value={filterValue || 'all'}
-  onChange={(e) => setFilter(e.target.value || undefined)}
-  style={{ fontFamily: 'Kanit, sans-serif', color: 'black', backgroundColor: 'White',borderRadius: '5px', outline: 'none',border: '1px solid #ccc' }}
->
-  <option value="all">All</option>
-  <option value="Sale">Sale</option>
-  <option value="Rent">Rent</option>
-  <option value="Invalid">Invalid</option>
-  <option value="Sale/Rent">Sale/Rent</option>
-</select>
+    <select
+      value={filterValue || 'all'}
+      onChange={(e) => setFilter(e.target.value || undefined)}
+      style={{ fontFamily: 'Kanit, sans-serif', color: 'black', backgroundColor: 'White', borderRadius: '5px', outline: 'none', border: '1px solid #ccc' }}
+    >
+      <option value="all">All</option>
+      <option value="Sale">Sale</option>
+      <option value="Rent">Rent</option>
+      <option value="Invalid">Invalid</option>
+      <option value="Sale/Rent">Sale/Rent</option>
+    </select>
 
   );
 }

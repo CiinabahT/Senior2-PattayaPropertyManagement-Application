@@ -13,7 +13,7 @@ export default function Building() {
   const [newBuildingName, setNewBuildingName] = useState('');
   const [warning, setWarning] = useState('');
 
-  
+
 
   useEffect(() => {
     if (router.query.buildingName) {
@@ -48,11 +48,11 @@ export default function Building() {
       try {
         await ChangePlaceName(buildingId, newBuildingName);
         setBuildingName(newBuildingName); // Update the displayed building name
-        
+
         // Update the URL to reflect the new building name
         const newRoute = `/building?placeId=${buildingId}&buildingName=${newBuildingName}`;
         router.replace(newRoute, undefined, { shallow: true });
-        
+
         closeModal(); // Close the modal
       } catch (error) {
         console.error('Failed to change name:', error);
@@ -60,7 +60,7 @@ export default function Building() {
     }
     setWarning('');
   };
-  
+
 
   return (
     <>
@@ -92,25 +92,25 @@ export default function Building() {
           </div>
         </div>
       </div>
-      
+
       {showModal && (
-  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', width: '400px', textAlign: 'left', fontFamily: 'Kanit, sans-serif' }}>
-      <h2>Change Condo's Name</h2>
-      <div>
-        <label>New Condo Name:</label>
-      </div>
-      <div>
-        <input type="text" value={newBuildingName} placeholder={buildingName} onChange={e => setNewBuildingName(e.target.value)} style={{ width: '95%', height: '20px', padding: '5px', fontSize: '16px', fontFamily: 'Kanit, sans-serif', marginTop: '5px', backgroundColor: 'white', borderRadius: '10px', color: 'black', outline: 'none', border: '1px solid #ccc' }} />
-        {warning && <div style={{ color: 'red' }}>{warning}</div>}
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', width: '400px', textAlign: 'left', fontFamily: 'Kanit, sans-serif' }}>
+            <h2>Change Condo's Name</h2>
+            <div>
+              <label>New Condo Name:</label>
             </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px' }}>
-        <button onClick={closeModal} style={{ marginRight: '10px', outline: 'none', border: 'none', width: '60px', height: '30px', borderRadius: '5px', fontFamily: 'Kanit' }}>Close</button>
-        <button onClick={handleChangeName} style={{ backgroundColor: '#326896', outline: 'none', border: 'none', width: '70px', height: '30px', borderRadius: '5px', fontFamily: 'Kanit'  }}>Change</button>
-      </div>
-    </div>
-  </div>
-)}
+            <div>
+              <input type="text" value={newBuildingName} placeholder={buildingName} onChange={e => setNewBuildingName(e.target.value)} style={{ width: '95%', height: '20px', padding: '5px', fontSize: '16px', fontFamily: 'Kanit, sans-serif', marginTop: '5px', backgroundColor: 'white', borderRadius: '10px', color: 'black', outline: 'none', border: '1px solid #ccc' }} />
+              {warning && <div style={{ color: 'red' }}>{warning}</div>}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px' }}>
+              <button onClick={closeModal} style={{ marginRight: '10px', outline: 'none', border: 'none', width: '60px', height: '30px', borderRadius: '5px', fontFamily: 'Kanit' }}>Close</button>
+              <button onClick={handleChangeName} style={{ backgroundColor: '#326896', outline: 'none', border: 'none', width: '70px', height: '30px', borderRadius: '5px', fontFamily: 'Kanit' }}>Change</button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
     </>

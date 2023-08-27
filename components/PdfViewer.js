@@ -14,7 +14,7 @@ function PdfViewer({ pdfUrl }) {
     margin: '-100px 0', // Example, adjust as needed
     padding: '0px',
   };
-  
+
 
   return (
     <Document

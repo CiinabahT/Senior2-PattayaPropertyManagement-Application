@@ -45,11 +45,6 @@ export default function RoomEdit() {
   const [showModal, setShowModal] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState([]);
 
-
-
-
-
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const lastRowIndex = currentPage * rowsPerPage;
@@ -276,53 +271,41 @@ export default function RoomEdit() {
 
   const handleFileChangeForDocument = async (event) => {
     const newFiles = Array.from(event.target.files);
-
-    const base64Files = await Promise.all(files.map(async file => {
+  
+    const base64Files = await Promise.all(newFiles.map(async file => {
       const base64 = await toBase64file(file);
       return {
-        id: Date.now(),
+        id: Date.now(), // This is temporary id
         name: file.name,
         preview: URL.createObjectURL(file),
         base64
       };
     }));
-
-
-    setSelectedFilesForDocument(prevFiles => [...prevFiles, ...filesWithPreviews]);
-
-
-    for (let file of newFiles) {
-      const apiResponse = await sendDocumentToAPI(file, roomID);
-
-      if (apiResponse && apiResponse.data && apiResponse.data.id) {
-        // Update the id of the file object with the id returned from the API
-        file.id = apiResponse.data.id;
-      }
-      console.log("apiResponse" + apiResponse.data)
-      // console.log ("apiResponse" +apiResponse.data)
-      // console.log ("apiResponse" +apiResponse.data.id)
-
-
+  
+    for (let file of base64Files) {
       try {
-        const base64 = await toBase64file(file);
-        const fileWithBase64 = {
-          id: Date.now(),
-          name: file.name,
-          preview: URL.createObjectURL(file),
-          base64
-        };
-
-        // Add this line to update the selectedDoc state.
-        setSelectedDoc(prevDocs => [...prevDocs, fileWithBase64]);
+        const apiResponse = await sendDocumentToAPI(file, roomID);
+    
+        if (apiResponse && apiResponse.data && apiResponse.data.id) {
+          // Update the id of the file object with the id returned from the API
+          file.id = apiResponse.data.id;
+          console.log("apiResponse" + apiResponse.data.id)
+        } else {
+          console.warn("API response is not as expected", apiResponse);
+        }
       } catch (error) {
-        console.error("Error converting file to Base64:", error);
+        console.error("Error uploading file to API", error);
       }
     }
-
-    // Reset the value of the file input to allow re-uploading the same file
-    event.target.value = null;
-  };
-
+  
+    setSelectedFilesForDocument(prevFiles => {
+      const newFilesList = [...prevFiles, ...base64Files];
+      console.log('New Files:', newFilesList);
+      return newFilesList;
+    });
+    
+  
+  
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
 
@@ -894,7 +877,7 @@ export default function RoomEdit() {
 
                       {console.log('About to map over selected files:', selectedDoc)}
 
-                      {selectedDoc.map((fileObj, index) => (
+                      {selectedFilesForDocument.map((fileObj, index) => (
                         <div
                           key={index}
                           style={{

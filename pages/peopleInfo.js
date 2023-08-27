@@ -7,6 +7,10 @@ import PeopleInfoContactTable from '../components/PeopleInfoContactTable.js';
 export default function PeopleInfo() {
     const router = useRouter();
     const [isAddContactModalOpen, setIsContactModalOpen] = useState(false);
+    const [personInfo, setPersonInfo] = useState({});
+    const [apiData, setApiData] = useState(null);
+    const { PersonId } = router.query;
+
 
     const records = [
       {
@@ -45,6 +49,9 @@ export default function PeopleInfo() {
             document.body.style.overflow = 'unset';
         };
     }, []);
+
+
+    
 
 
       const handleSaveClick = (info) => {
@@ -140,11 +147,11 @@ export default function PeopleInfo() {
               <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginBottom: '40px', marginTop: '10px' }} />
             <div style={{ width: '100%' }}>
 
-                <div><label style={commonLabelStyle}>Name-Surname:</label></div>
-                <input type="text" placeholder='Type of Expense..' style={commonInputStyle}/>
-
+            <div><label style={commonLabelStyle}>Name-Surname:</label></div>
+                <input type="text" placeholder='Name - Surname..' style={commonInputStyle}  />
+                
                 <div><label style={commonLabelStyle}>Passport/ID:</label></div>
-                <input type="text" placeholder='Amount of Money..' style={commonInputStyle}/>
+                <input type="text"  placeholder='Passport/ID..' style={commonInputStyle}  />
 
                 <div><label style={commonLabelStyle}>Contact:</label></div>
                 <PeopleInfoContactTable records={records} />
@@ -210,5 +217,3 @@ export default function PeopleInfo() {
     </>
   );
 }
-
-

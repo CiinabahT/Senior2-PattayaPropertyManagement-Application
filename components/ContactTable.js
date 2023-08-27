@@ -57,15 +57,17 @@ function ContractTable({ records }) {
       },
       {
         Header: 'Start Date',
-        accessor: 'startDate',
+        accessor: (row) => row.start_contract_date.split(' ')[0],
+        id: 'start_contract_date',
       },
       {
         Header: 'End Date',
-        accessor: 'endDate',
+        accessor: (row) => row.end_contract_date.split(' ')[0],
+        id: 'end_contract_date',
       },
       {
         Header: 'Price(฿)',
-        accessor: 'price',
+        accessor: 'rental',
       },
       {
         Header: 'Deposit(฿)',
@@ -73,11 +75,15 @@ function ContractTable({ records }) {
       },
       {
         Header: 'Renter',
-        accessor: 'renter',
+        accessor: 'tenant_name',
       },
       {
         Header: 'Room Address',
-        accessor: 'roomAddress',
+        accessor: 'room_number',
+      },
+      {
+        Header: 'Contract Status',
+        accessor: 'contract_status',
       },
       {
         Header: 'More Info',

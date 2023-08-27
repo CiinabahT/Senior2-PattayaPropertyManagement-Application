@@ -2,7 +2,7 @@ import { Card, Grid, Text, Button } from "@nextui-org/react";
 import React, { useState, useEffect } from 'react';
 
 
-export default function Buildingcard({data, buildingName, onDelete }) {
+export default function Buildingcard({ buildingName, onDelete, placeId }) {
   const truncatedName = buildingName.length > 20 ? buildingName.slice(0, 20) + "..." : buildingName;
 
   // const handleDelete = (event) => {
@@ -14,7 +14,7 @@ export default function Buildingcard({data, buildingName, onDelete }) {
   // fech, post
 
   useEffect(() => {
-    console.log(data)
+
   }, []);
 
   return (
@@ -37,7 +37,9 @@ export default function Buildingcard({data, buildingName, onDelete }) {
         backgroundSize: 'cover',
         boxShadow: "none",
       }}
-      onClick={() => window.location.href = `/building?buildingName=${encodeURIComponent(buildingName)}`} // Redirect to building.js page
+      onClick={() => {
+        window.location.href = `/building?buildingName=${encodeURIComponent(buildingName)}&placeId=${encodeURIComponent(placeId)}`;
+      }}
     >
       <Card.Header>
       <Grid.Container css={{ pl: "$6", pr: "$6", justify: "center", alignItems: "center" }}>

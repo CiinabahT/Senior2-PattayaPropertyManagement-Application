@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.js';
 import Head from 'next/head';
 import CreatableSelect from 'react-select/creatable';
 import ContractTable from '../components/ContactTable.js';
+import { fetchContract } from '../API/api.js';
+
 
 
 export default function Contract() {
     const [isAddContractModalOpen, setIsAddContractModalOpen] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleCloseModal = () => {
         setIsAddContractModalOpen(false);
@@ -17,104 +21,30 @@ export default function Contract() {
         setIsAddContractModalOpen(false);
       };
 
+      const [records, setRecords] = useState([]);
+
+      const fetchData = async () => {
+        setIsLoading(true);
+        setError(null);
+        
+        try {
+          const data = await fetchContract();
+          setRecords(data);
+        } catch (error) {
+          setError(error.message);
+        }
+        
+        setIsLoading(false);
+      };
+      
+      useEffect(() => {
+        fetchData();
+      }, []);
+
       const RoomOptions = [
         { value: 'room1', label: 'Room 1' },
         { value: 'room2', label: 'Room 2' },
       ];
-
-      const records = [
-        {
-          startDate: '2023-08-01',
-          endDate: '2023-08-31',
-          price: 1500,
-          deposit: 500,
-          renter: 'John Doe',
-          roomAddress: '123 Main St',
-
-        },
-        {
-          startDate: '2023-09-01',
-          endDate: '2023-09-30',
-          price: 1700,
-          deposit: 600,
-          renter: 'Jane Smith',
-          roomAddress: '456 Elm St',
-
-        },
-        {
-          startDate: '2023-10-01',
-          endDate: '2023-10-31',
-          price: 1400,
-          deposit: 450,
-          renter: 'Michael Johnson',
-          roomAddress: '789 Oak Rd',
-
-        },
-        {
-          startDate: '2023-11-01',
-          endDate: '2023-11-30',
-          price: 1600,
-          deposit: 550,
-          renter: 'Emily Brown',
-          roomAddress: '101 Pine Ave',
-
-        },
-        {
-          startDate: '2023-12-01',
-          endDate: '2023-12-31',
-          price: 1800,
-          deposit: 700,
-          renter: 'David Wilson',
-          roomAddress: '222 Maple St',
-
-        },
-        {
-          startDate: '2024-01-01',
-          endDate: '2024-01-31',
-          price: 1650,
-          deposit: 600,
-          renter: 'Olivia Johnson',
-          roomAddress: '333 Cedar Rd',
-
-        },
-        {
-          startDate: '2024-02-01',
-          endDate: '2024-02-28',
-          price: 1550,
-          deposit: 550,
-          renter: 'James Miller',
-          roomAddress: '444 Birch Ave',
-
-        },
-        {
-          startDate: '2024-03-01',
-          endDate: '2024-03-31',
-          price: 1700,
-          deposit: 600,
-          renter: 'Sophia Davis',
-          roomAddress: '555 Oak Rd',
-
-        },
-        {
-          startDate: '2024-04-01',
-          endDate: '2024-04-30',
-          price: 1600,
-          deposit: 550,
-          renter: 'William Jackson',
-          roomAddress: '666 Elm St',
-
-        },
-        {
-          startDate: '2024-05-01',
-          endDate: '2024-05-31',
-          price: 1750,
-          deposit: 650,
-          renter: 'Ava Smith',
-          roomAddress: '777 Maple Ave',
-
-        },
-      ];
-      
 
       const commonInputStyle = {
         width: '100%',
@@ -128,7 +58,7 @@ export default function Contract() {
         border: 'none',
         fontSize: '14px'
       };
-
+      
       const secondInputStyle = {
         padding: '8px',
         margin: '5px 0',
@@ -140,6 +70,7 @@ export default function Contract() {
         border: 'none',
         fontSize: '14px'
       };
+
 
 
     return (
@@ -180,8 +111,11 @@ export default function Contract() {
               </div>
               <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginBottom: '40px', marginTop: '10px' }} />
               <div style={{ width: '100%', height: '500px' }}>
-              <ContractTable records={records} />
-              </div>
+  {isLoading && <p>Loading...</p>}
+  {error && <p>Error: {error}</p>}
+  {!isLoading && !error && <ContractTable records={records} />}
+</div>
+
             </div>
           </div>
 

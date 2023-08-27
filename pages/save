@@ -1,0 +1,126 @@
+import { version } from "react";
+
+const records = [
+  { startDate: '2021-08-01', endDate: '2021-08-30', price: 1000, deposit: 500, renter: 'John Doe', contact: '1234567890', status: 'Active' },
+  { startDate: '2021-09-01', endDate: '2021-09-30', price: 1200, deposit: 600, renter: 'Jane Smith', contact: '0987654321', status: 'Pending' },
+  { startDate: '2021-10-01', endDate: '2021-10-31', price: 1100, deposit: 550, renter: 'James Brown', contact: '1122334455', status: 'Active' },
+  { startDate: '2021-11-01', endDate: '2021-11-30', price: 1300, deposit: 650, renter: 'Jessica Lee', contact: '2233445566', status: 'Expired' },
+  { startDate: '2021-12-01', endDate: '2021-12-31', price: 900, deposit: 450, renter: 'Jim White', contact: '3344556677', status: 'Active' },
+  { startDate: '2022-01-01', endDate: '2022-01-31', price: 800, deposit: 400, renter: 'Jenny Black', contact: '4455667788', status: 'Pending' },
+  { startDate: '2022-02-01', endDate: '2022-02-28', price: 1500, deposit: 750, renter: 'Jack Green', contact: '5566778899', status: 'Active' },
+  { startDate: '2022-03-01', endDate: '2022-03-31', price: 950, deposit: 475, renter: 'Jill Gray', contact: '6677889900', status: 'Expired' },
+  { startDate: '2022-04-01', endDate: '2022-04-30', price: 1000, deposit: 500, renter: 'Joe Teal', contact: '7788990011', status: 'Active' },
+  { startDate: '2022-05-01', endDate: '2022-05-31', price: 1200, deposit: 600, renter: 'Jasmine Silver', contact: '8899001122', status: 'Pending' },
+  { startDate: '2022-06-01', endDate: '2022-06-30', price: 1400, deposit: 700, renter: 'Jerry Gold', contact: '9900112233', status: 'Active' },
+  { startDate: '2022-07-01', endDate: '2022-07-31', price: 1600, deposit: 800, renter: 'Julie Rose', contact: '0011223344', status: 'Expired' },
+  { startDate: '2021-08-01', endDate: '2021-08-30', price: 1000, deposit: 500, renter: 'John Doe', contact: '1234567890', status: 'Active' },
+  { startDate: '2021-09-01', endDate: '2021-09-30', price: 1200, deposit: 600, renter: 'Jane Smith', contact: '0987654321', status: 'Pending' },
+  { startDate: '2021-10-01', endDate: '2021-10-31', price: 1100, deposit: 550, renter: 'James Brown', contact: '1122334455', status: 'Active' },
+  { startDate: '2021-11-01', endDate: '2021-11-30', price: 1300, deposit: 650, renter: 'Jessica Lee', contact: '2233445566', status: 'Expired' },
+  { startDate: '2021-12-01', endDate: '2021-12-31', price: 900, deposit: 450, renter: 'Jim White', contact: '3344556677', status: 'Active' },
+  { startDate: '2022-01-01', endDate: '2022-01-31', price: 800, deposit: 400, renter: 'Jenny Black', contact: '4455667788', status: 'Pending' },
+  { startDate: '2022-02-01', endDate: '2022-02-28', price: 1500, deposit: 750, renter: 'Jack Green', contact: '5566778899', status: 'Active' },
+  { startDate: '2022-03-01', endDate: '2022-03-31', price: 950, deposit: 475, renter: 'Jill Gray', contact: '6677889900', status: 'Expired' },
+  { startDate: '2022-04-01', endDate: '2022-04-30', price: 1000, deposit: 500, renter: 'Joe Teal', contact: '7788990011', status: 'Active' },
+  { startDate: '2022-05-01', endDate: '2022-05-31', price: 1200, deposit: 600, renter: 'Jasmine Silver', contact: '8899001122', status: 'Pending' },
+  { startDate: '2022-06-01', endDate: '2022-06-30', price: 1400, deposit: 700, renter: 'Jerry Gold', contact: '9900112233', status: 'Active' },
+  { startDate: '2022-07-01', endDate: '2022-07-31', price: 1600, deposit: 800, renter: 'Julie Rose', contact: '0011223344', status: 'Expired' },
+  
+  
+];
+
+const handleFileChange = async (e) => {
+  const files = Array.from(e.target.files);
+
+  const base64Files = await Promise.all(files.map(async file => {
+    const base64 = await toBase64(file);
+    return {
+      id: Date.now(), // This is temporary id
+      name: file.name,
+      preview: base64
+    };
+  }));
+
+  for (let file of base64Files) {
+    const apiResponse = await sendImageToAPI(file, roomID);
+    
+    if (apiResponse && apiResponse.data && apiResponse.data.id) {
+      // Update the id of the file object with the id returned from the API
+      file.id = apiResponse.data.id;
+    }
+  }
+
+  setSelectedFiles(prevFiles => [...prevFiles, ...base64Files]);
+};
+
+const handleFileChangeForDocument = (event) => {
+  const newFiles = Array.from(event.target.files).map(file => {
+    return {
+      file,
+      name: file.name,
+      preview: URL.createObjectURL(file)
+    }
+  });
+  setSelectedFilesForDocument(prevFiles => [...prevFiles, ...newFiles]);
+  // Reset the value of the file input to allow re-uploading the same file
+  event.target.value = null;
+};
+
+
+
+
+
+
+const handleDeleteFile = (index) => () => {  // extra arrow function here
+  const newFiles = [...selectedFilesForDocument];
+  newFiles.splice(index, 1);
+  setSelectedFilesForDocument(newFiles);
+};
+
+
+// API version
+// const handleFileChangeForDocument = async (event) => {
+//   const newFiles = Array.from(event.target.files);
+
+//   const filesWithBase64 = await Promise.all(newFiles.map(async file => {
+//     const base64 = await toBase64(file);
+//     return {
+//       name: file.name,
+//       preview: base64
+//     };
+//   }));
+
+//   setSelectedFilesForDocument(prevFiles => [...prevFiles, ...filesWithBase64]);
+
+//   for (let file of filesWithBase64) {
+//     await sendDocumentToAPI(file, roomID);
+//   }
+
+//   // Reset the value of the file input to allow re-uploading the same file
+//   event.target.value = null;
+// };
+
+const commonInputStyle = {
+  width: '100%',
+  padding: '8px',
+  margin: '5px 0',
+  borderRadius: '5px',
+  border: '1px solid #ccc',
+  width: '372px',
+  fontFamily: 'Kanit',
+  outline: 'none',
+  border: 'none',
+  fontSize: '14px'
+};
+
+const secondInputStyle = {
+  padding: '8px',
+  margin: '5px 0',
+  borderRadius: '5px',
+  border: '1px solid #ccc',
+  width: '167px',
+  fontFamily: 'Kanit',
+  outline: 'none',
+  border: 'none',
+  fontSize: '14px'
+};

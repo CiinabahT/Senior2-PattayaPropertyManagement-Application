@@ -84,6 +84,10 @@ export  default function Cards({ onSaveBuildingName, onCloseModal }) {
       setBuildingName('');
     }
   };
+
+  
+
+  
   
   
   
@@ -138,14 +142,16 @@ export  default function Cards({ onSaveBuildingName, onCloseModal }) {
             </Card.Body>
           </Card>
           </Grid>
-          {smt.map((place) => (
-    <Grid key={place.place_id} xs={2} style={{ width: '268px', height: '162px', padding: '7px' }}>
-      <Buildingcard
-        buildingName={place.place_name}
-        onDelete={() => handleDeleteBuilding(place.place_id, place.place_name)} // adjust this method as needed
-            />
-          </Grid>
-        ))}
+                { smt.map((place) => (
+        <Grid key={place.place_id} xs={2} style={{ width: '268px', height: '162px', padding: '7px' }}>
+          <Buildingcard
+            buildingName={place.place_name}
+            placeId={place.place_id} // passing the place_id
+            onDelete={() => handleDeleteBuilding(place.place_id, place.place_name)}
+          />
+        </Grid>
+      ))}
+
       </Grid.Container>
           ) : (
             <div className="flex gap-4">

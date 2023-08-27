@@ -8,6 +8,10 @@ function RecordTable({ records }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
     const [filteredRecords, setFilteredRecords] = useState(records);
+
+    const pageCount = filteredRecords ? Math.ceil(filteredRecords.length / rowsPerPage) : 0;
+    
+    
     
 
     useEffect(() => {
@@ -28,10 +32,11 @@ function RecordTable({ records }) {
         setPageNumber(0); // Reset the page number when filtering
       }, [searchTerm, filterStatus, records]);
     
-      const currentRows = filteredRecords.slice(
+      const currentRows = (filteredRecords || []).slice(
         pageNumber * rowsPerPage,
         (pageNumber + 1) * rowsPerPage
       );
+      
     
 
   const columns = useMemo(
@@ -43,15 +48,17 @@ function RecordTable({ records }) {
       },
       {
         Header: 'Start Date',
-        accessor: 'startDate',
+        accessor: (row) => row.start_contract_date.split(' ')[0],
+        id: 'start_contract_date',
       },
       {
         Header: 'End Date',
-        accessor: 'endDate',
+        accessor: (row) => row.end_contract_date.split(' ')[0],
+        id: 'end_contract_date',
       },
       {
         Header: 'Price(฿)',
-        accessor: 'price',
+        accessor: 'rental',
       },
       {
         Header: 'Deposit(฿)',
@@ -59,15 +66,15 @@ function RecordTable({ records }) {
       },
       {
         Header: 'Renter',
-        accessor: 'renter',
+        accessor: 'tenant_name',
       },
       {
         Header: 'Contact',
-        accessor: 'contact',
+        accessor: 'contact_type',
       },
       {
         Header: 'Status',
-        accessor: 'status',
+        accessor: 'contract_status',
       },
     ],
     [pageNumber]
@@ -128,7 +135,7 @@ function RecordTable({ records }) {
         </tbody>
       </table>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-  {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (
+  {Array.from({ length: pageCount }, (_, k) => (
     <button
       key={k}
       onClick={() => paginate(k + 1)}

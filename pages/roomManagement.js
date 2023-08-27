@@ -24,6 +24,16 @@ export default function RoomManagement() {
   const [floorNumber, setFloorNumber] = useState('');
   const [isFloorNumberEmpty, setIsFloorNumberEmpty] = useState(false);
   const [floorNumberError, setFloorNumberError] = useState('');
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  const handleGlobalFilterChange = (e) => {
+    setGlobalFilter(e.target.value || undefined);
+  };
+
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.target.value === "all" ? undefined : e.target.value);
+  };
 
   
 
@@ -192,11 +202,24 @@ export default function RoomManagement() {
           <p style={{ fontSize: '20px', color: '#666' }}>
   {"Building " + buildingName || "Your custom text here"}
 </p>
-<hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px' , }} />
+<hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginBottom: '20px'}} />
+<label>Search All Room No.: </label>
+      <input type="text" value={globalFilter} onChange={handleGlobalFilterChange} style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none',border: '1px solid #ccc', marginRight: '10px', backgroundColor: 'white', color: 'black' }}/>
+      <label>Room Status: </label>
+      <select onChange={handleStatusFilterChange} style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none',border: '1px solid #ccc', backgroundColor: 'white', color: 'black'  }}> 
+        <option value="all">All</option>
+        <option value="Sell">Sell</option>
+        <option value="Rent">Rent</option>
+        <option value="Sell/Rent">Sell/Rent</option>
+        <option value="Returned">Returned</option>
+      </select>
 {roomsToDisplay && roomsToDisplay.map((floor) => (
   <div key={floor.floor_id}>
     <h3>Floor {floor.floor_number}</h3>
-    {floor.rooms && <RoomTable rooms={floor.rooms} />}
+    {floor.rooms &&       <RoomTable
+        globalFilter={globalFilter}
+        statusFilter={statusFilter} 
+        rooms={floor.rooms} />}
   </div>
 ))}
 

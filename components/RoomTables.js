@@ -1,10 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useTable, useGlobalFilter, useFilters } from 'react-table';
 import { useRouter } from 'next/router';
-import { fetchPlaces } from '../API/api.js';
-import RoomManagement from '../pages/roomManagement.js';
 
-function RoomTable({ rooms, buildingName }) {
+
+function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
   const router = useRouter();
   const [data, setData] = useState([]);
   const truncateText = (text, limit = 20) => {
@@ -56,7 +55,7 @@ function RoomTable({ rooms, buildingName }) {
         
       },
       {
-        Header: 'Sale/Rent',
+        Header: 'Room Status',
         accessor: 'status_of_room',
         Filter: SaleRentFilter,
         filter: 'includes',
@@ -94,6 +93,11 @@ function RoomTable({ rooms, buildingName }) {
     useFilters
   );
 
+  useEffect(() => {
+    setGlobalFilter(globalFilter); // update globalFilter whenever it changes
+    setFilter('status_of_room', statusFilter); // update filter whenever it changes
+  }, [globalFilter, statusFilter, setGlobalFilter, setFilter]);
+
   const [searchValue, setSearchValue] = useState('');
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -105,16 +109,16 @@ function RoomTable({ rooms, buildingName }) {
       <div style={{ marginBottom: '10px' }}>
         <label>Search Room No.: </label>
         <input value={searchValue} onChange={handleSearchChange} style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none',border: '1px solid #ccc' }} />
-        <label style={{ marginLeft: '10px' }}>Sale/Rent: </label>
+        <label style={{ marginLeft: '10px' }}>Room Status: </label>
         <select
   onChange={(e) => setFilter('status_of_room', e.target.value === 'all' ? undefined : e.target.value)}
   style={{ fontFamily: 'Kanit, sans-serif', borderRadius: '5px', outline: 'none',border: '1px solid #ccc'  }}
 >
   <option value="all">All</option>
-  <option value="Sale">Sale</option>
+  <option value="Sell">Sell</option>
   <option value="Rent">Rent</option>
-  <option value="Invalid">Invalid</option>
-  <option value="Sale/Rent">Sale/Rent</option>
+  <option value="Sell/Rent">Sell/Rent</option>
+  <option value="Returned">Returned</option>
 </select>
 
       </div>

@@ -1,10 +1,15 @@
 import axios from 'axios';
 
 const BASE_URL = 'https://pattayaavenueproperty.xyz/api/rooms/places'; //www.pattayaavenueproperty.xyz/api/rooms/places
-const BUILDING_URL = 'https://pattayaavenueproperty.xyz/api/rooms';
+const BUILDING_URL = 'https://pattayaavenueproperty.xyz/api/rooms/building';
 const ROOM_URL = 'https://pattayaavenueproperty.xyz/api/rooms/room';
 const FLOOR_URL = 'https://pattayaavenueproperty.xyz/api/rooms/floor';
 const OWNERNOBANK_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles';
+const CHANGE_NAME_PLACE = 'https://pattayaavenueproperty.xyz/api/rooms/editplace';
+const CONTRACT_ROOM_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts/room';
+const EDIT_ROOM = 'https://pattayaavenueproperty.xyz/api/rooms/editroom';
+const PEOPLE_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles';
+const CONTRACT_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts'
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -19,6 +24,29 @@ export const fetchPlaces = async () => {
     return [];
   }
 };
+
+export const fetchPeople = async () => {
+  try {
+    console.log(PEOPLE_URL);
+    const response = await axios.get(PEOPLE_URL);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching people:', error);
+    return [];
+  }
+};
+
+export const fetchContract = async () => {
+  try {
+    console.log(CONTRACT_URL);
+    const response = await axios.get(CONTRACT_URL);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching contract:', error);
+    throw error;
+  }
+};
+
 
 export const fetchOwner = async () => {
   try {
@@ -40,22 +68,32 @@ export const createPlace = async (input) => {
   }
 };
 
-export const createBuilding = async (buildingData) => {
+export const ChangePlaceName = async (placeid, newBuidingName) => {
   try {
-    const response = await axios.post(`${BUILDING_URL}/building`, buildingData);
+    const response = await axios.post(`${CHANGE_NAME_PLACE}/${placeid}/${newBuidingName}`);
     return response.data;
   } catch (error) {
-    if (error.response) {
-      // Server responded with a status other than 200
-      console.error('Server responded with error:', error.response.data, error.response.status);
-    } else if (error.request) {
-      // Request was made, but no response was received
-      console.error('No response received:', error.request);
-    } else {
-      // Something else went wrong
-      console.error('Error creating building:', error.message);
-    }
-    throw error; // Re-throw the error if you want to handle it later
+    console.error('Error creating place:', error);
+  }
+};
+
+export const EditRoom = async (roomID, allRoomData) => {
+  try {
+    const response = await axios.post(`${EDIT_ROOM}/${roomID}`, allRoomData);
+    return response.data;
+  } catch (error) {
+    console.error('Error editing room:', error);
+  }
+};
+
+
+export const createBuilding = async (buildingData) => {
+  try {
+    const response = await axios.post(BUILDING_URL, buildingData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding Buiding:', error);
+    throw error;
   }
 };
 
@@ -85,6 +123,16 @@ export const getRoomById = async (roomId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching room by ID:', error);
+    throw error; // Propagate the error up so it can be handled by the calling function
+  }
+};
+
+export const getContractRoom = async (roomId) => {
+  try {
+    const response = await axios.get(`${CONTRACT_ROOM_URL}/${roomId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Contract by ID:', error);
     throw error; // Propagate the error up so it can be handled by the calling function
   }
 };

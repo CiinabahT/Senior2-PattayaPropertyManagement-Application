@@ -10,14 +10,17 @@ function PeopleTable({ records }) {
     const [filteredRecords, setFilteredRecords] = useState(records);
     const router = useRouter();
 
+    
+
     useEffect(() => {
         let filtered = records;
         if (searchTerm) {
           filtered = filtered.filter((record) =>
-            Object.values(record).some((value) =>
-              value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-            )
-          );
+          Object.values(record).some((value) =>
+            value ? value.toString().toLowerCase().includes(searchTerm.toLowerCase()) : false
+          )
+        );
+        
         }
         if (filterStatus) {
           filtered = filtered.filter(
@@ -33,10 +36,19 @@ function PeopleTable({ records }) {
         (pageNumber + 1) * rowsPerPage
       );
 
-      const handleInfoClick = (info) => {
-        router.push(`/peopleInfo`);
-        console.log(info);
+      // const handleInfoClick = (info) => {
+      //   router.push(`/peopleInfo?id=${info.id}`);
+      // };
+
+      const handleInfoClick = (Infodata) => {
+        router.push({
+          pathname: '/peopleInfo',
+          query: {
+            PersonId: Infodata.id, 
+          },
+        });
       };
+      
     
 
   const columns = useMemo(
@@ -48,11 +60,11 @@ function PeopleTable({ records }) {
       },
       {
         Header: 'Name-Surname',
-        accessor: 'name-surname',
+        accessor: 'full_name',
       },
       {
         Header: 'Passport/ID',
-        accessor: 'passport/ID',
+        accessor: 'identity_number',
       },
       {
         Header: 'More Info',

@@ -13,10 +13,10 @@ export default function CustomCards({ onSaveBuildingName, onCloseModal, }) {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const router = useRouter();
   const selectedBuildingName = router.query.buildingName;
-  // const places = data.data;
-
-  // const buildings = [].concat(...places.map((place) => (place.Buildings ? place.Buildings : [])));
+  const selectedPlaceID = router.query.placeId;
+  const { placeId } = router.query;
   const [smp, setSmp] = useState({});
+  
 
   const fetchData = async () => {
     try {
@@ -34,6 +34,7 @@ export default function CustomCards({ onSaveBuildingName, onCloseModal, }) {
       await createBuilding(buildingData);
     } catch (error) {
       console.error('An error occurred:', error);
+      // Consider setting some error state here
     }
   };
 
@@ -86,23 +87,19 @@ useEffect(() => {
   
       setBuildingCards((prevCards) => [...prevCards, newBuildingCard]);
   
-      // Define the data structure as per your API's expectations
       const buildingData = {
-        // Fill this with the actual fields your API expects
+        place_id: placeId ? parseInt(placeId, 10) : null,  // Convert the placeId to integer
         building_name: buildingName,
-        // ... other fields ...
       };
   
-      // Post the data
       await postData(buildingData);
-  
-      // Fetch the updated data
       await fetchData();
-  
       setShowModal(false);
       setBuildingName('');
     }
   };
+  
+  
   
   
 
@@ -149,7 +146,7 @@ useEffect(() => {
           </Card>
         </Grid>
         {smp.map((place) => {
-  if (selectedBuildingName && decodeURIComponent(selectedBuildingName) === place.place_name) {
+  if (placeId && parseInt(placeId, 10) === place.place_id) {
     return (
       <div key={place.place_id} style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
         {place.Buildings &&
@@ -168,6 +165,7 @@ useEffect(() => {
   }
   return null;
 })}
+
 
       </Grid.Container>
                 ) : (

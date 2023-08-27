@@ -7,15 +7,16 @@ import CreatableSelect from 'react-select/creatable';
 import RecordTable from '../components/RecordTables.js';
 import { getRoomById } from '../API/api.js';
 import { fetchOwner } from '../API/api.js';
+import { getContractRoom } from '../API/api.js';
+import axios from 'axios';
+import { EditRoom } from '../API/api.js';
+
 
 
 export default function RoomEdit() {
   const router = useRouter();
-  const [buildingName, setBuildingName] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
   const [activeTab, setActiveTab] = useState('room'); // For the tabs
-  const [selectedView, setSelectedView] = useState(null);
-  const [selectedOwner, setSelectedOwner] = useState(null);
   const [documentObj, setDocumentObj] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 6;
@@ -31,11 +32,20 @@ export default function RoomEdit() {
   const [toiletAmount, setToiletAmount] = useState('');
   const [livingRoomAmount, setLivingRoomAmount] = useState('');
   const [selectedViews, setSelectedViews] = useState(null);
-  const [owner, setOwner] = useState({});
   const [owners, setOwners] = useState([]); // holds the array of owner objects
   const [ownerOptions, setOwnerOptions] = useState([]); // holds the dropdown options
   const [selectedOwners, setSelectedOwners] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [pictureID, setPictureID] = useState('');
+  const [selectedFilesForDocument, setSelectedFilesForDocument] = useState([]);
+  const [records, setRecords] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState([]);
+
+
 
 
 
@@ -48,52 +58,107 @@ export default function RoomEdit() {
   useEffect(() => {
     const roomNumberFromQuery = router.query.roomNumber;
     const roomIdFromQuery = router.query.roomId;
-  
+
     if (roomNumberFromQuery) {
       setRoomNumber(roomNumberFromQuery);
     }
 
-    if (roomIdFromQuery) {
-      setLoading(true); // Start loading
-      getRoomById(roomIdFromQuery)
-      .then(data => {
-        console.log('API Response:', data);
-        setRoomData(data);
-        const matchedOption = viewOptions.find(option => option.label === data.type_of_view);
-        console.log ('match' + matchedOption)        
-        if (matchedOption) {
-            setSelectedViews(matchedOption);
-        }
+    if (router.query.roomId) {
+      setLoading(true);
+      getRoomById(router.query.roomId)
+        .then(data => {
+          console.log('API Response:', data);
+          setRoomData(data);
 
-        setLoading(false); // End loading after processing data
-    })
-    .catch(error => {
-        console.error("Error fetching data: ", error);
-        setLoading(false); 
-    });
+
+          if (data.room_pictures && data.room_pictures.length > 0) {
+            const roomPictures = data.room_pictures.map(picture => ({
+              id: picture.id,
+              name: `Image-${picture.id}`,
+              preview: picture.room_picture_url
+            }));
+            setSelectedFiles(roomPictures);
+          }
+          const base64ToBlob = (base64, mimeType = 'application/pdf') => {
+            console.log("Base64 Length: ", base64.length); // Check if this is reasonable
+
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], { type: mimeType });
+          };
+
+
+
+          // Your existing logic to populate 'selectedDoc'
+          if (data.room_documents && data.room_documents.length > 0) {
+            const roomDoc = data.room_documents.map(document => {
+              let preview;
+
+              const blob = base64ToBlob(document.room_document);
+              preview = URL.createObjectURL(blob);
+
+              return {
+                id: document.id,
+                name: `PDF-${document.id}`,
+                preview: preview,
+              };
+            });
+            setSelectedDoc(roomDoc);
+          }
+
+
+
+          console.log("Room Data " + data.owner_name)
+          setSelectedStatus({ label: data.status_of_room, value: data.room_id })
+          setSelectedOwners({ label: data.owner_name, value: data.owner_id });
+          setSelectedViews({ label: data.type_of_view, value: data.room_id })
+          setPictureID(data.room_picture.id)
+
+          console.log("Selected Owner" + selectedOwners)
+          console.log('match' + data.owner_name)
+
+          setLoading(false); // End loading after processing data
+        })
+        .catch(error => {
+          console.error("Error fetching data: ", error);
+          setLoading(false);
+        });
       setRoomID(roomIdFromQuery);
     }
     // Fetch owners
     fetchOwnerData()
-    .then(() => {
+      .then(() => {
         setLoading(false);
-    })
-    .catch(error => {
+      })
+      .catch(error => {
         console.error("Error fetching owners: ", error);
         setLoading(false); // End loading even if there's an error
-    });
+      });
 
-}, [router.query.roomNumber, router.query.roomId]);
+  }, [router.query.roomNumber, router.query.roomId,]);
+
+  useEffect(() => {
+    console.log("Updated selectedOwners:", selectedOwners);
+  }, [selectedOwners]);
+
+
+
 
 
 
   useEffect(() => {
     if (roomData && roomData.room_number) {
-       setRoomNumbera(roomData.room_number);
+      setRoomNumbera(roomData.room_number);
     }
     if (roomData && roomData.room_address) {
       setroomAddress(roomData.room_address);
-   }
+    }
     if (roomData && roomData.electric_user_number) {
       setElectricNumber(roomData.electric_user_number);
     }
@@ -113,75 +178,299 @@ export default function RoomEdit() {
       setLivingRoomAmount(roomData.amount_of_living_room);
     }
 
- }, [roomData]);
- 
- const fetchOwnerData = async () => {
-  setLoading(true);  // Start loading for owner fetch
-  try {
+  }, [roomData]);
+
+  const fetchOwnerData = async () => {
+    setLoading(true);  // Start loading for owner fetch
+    try {
       const data = await fetchOwner();
       setOwners(data);  // set owners state
-      const ownerMatchedOption = ownerOptions.find(option => option.label === roomData.owner_name);
-      if (ownerMatchedOption) {
-        setSelectedOwners(ownerMatchedOption);
-    }
       setLoading(false);
-  } catch (err) {
+    } catch (err) {
       console.log(err);
       setLoading(false);
-  }
-};
-
-
-useEffect(() => {
-  fetchOwnerData();
-}, []);  // This useEffect will call fetchData when the component mounts.
-
-// New useEffect to listen for changes in owners state
-useEffect(() => {
-  // Generate ownerOptions from owners state
-  const options = owners.map(owner => ({
-    value: owner.id,  // Assuming each owner has a unique 'id'
-    label: owner.full_name // Use the 'full_name' property for the option label
-  }));
-  
-  setOwnerOptions(options);
-}, [owners]);
-
-  console.log ("room ID" + roomID)
-
-  const [images, setImages] = useState([null, null, null]); // To hold three images
-
-// Function to handle the image change
-const handleImageChange = (e, index) => {
-  const file = e.target.files[0];
-  const reader = new FileReader();
-  
-
-  reader.onloadend = () => {
-    // Use an object to store both the file name and the preview URL
-    const updatedImage = {
-      name: file.name,
-      previewUrl: reader.result,
-    };
-
-    // Copy and update the images array
-    const newImages = [...images];
-    newImages[index] = updatedImage;
-    setImages(newImages);
+    }
   };
 
-  if (file) {
-    reader.readAsDataURL(file);
-  }
-};
 
-const handleDocumentChange = (e) => {
-  // Handle the document changes here
-  // Example:
-  const file = e.target.files[0];
-  const previewUrl = URL.createObjectURL(file);
-  setDocumentObj({ name: file.name, previewUrl });
-};
+  // useEffect(() => {
+  //   fetchOwnerData();
+  // }, []);  
+
+  useEffect(() => {
+    // Generate ownerOptions from owners state
+    const options = owners.map(owner => ({
+      value: owner.id,  // Assuming each owner has a unique 'id'
+      label: owner.full_name // Use the 'full_name' property for the option label
+    }));
+
+    setOwnerOptions(options);
+  }, [owners]);
+
+
+  const sendImageToAPI = async (file, roomID) => {
+    const apiUrl = 'https://pattayaavenueproperty.xyz/api/rooms/roompicture';
+
+    try {
+      const response = await axios.post(apiUrl, {
+        room_id: parseInt(roomID),
+        room_picture_url: file.preview  // This is the Base64 encoded image
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Other headers as necessary
+        }
+      });
+
+      return response.data;  // Return API response data
+    } catch (error) {
+      console.error('There was a problem uploading the image:', error.message);
+    }
+  };
+
+
+  const deleteImageFromAPI = async (pictureID) => {
+    const apiUrl = `https://pattayaavenueproperty.xyz/api/rooms/editroompicture/${pictureID}`;
+
+    try {
+      const response = await axios.post(apiUrl, {
+        id: parseInt(pictureID)
+      }, {
+        headers: {
+          // Headers if necessary
+        }
+      });
+
+      // Remove the image from local state as well
+      setSelectedFiles(prevFiles => prevFiles.filter(file => file.id !== parseInt(pictureID)));
+
+      console.log(response.data);
+    } catch (error) {
+      console.error('There was a problem deleting the image:', error.message);
+    }
+  };
+
+  const deleteFileFromAPI = async (documentId) => {
+    const apiUrl = `https://pattayaavenueproperty.xyz/api/rooms/editroomdocument/${documentId}`;
+
+    try {
+      const response = await axios.post(apiUrl, {
+        id: parseInt(documentId)
+      }, {
+        headers: {
+          // Headers if necessary
+        }
+      });
+
+      // Remove the image from local state as well
+      setSelectedDoc(prevFiles => prevFiles.filter(file => file.id !== parseInt(documentId)));
+
+      console.log(response.data);
+    } catch (error) {
+      console.error('There was a problem deleting the image:', error.message);
+    }
+  };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  const handleFileChangeForDocument = async (event) => {
+    const newFiles = Array.from(event.target.files);
+
+    const base64Files = await Promise.all(files.map(async file => {
+      const base64 = await toBase64file(file);
+      return {
+        id: Date.now(),
+        name: file.name,
+        preview: URL.createObjectURL(file),
+        base64
+      };
+    }));
+
+
+    setSelectedFilesForDocument(prevFiles => [...prevFiles, ...filesWithPreviews]);
+
+
+    for (let file of newFiles) {
+      const apiResponse = await sendDocumentToAPI(file, roomID);
+
+      if (apiResponse && apiResponse.data && apiResponse.data.id) {
+        // Update the id of the file object with the id returned from the API
+        file.id = apiResponse.data.id;
+      }
+      console.log("apiResponse" + apiResponse.data)
+      // console.log ("apiResponse" +apiResponse.data)
+      // console.log ("apiResponse" +apiResponse.data.id)
+
+
+      try {
+        const base64 = await toBase64file(file);
+        const fileWithBase64 = {
+          id: Date.now(),
+          name: file.name,
+          preview: URL.createObjectURL(file),
+          base64
+        };
+
+        // Add this line to update the selectedDoc state.
+        setSelectedDoc(prevDocs => [...prevDocs, fileWithBase64]);
+      } catch (error) {
+        console.error("Error converting file to Base64:", error);
+      }
+    }
+
+    // Reset the value of the file input to allow re-uploading the same file
+    event.target.value = null;
+  };
+
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files);
+
+    const base64Files = await Promise.all(files.map(async file => {
+      const base64 = await toBase64(file);
+      return {
+        id: Date.now(), // This is temporary id
+        name: file.name,
+        preview: base64
+      };
+    }));
+
+    for (let file of base64Files) {
+      const apiResponse = await sendImageToAPI(file, roomID);
+
+      if (apiResponse && apiResponse.data && apiResponse.data.id) {
+        // Update the id of the file object with the id returned from the API
+        file.id = apiResponse.data.id;
+      }
+      console.log("apiResponse" + apiResponse.data.id)
+    }
+
+    setSelectedFiles(prevFiles => [...prevFiles, ...base64Files]);
+  };
+
+  const toBase64file = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.split(',')[1]); // Get only the Base64 content, not the MIME type
+    reader.onerror = (error) => reject(error);
+  });
+  const toBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  const handleDeleteFile = (index) => () => {  // extra arrow function here
+    const newFiles = [...selectedFilesForDocument];
+    newFiles.splice(index, 1);
+    setSelectedFilesForDocument(newFiles);
+  };
+
+  useEffect(() => {
+    console.log('State changed:', selectedFilesForDocument);
+  }, [selectedFilesForDocument]);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup logic
+      selectedFilesForDocument.forEach(fileObj => {
+        URL.revokeObjectURL(fileObj.preview);
+      });
+    };
+  }, [selectedFilesForDocument]);
+
+  const sendDocumentToAPI = async (file, roomID) => {
+    const apiUrl = 'https://pattayaavenueproperty.xyz/api/rooms/roomdocument';
+    // const apiUrl = ''
+
+    try {
+      const response = await axios.post(apiUrl, {
+        room_id: parseInt(roomID),
+        room_document: file.base64 // This should be the Base64 encoded document
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Other headers as necessary
+        }
+      });
+
+      console.log(response.data); // Log the API response if needed
+    } catch (error) {
+      console.error('There was a problem uploading the document:', error.message);
+    }
+  };
+
+
+
+  const handleSubmit = async () => {
+    const allRoomData = {
+      room_number: roomNumbera,
+      room_address: roomAddress,
+      electric_number: electricNumber,
+
+      size_sqm: parseFloat(roomSize),
+      amount_of_bed_room: parseInt(bedRoom),
+      amount_of_toilet_room: parseInt(toiletAmount),
+      amount_of_living_room: parseInt(livingRoomAmount),
+
+      type_of_view: selectedViews?.label,
+      owner_id: selectedOwners?.value,
+      // owner_name: selectedOwners?.value,
+      status_of_room: selectedStatus?.label,
+      electric_user_number: meterNumber
+
+    };
+
+    try {
+      const response = await EditRoom(roomID, allRoomData);
+      console.log("API Response: ", response);
+      if (response && response.statusCode === 200) {
+        setShowModal(true); // Show modal upon successful save
+        setTimeout(() => setShowModal(false), 3000); // Hide modal after 3 seconds
+      }
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+
+  };
+
+  console.log("Selected Views: ", selectedViews);
+  console.log("Selected Status: ", selectedStatus);
+
+
+
+  // Save to local storage whenever state changes
+  useEffect(() => {
+    if (selectedStatus) {
+      localStorage.setItem('selectedStatus', JSON.stringify(selectedStatus));
+    }
+    if (selectedViews) {
+      localStorage.setItem('selectedViews', JSON.stringify(selectedViews));
+    }
+  }, [selectedStatus, selectedViews]);
+
+  // Load from local storage when component initializes
+  useEffect(() => {
+    const savedStatus = JSON.parse(localStorage.getItem('selectedStatus'));
+    const savedViews = JSON.parse(localStorage.getItem('selectedViews'));
+    if (savedStatus) setSelectedStatus(savedStatus);
+    if (savedViews) setSelectedViews(savedViews);
+  }, []);
+
 
 
   const tabStyle = {
@@ -194,20 +483,20 @@ const handleDocumentChange = (e) => {
   };
 
   const viewOptions = [
-    { value: 'option1', label: 'Sea' },
-    { value: 'option2', label: 'City' },
-    { value: 'option3', label: 'Sea-City' },
+    { value: 'Sea', label: 'Sea' },
+    { value: 'City', label: 'City' },
+    { value: 'Sea-City', label: 'Sea-City' },
   ];
   // const ownerOptions = [
   //   { value: 'owner1', label: 'Owner 1' },
   //   { value: 'owner2', label: 'Owner 2' },
   // ];
-  
+
   const roomStatusOptions = [
-    { value: 'Sale', label: 'Sale' },
+    { value: 'Sell', label: 'Sell' },
     { value: 'Rent', label: 'Rent' },
-    { value: 'Sale/Rent', label: 'Sale/Rent' },
-    { value: 'Invalid', label: 'Invalid' },
+    { value: 'Sell/Rent', label: 'Sell/Rent' },
+    { value: 'Returned', label: 'Returned' },
   ];
 
 
@@ -222,7 +511,7 @@ const handleDocumentChange = (e) => {
     color: 'black',
     fontWeight: 'bold',
   };
-  
+
   const commonLabelStyle = {
     display: 'block',
     fontSize: '20px',
@@ -231,37 +520,57 @@ const handleDocumentChange = (e) => {
 
   const handleRoomNumberChange = (event) => {
     setRoomNumbera(event.target.value);
- };
+  };
 
- const handleRoomAddressChange = (event) => {
-  setroomAddress(event.target.value);
-};
+  const handleRoomAddressChange = (event) => {
+    setroomAddress(event.target.value);
+  };
 
-const handleElectricNumberChange = (event) => {
-  setElectricNumber(event.target.value);
-};
+  const handleElectricNumberChange = (event) => {
+    setElectricNumber(event.target.value);
+  };
 
-const handleMeterNumberChange = (event) => {
-  setMeterNumber(event.target.value);
-};
+  const handleMeterNumberChange = (event) => {
+    setMeterNumber(event.target.value);
+  };
 
-const handleRoomSizeChange = (event) => {
-  setRoomSize(event.target.value);
-};
+  const handleRoomSizeChange = (event) => {
+    setRoomSize(event.target.value);
+  };
 
-const handleBedRoomChange = (event) => {
-  setbedRoom(event.target.value);
-};
+  const handleBedRoomChange = (event) => {
+    setbedRoom(event.target.value);
+  };
 
-const handleToiletAmountChange = (event) => {
-  setToiletAmount(event.target.value);
-};
+  const handleToiletAmountChange = (event) => {
+    setToiletAmount(event.target.value);
+  };
 
-const handleLivingRoomAmountChange = (event) => {
-  setLivingRoomAmount(event.target.value);
-};
- 
-  
+  const handleLivingRoomAmountChange = (event) => {
+    setLivingRoomAmount(event.target.value);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true); // Start loading
+      try {
+        const data = await getContractRoom(roomID);
+        setRecords(data);  // Assuming data is an array
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+      setIsLoading(false); // End loading
+    };
+
+    fetchData();
+  }, [roomID]);
+
+  const handleChangeStatus = (option) => {
+    setSelectedStatus(option);
+  }
+
+
+
 
   return (
     <>
@@ -274,336 +583,423 @@ const handleLivingRoomAmountChange = (event) => {
         />
       </Head>
       {loading ? (
-            <div>Loading...</div>
-        ) : (
-            <div>
-      <div style={{ display: 'flex', fontFamily: 'Kanit, sans-serif' }}>
-        <div style={{ flex: '0 0 250px', position: 'fixed' }}>
-          <Sidebar />
-        </div>
-        <div style={{ marginLeft: '300px', marginRight: '30px', marginTop: '40px', flex: '1' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src="/back(1).png" alt="Back" style={{ width: '30px', height: '30px', cursor: 'pointer' }} onClick={() => router.back()} />
-          <h1 style={{ fontSize: '35px', fontFamily: 'Kanit, sans-serif', marginLeft: '10px', }}>Edit Room</h1>
-          </div>
-            <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px', marginTop: '10px', fontWeight: 'bold' }}>
-
-          </div>
-          </div>
-          <p style={{ fontSize: '20px', color: '#666' }}>{"Rooms " + roomNumber || "Your custom text here"}</p>
-          <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px' }} />
-          <h2 style={{ fontWeight: 'bold' }}>Floor</h2>
-          <div style={{ display: 'flex', marginBottom: '20px', marginLeft: '-5px' }}>
-            <button onClick={() => setActiveTab('room')} style={{ fontWeight: activeTab === 'room' ? 'bold' : 'normal', fontFamily: 'Kanit, sans-serif', border: 'none', background: 'none', cursor: 'pointer', color: activeTab === 'room' ? 'black' : '#666' }}>Room</button>
-            <span style={{ margin: '0 10px', color: '#666' }}>|</span>
-            <button onClick={() => setActiveTab('record')} style={{ fontWeight: activeTab === 'record' ? 'bold' : 'normal', fontFamily: 'Kanit, sans-serif', border: 'none', background: 'none', cursor: 'pointer', color: activeTab === 'record' ? 'black' : '#666' }}>Record</button>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px', marginTop: '10px', fontWeight: 'bold' }}>
-      
-    </div>
-
-
-{activeTab === 'room' && (
-  
-  <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', marginTop: '30px' }}>
-    <div>
-    <button
-        style={{
-          padding: '5px 10px',
-          cursor: 'pointer',
-          fontFamily: 'Kanit, sans-serif',
-          backgroundColor: '#326896',
-          border: 'none',
-          borderRadius: '5px',
-          color: 'white',
-          width: '110px',
-          height: '40px',
-          fontSize: '16px',
-          display: activeTab === 'room' ? 'block' : 'none', // Show the button when activeTab is 'room'
-          marginRight: '10px',
-          marginTop: '-30px'
-        }}
-      >
-        Save Data
-      </button>
-    </div>
-
-    <Select
-    options={roomStatusOptions}
-    value={selectedOption}
-    onChange={option => setSelectedOption(option)}
-    placeholder="Room Status"
-    styles={{
-      container: (provided) => ({
-        ...provided,
-        marginRight: '23px',
-        fontFamily: 'Kanit',
-        borderRadius: '5px',
-        outline: 'none',
-        marginBottom: '0px',
-        width: '205px',
-        marginTop: '31px',
-        marginLeft: '-118px'
-      }),
-      menu: styles => ({
-        ...styles,
-        marginTop: '-22px', // Adjust this value to control the distance between the menu and the input
-        zIndex: 9999
-      })
-    }}
-/>
-
-
-
-
-<div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%', marginLeft: '113px'}}>
-  <label style={commonLabelStyle}>Room No:</label>
-  <input 
-      type="text" 
-      placeholder=" Room No.." 
-      style={commonInputStyle} 
-      value={roomNumbera} 
-      onChange={handleRoomNumberChange} 
-  />
-</div>
-
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-    <label style={commonLabelStyle}>Room Address:</label>
-  <input 
-      type="text" 
-      placeholder=" Room Address.." 
-      style={commonInputStyle} 
-      value={roomAddress} 
-      onChange={handleRoomAddressChange} 
-  />
-</div>
-
-    <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
-      <label style={commonLabelStyle}>Electric No:</label>
-      <input 
-      type="text" 
-      placeholder=" Electric No.." 
-      style={commonInputStyle} 
-      value={electricNumber} 
-      onChange={handleElectricNumberChange} 
-  />
-</div>
-    <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
-      <label style={commonLabelStyle}>Meter No:</label>
-      <input 
-      type="text" 
-      placeholder=" Meter No.." 
-      style={commonInputStyle} 
-      value={meterNumber} 
-      onChange={handleMeterNumberChange} 
-  />
-</div>
-    <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
-      <label style={commonLabelStyle}>Room Size:</label>
-      <input 
-      type="text" 
-      placeholder=" Room Size.." 
-      style={commonInputStyle} 
-      value={roomSize} 
-      onChange={handleRoomSizeChange} 
-  />
-</div>
-    <div style={{marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
-      <label style={commonLabelStyle}>Bedroom Amount:</label>
-      <input 
-      type="text" 
-      placeholder=" Bedroom Amount.." 
-      style={commonInputStyle} 
-      value={bedRoom} 
-      onChange={handleBedRoomChange} 
-  />
-</div>
-    <div style={{marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-      <label style={commonLabelStyle}>Toilet Amount:</label>
-      <input 
-      type="text" 
-      placeholder=" Toilet Amount.." 
-      style={commonInputStyle} 
-      value={toiletAmount} 
-      onChange={handleToiletAmountChange} 
-  />
-</div>
-    <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%'}}>
-      <label style={commonLabelStyle}>Living Room Amount:</label>
-      <input 
-      type="text" 
-      placeholder=" Living Room Amount.." 
-      style={commonInputStyle} 
-      value={livingRoomAmount} 
-      onChange={handleLivingRoomAmountChange} 
-  />
-</div>
-    
-    <div style={{ marginBottom: '30px', flex: '0 0 100%' }}> {/* Parent div */}
-  <div style={{ display: 'flex', flex: '0 0 100%' }}> {/* Flex div for horizontal alignment */}
-    <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold' }}>
-    <label style={commonLabelStyle}>View:</label>
-                    <Select
-                        options={viewOptions}
-                        value={selectedViews}
-                        onChange={setSelectedViews}
-                        isSearchable={false}
-                        placeholder="Select View"
-                        styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px' }) }}
-                    />
+        <div>Loading...</div>
+      ) : (
+        <div>
+          <div style={{ display: 'flex', fontFamily: 'Kanit, sans-serif' }}>
+            <div style={{ flex: '0 0 250px', position: 'fixed' }}>
+              <Sidebar />
+            </div>
+            <div style={{ marginLeft: '300px', marginRight: '30px', marginTop: '40px', flex: '1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <img src="/back(1).png" alt="Back" style={{ width: '30px', height: '30px', cursor: 'pointer' }} onClick={() => router.back()} />
+                  <h1 style={{ fontSize: '35px', fontFamily: 'Kanit, sans-serif', marginLeft: '10px', }}>Edit Room</h1>
                 </div>
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px', marginTop: '10px', fontWeight: 'bold' }}>
 
-    <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold' }}>
-      <label style={{commonLabelStyle}}>Owner:</label>
-<Select
-  options={ownerOptions}
-  value={selectedOwners}
-  onChange={option => setSelectedOwners(option)}
-  placeholder="Owner"
-  styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px' }) }}
-/>
+                </div>
+              </div>
+              <p style={{ fontSize: '20px', color: '#666' }}>{"Rooms " + roomNumber || "Your custom text here"}</p>
+              <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px' }} />
+              {/* <h2 style={{ fontWeight: 'bold' }}>Floor</h2> */}
+              <div style={{ display: 'flex', marginBottom: '20px', marginLeft: '-5px' }}>
+                <button onClick={() => setActiveTab('room')} style={{ fontWeight: activeTab === 'room' ? 'bold' : 'normal', fontFamily: 'Kanit, sans-serif', border: 'none', background: 'none', cursor: 'pointer', color: activeTab === 'room' ? 'black' : '#666', marginTop: '10px' }}>Room</button>
+                <span style={{ margin: '0 10px', color: '#666', marginTop: '10px' }}>|</span>
+                <button onClick={() => setActiveTab('record')} style={{ fontWeight: activeTab === 'record' ? 'bold' : 'normal', fontFamily: 'Kanit, sans-serif', border: 'none', background: 'none', cursor: 'pointer', color: activeTab === 'record' ? 'black' : '#666', marginTop: '12px' }}>Record</button>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px', marginTop: '10px', fontWeight: 'bold' }}>
+
+              </div>
 
 
-    </div>
-  </div> 
-  <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginTop: '40px' }} />
-  <h2 style={{ fontWeight: 'bold' }}>Room Price Detail</h2>
-<div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', marginTop: '30px' }}>
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-    <label style={commonLabelStyle}>Price For Sell:</label>
-    <input type="text" placeholder=" Price.." style={commonInputStyle} />
-  </div>
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-    <label style={commonLabelStyle}>Price For Rent:</label>
-    <input type="text" placeholder=" Price.." style={commonInputStyle} />
-  </div>
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-    <label style={commonLabelStyle}>Deposit:</label>
-    <input type="text" placeholder=" Deposit.." style={commonInputStyle} />
-  </div>
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-    <label style={commonLabelStyle}>Price 1 Month:</label>
-    <input type="text" placeholder=" Price.." style={commonInputStyle} />
-  </div>
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-    <label style={commonLabelStyle}>Price 2-5 Month:</label>
-    <input type="text" placeholder=" Price.." style={commonInputStyle} />
-  </div>
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-    <label style={commonLabelStyle}>Price 6-11 Month:</label>
-    <input type="text" placeholder=" Price.." style={commonInputStyle} />
-  </div>
-  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-    <label style={commonLabelStyle}>Price 12 Month:</label>
-    <input type="text" placeholder=" Price.." style={commonInputStyle} />
-  </div>
-</div>
-<hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginTop: '20px' }} />
-<div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%', marginTop: '40px' }}>
-  <h2 style={{ fontWeight: 'bold' }}>Room Image</h2>
-</div>
-<div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap' }}>
-  {images.map((imageObj, index) => (
-    <div key={index} style={{ margin: '10px' }}>
-      <label
-        style={{
-          display: 'block',
-          padding: '10px 15px',
-          background: '#326896',
-          color: '#FFF',
-          cursor: 'pointer',
-          width: '150px',
-          textAlign: 'center',
-          borderRadius: '5px'
-        }}
-      >
-        Choose File
-        <input
-          type="file"
-          onChange={(e) => handleImageChange(e, index)}
-          style={{ display: 'none' }} // This hides the actual input
-        />
-      </label>
-      <div style={{ textAlign: 'center', marginTop: '17px' }}>
-        <div
-          style={{
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            width: '150px', // Same as the label width
-          }}
-        >
-          {imageObj?.name?.length > 12 ? `${imageObj.name.substring(0, 12)}...` : imageObj?.name}
-        </div>
-        {imageObj?.previewUrl && (
-          <img src={imageObj.previewUrl} alt={`preview ${index}`} style={{ width: '160px', height: '100px', borderRadius: '5px' }} />
-        )}
-      </div>
-    </div>
-  ))}
-</div>
+              {activeTab === 'room' && (
 
-<hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginTop: '40px' }} />
-    <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%', marginTop: '40px' }}>
-      <h2 style={{ fontWeight: 'bold' }}>Document</h2>
-    </div>
-    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '4px' }}>
-      <div>
-        <label
-          style={{
-            display: 'block',
-            padding: '10px 15px',
-            background: '#326896',
-            color: '#FFF',
-            cursor: 'pointer',
-            width: '150px',
-            textAlign: 'center',
-            borderRadius: '5px',
-          }}
-        >
-          Choose File
-          <input
-            type="file"
-            accept=".pdf, image/*"
-            onChange={handleDocumentChange}
-            style={{ display: 'none' }}
-          />
-        </label>
-        <div style={{ textAlign: 'center', marginTop: '17px' }}>
-        <div
-          style={{
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            width: '150px',
-          }}
-        >
-          {documentObj?.name?.length > 12 ? `${documentObj.name.substring(0, 12)}...` : documentObj?.name}
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', marginTop: '30px' }}>
+                  <div>
+                    <button
+                      onClick={handleSubmit}
+                      style={{
+                        padding: '5px 10px',
+                        cursor: 'pointer',
+                        fontFamily: 'Kanit, sans-serif',
+                        backgroundColor: '#326896',
+                        border: 'none',
+                        borderRadius: '5px',
+                        color: 'white',
+                        width: '150px',
+                        height: '40px',
+                        fontSize: '16px',
+                        display: activeTab === 'room' ? 'block' : 'none', // Show the button when activeTab is 'room'
+                        marginRight: '10px',
+                        marginTop: '-30px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <img src="CloundUpload.png" alt="Upload" style={{ width: '25px', height: '20px', marginRight: '8px' }} />
+                      Save Data
+                    </button>
+                  </div>
+
+                  <Select
+                    options={roomStatusOptions}
+                    value={selectedStatus}
+                    onChange={handleChangeStatus}
+                    placeholder="Room Status"
+                    styles={{
+                      container: (provided) => ({
+                        ...provided,
+                        marginRight: '23px',
+                        fontFamily: 'Kanit',
+                        borderRadius: '5px',
+                        outline: 'none',
+                        marginBottom: '0px',
+                        width: '205px',
+                        marginTop: '31px',
+                        marginLeft: '-159px'
+                      }),
+                      menu: styles => ({
+                        ...styles,
+                        marginTop: '-22px', // Adjust this value to control the distance between the menu and the input
+                        zIndex: 9999
+                      })
+                    }}
+                  />
+
+
+
+
+                  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%', marginLeft: '113px' }}>
+                    <label style={commonLabelStyle}>Room No:</label>
+                    <input
+                      type="text"
+                      placeholder=" Room No.."
+                      style={commonInputStyle}
+                      value={roomNumbera}
+                      onChange={handleRoomNumberChange}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                    <label style={commonLabelStyle}>Room Address:</label>
+                    <input
+                      type="text"
+                      placeholder=" Room Address.."
+                      style={commonInputStyle}
+                      value={roomAddress}
+                      onChange={handleRoomAddressChange}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                    <label style={commonLabelStyle}>Electric No:</label>
+                    <input
+                      type="text"
+                      placeholder=" Electric No.."
+                      style={commonInputStyle}
+                      value={electricNumber}
+                      onChange={handleElectricNumberChange}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                    <label style={commonLabelStyle}>Meter No:</label>
+                    <input
+                      type="text"
+                      placeholder=" Meter No.."
+                      style={commonInputStyle}
+                      value={meterNumber}
+                      onChange={handleMeterNumberChange}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                    <label style={commonLabelStyle}>Room Size:</label>
+                    <input
+                      type="text"
+                      placeholder=" Room Size.."
+                      style={commonInputStyle}
+                      value={roomSize}
+                      onChange={handleRoomSizeChange}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                    <label style={commonLabelStyle}>Bedroom Amount:</label>
+                    <input
+                      type="text"
+                      placeholder=" Bedroom Amount.."
+                      style={commonInputStyle}
+                      value={bedRoom}
+                      onChange={handleBedRoomChange}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                    <label style={commonLabelStyle}>Toilet Amount:</label>
+                    <input
+                      type="text"
+                      placeholder=" Toilet Amount.."
+                      style={commonInputStyle}
+                      value={toiletAmount}
+                      onChange={handleToiletAmountChange}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                    <label style={commonLabelStyle}>Living Room Amount:</label>
+                    <input
+                      type="text"
+                      placeholder=" Living Room Amount.."
+                      style={commonInputStyle}
+                      value={livingRoomAmount}
+                      onChange={handleLivingRoomAmountChange}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '30px', flex: '0 0 100%' }}> {/* Parent div */}
+                    <div style={{ display: 'flex', flex: '0 0 100%' }}> {/* Flex div for horizontal alignment */}
+                      <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold' }}>
+                        <label style={commonLabelStyle}>View:</label>
+                        <Select
+                          options={viewOptions}
+                          value={selectedViews}
+                          onChange={setSelectedViews}
+                          isSearchable={false}
+                          placeholder="Select View"
+                          styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px' }) }}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold' }}>
+                        <label style={{ commonLabelStyle }}>Owner:</label>
+                        <Select
+                          options={ownerOptions}
+                          value={selectedOwners}
+                          onChange={option => setSelectedOwners(option)}
+                          placeholder="Owner"
+                          styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px' }) }}
+                        />
+
+
+                      </div>
+                    </div>
+                    <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginTop: '40px' }} />
+                    <h2 style={{ fontWeight: 'bold' }}>Room Price Detail</h2>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', marginTop: '30px' }}>
+                      <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                        <label style={commonLabelStyle}>Price For Sell:</label>
+                        <input type="text" placeholder=" Price.." style={commonInputStyle} />
+                      </div>
+                      <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                        <label style={commonLabelStyle}>Price For Rent:</label>
+                        <input type="text" placeholder=" Price.." style={commonInputStyle} />
+                      </div>
+                      <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                        <label style={commonLabelStyle}>Deposit:</label>
+                        <input type="text" placeholder=" Deposit.." style={commonInputStyle} />
+                      </div>
+                      <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                        <label style={commonLabelStyle}>Price 1 Month:</label>
+                        <input type="text" placeholder=" Price.." style={commonInputStyle} />
+                      </div>
+                      <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                        <label style={commonLabelStyle}>Price 2-5 Month:</label>
+                        <input type="text" placeholder=" Price.." style={commonInputStyle} />
+                      </div>
+                      <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                        <label style={commonLabelStyle}>Price 6-11 Month:</label>
+                        <input type="text" placeholder=" Price.." style={commonInputStyle} />
+                      </div>
+                      <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
+                        <label style={commonLabelStyle}>Price 12 Month:</label>
+                        <input type="text" placeholder=" Price.." style={commonInputStyle} />
+                      </div>
+                    </div>
+                    <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginTop: '20px' }} />
+                    <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%', marginTop: '40px' }}>
+                      <h2 style={{ fontWeight: 'bold' }}>Room Image</h2>
+                    </div>
+
+                    <div>
+
+                      <button
+                        style={{ fontFamily: 'Kanit, sans-serif', marginBottom: '30px', backgroundColor: '#326896', outline: 'none', border: 'none', borderRadius: '5px', width: '180px', height: '45px', fontSize: '17px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        onClick={() => document.getElementById('fileInput').click()}
+                      >
+                        <img src="upload.png" alt="Upload" style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                        Select Images
+                      </button>
+
+
+                      <input
+                        id="fileInput"
+                        type="file"
+                        multiple
+                        style={{ display: 'none' }}
+                        onChange={handleFileChange}
+                      />
+                      <div>
+                        {selectedFiles.map(file => (
+                          <div key={file.id} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }}>
+                            <img
+                              src={file.preview}
+                              alt={file.name}
+                              style={{
+                                width: '150px',
+                                height: '100px',
+                                border: '2px solid black',  // Add border
+                                borderRadius: '10px'  // Add border-radius
+                              }}
+                            />
+                            <img
+                              src="X.png"  // Replace this with the actual path to your X.png image
+                              alt="Close"
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                cursor: 'pointer',
+                                width: '23px',
+                                height: '23px',
+                                marginLeft: '5px',
+                                marginTop: '5px'
+                              }}
+                              onClick={() => deleteImageFromAPI(file.id)}
+                            />
+
+                          </div>
+                        ))}
+                      </div>
+
+                    </div>
+
+
+                    <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginTop: '40px' }} />
+                    <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%', marginTop: '40px' }}>
+                      <h2 style={{ fontWeight: 'bold' }}>Document</h2>
+                      <button
+                        style={{ fontFamily: 'Kanit, sans-serif', marginBottom: '30px', backgroundColor: '#326896', outline: 'none', border: 'none', borderRadius: '5px', width: '180px', height: '45px', fontSize: '17px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        onClick={() => document.getElementById('fileInputForDocument').click()}
+                      >
+                        <input
+                          id="fileInputForDocument"
+                          type="file"
+                          multiple
+                          style={{ display: 'none' }}
+                          onChange={handleFileChangeForDocument}
+                        />
+
+                        <img src="upload.png" alt="Upload" style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                        Select File
+                      </button>
+
+                      {console.log('About to map over selected files:', selectedDoc)}
+
+                      {selectedDoc.map((fileObj, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            position: 'relative',
+                            display: 'inline-block',
+                            marginRight: '10px'
+                          }}
+                        >
+
+                          {/* { fileObj.name.endsWith('.pdf') ?
+      <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px' }} />
+      :
+      <img src={fileObj.preview} alt="File" style={{ width: '100px', height: '100px' }} />
+    } */}
+
+                          <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px' }} />
+
+                          {/* <img src={fileObj.preview} alt="File" style={{ width: '100px', height: '100px' }} /> */}
+
+
+
+
+                          {/* Display file name */}
+
+                          {/* <div style={{ 
+      whiteSpace: 'nowrap', 
+      overflow: 'hidden', 
+      textOverflow: 'ellipsis', 
+      textAlign: 'center',
+      maxWidth: '150px' 
+    }}>
+      {fileObj.name.length > 15 ? `${fileObj.name.substring(0, 15)}...` : fileObj.name}
+    </div> */}
+
+                          {/* Display delete button */}
+                          <img
+                            src="X.png"
+                            alt="Close"
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              cursor: 'pointer',
+                              width: '23px',
+                              height: '23px',
+                              marginLeft: '5px',
+                              marginTop: '5px'
+                            }}
+                            onClick={() => deleteFileFromAPI(fileObj.id)}
+                          />
+                        </div>
+                      ))}
+
+                      {showModal && (
+                        <div style={{
+                          position: 'fixed',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: 'rgba(0,0,0,0.5)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center', // this line centers the inner div horizontally
+                          zIndex: 999  // make sure it's less than the inner div
+                        }}>
+                          <div style={{
+                            backgroundColor: '#fff',
+                            fontFamily: 'Kanit',
+                            fontSize: '20px',
+                            padding: '20px',
+                            borderRadius: '5px',  // this line sets the border radius
+                            zIndex: 1000,  // make sure it's higher than the outer div
+                            display: 'flex', // display the image and text in a row
+                            alignItems: 'center', // vertically align the image and text
+                          }}>
+                            <img
+                              src="RightCheck.png" // Update with the actual path to your image
+                              alt="Right Check"
+                              style={{ width: '22px', height: '22px', marginRight: '10px' }} // Add some spacing between image and text
+                            />
+                            Save Successful
+                          </div>
+                        </div>
+                      )}
+
+
+
+
+                    </div>
+
+                  </div>
+                </div>
+              )}
+
+
+
+              {activeTab === 'record' && (
+                isLoading ? <div>Loading...</div> : <RecordTable records={records} />
+              )}
+
+            </div>
           </div>
-        {documentObj?.previewUrl && (
-          <img src={documentObj.previewUrl} alt={`preview`} style={{ width: '160px', height: '100px', borderRadius: '5px' }} />
-        )}
-      </div>
-    </div>
-    </div>
-
-
-</div> 
-  </div>
-)}
-
-{activeTab === 'record' && (
-  <RecordTable records={records} />
-
-  
-)}
-
         </div>
-      </div>
-      </div>
-        )}
+      )}
     </>
   );
 }

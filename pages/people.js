@@ -1,77 +1,96 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.js';
 import Head from 'next/head';
 import PeopleTable from '../components/PeopleTable.js';
-
-const records = [
-    {
-      index: 1,
-      'name-surname': 'John Doe',
-      'passport/ID': '123456789',
-
-    },
-    {
-      index: 2,
-      'name-surname': 'Jane Smith',
-      'passport/ID': '987654321',
-
-    },
-    {
-      index: 3,
-      'name-surname': 'Alice Johnson',
-      'passport/ID': '111222333',
-
-    },
-    {
-      index: 4,
-      'name-surname': 'Bob Williams',
-      'passport/ID': '333444555',
-
-    },
-    {
-      index: 5,
-      'name-surname': 'Charlie Brown',
-      'passport/ID': '666777888',
-    },
-    {
-      index: 6,
-      'name-surname': 'David Lee',
-      'passport/ID': '999000111',
-    },
-    {
-      index: 7,
-      'name-surname': 'Emily Adams',
-      'passport/ID': '222333444',
-
-    },
-    {
-        index: 8,
-        'name-surname': 'James Adams',
-        'passport/ID': '124512512',
-  
-      },
-      {
-        index: 9,
-        'name-surname': 'Cid Serial',
-        'passport/ID': '45732324',
-  
-      }
-  ];
-  
-
-
-  
+import { fetchPeople } from '../API/api.js';
+import axios from 'axios';
 
 export default function People() {
     const [isAddPeopleModalOpen, setIsAddPeopleModalOpen] = useState(false);
+    const [fullName, setFullName] = useState('');
+    const [identityNumber, setIdentityNumber] = useState('');
+    const [contactType, setContactType] = useState('Line');
+    const [contactValue, setContactValue] = useState('');
+    const [fullNameError, setFullNameError] = useState('');
+    const [identityNumberError, setIdentityNumberError] = useState('');
+    const [contactValueError, setContactValueError] = useState('');
+
+    const resetFields = () => {
+      setFullName('');
+      setIdentityNumber('');
+      setContactType('Line');
+      setContactValue('');
+      setFullNameError('');
+      setIdentityNumberError('');
+      setContactValueError('');
+    };
 
     const handleCloseModal = () => {
-        setIsAddPeopleModalOpen(false);
-      };
+      setIsAddPeopleModalOpen(false);
+      resetFields();
+    };
     
-      const handleAddModal = () => {
-        setIsAddPeopleModalOpen(false);
-      };
+      
+  const [records, setRecords] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchPeople();
+      setRecords(data);
+    };
+    
+    fetchData();
+  }, []);
+
+  const handleAddPerson = async () => {
+    let isValid = true;
+
+    // Validation
+    if (!fullName) {
+      setFullNameError('Name-Surname is required.');
+      isValid = false;
+    } else {
+      setFullNameError('');
+    }
+
+    if (!identityNumber) {
+      setIdentityNumberError('Passport/ID is required.');
+      isValid = false;
+    } else {
+      setIdentityNumberError('');
+    }
+
+    if (!contactValue) {
+      setContactValueError('Contact Info is required.');
+      isValid = false;
+    } else {
+      setContactValueError('');
+    }
+
+    if (!isValid) {
+      return;
+    }
+
+    // API call
+    try {
+      const response = await axios.post('https://pattayaavenueproperty.xyz/api/persons/createprofiles', {
+        full_name: fullName,
+        identity_number: identityNumber,
+        type_contact: contactType,
+        value_contact: contactValue,
+      });
+      
+      if (response.status === 200) {
+        console.log('Successfully added person:', response.data);
+        handleCloseModal();
+        const data = await fetchPeople();
+        setRecords(data);
+      }
+    } catch (error) {
+      console.error('Failed to add person:', error);
+    }
+  };
+
     return (
         <>
           <Head>
@@ -128,11 +147,16 @@ export default function People() {
             <h2>Add People</h2>
             <div style={{ color: 'red', marginBottom: '15px' }}>* Warning * The data that Created can not be deleted</div>
             <div><label htmlFor="name-surname">Name-Surname: </label></div>
-            <input id="name-surname" type="text" placeholder="Name-Surname.." style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', width: '372px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px' }} />
+            <input id="name-surname" type="text" placeholder="Name-Surname.." value={fullName}
+            onChange={(e) => setFullName(e.target.value)} style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', width: '372px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px' }} />
+            {fullNameError && <div style={{ color: 'red' }}>{fullNameError}</div>}
             <div><label htmlFor="passport-id">Passport/ID: </label></div>
-            <input id="passport-id" type="text" placeholder="Passport/ID.." style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', width: '372px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px' }} />
+            <input id="passport-id" type="text" placeholder="Passport/ID.." value={identityNumber}
+            onChange={(e) => setIdentityNumber(e.target.value)} style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', width: '372px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px' }} />
+            {identityNumberError && <div style={{ color: 'red' }}>{identityNumberError}</div>}
             <div><label>Contact: </label></div>
-            <select style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', width:'200px' }}>
+            <select value={contactType}
+            onChange={(e) => setContactType(e.target.value)} style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', width:'200px' }}>
             <option value="Line">Line</option>
             <option value="Facebook">Facebook</option>
             <option value="WeChat">WeChat</option>
@@ -140,10 +164,12 @@ export default function People() {
             <option value="Weibo">Weibo</option>
             <option value="Shopee">Shopee</option>
             </select>
-            <input type="text" placeholder="Contact Info" style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', fontFamily: 'Kanit', width: '160px', marginLeft: '10px', border: 'none', borderRadius: '5px', outline: 'none', fontSize: '14px' }} />
+            <input type="text" placeholder="Contact Info" value={contactValue}
+            onChange={(e) => setContactValue(e.target.value)} style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', fontFamily: 'Kanit', width: '160px', marginLeft: '10px', border: 'none', borderRadius: '5px', outline: 'none', fontSize: '14px' }} />
+            {contactValueError && <div style={{ color: 'red' }}>{contactValueError}</div>}
             <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '10px', }}>
             <button onClick={handleCloseModal} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', borderRadius: '5px', border: 'none', marginRight: '10px', marginLeft: '1px', width: '60px' }}>Close</button>
-            <button onClick={handleAddModal} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius: '5px', color: 'white', width: '60px' }}>Add</button>
+            <button onClick={handleAddPerson} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius: '5px', color: 'white', width: '60px' }}>Add</button>
             </div>
           </div>
         </div>

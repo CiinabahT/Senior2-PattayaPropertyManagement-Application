@@ -3,13 +3,44 @@ import Sidebar from '../components/Sidebar.js';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import PeopleInfoContactTable from '../components/PeopleInfoContactTable.js';
+import { getPeoplebyId } from '../API/api.js';
 
 export default function PeopleInfo() {
   const router = useRouter();
   const [isAddContactModalOpen, setIsContactModalOpen] = useState(false);
   const [personInfo, setPersonInfo] = useState({});
   const [apiData, setApiData] = useState(null);
+  const [people, setpeople] = useState([]);
   const { PersonId } = router.query;
+  const [bankAccount, setBankAccount] = useState({
+    bank_name: '',
+    bank_address: '',
+    account_name: '',
+    account_number: '',
+    swift_code: ''
+  });
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getPeoplebyId(PersonId);
+        setPersonInfo(data); // Assuming data is an object containing the person's details and bank accounts
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [PersonId]);
+
+  const handleInputChange = (e, field) => {
+    setBankAccount({
+      ...bankAccount,
+      [field]: e.target.value
+    });
+  };
+
 
 
   const records = [
@@ -148,10 +179,11 @@ export default function PeopleInfo() {
           <div style={{ width: '100%' }}>
 
             <div><label style={commonLabelStyle}>Name-Surname:</label></div>
-            <input type="text" placeholder='Name - Surname..' style={commonInputStyle} />
+            <input type="text" value={personInfo.full_name || ''} placeholder='Name - Surname..' style={commonInputStyle} />
 
             <div><label style={commonLabelStyle}>Passport/ID:</label></div>
-            <input type="text" placeholder='Passport/ID..' style={commonInputStyle} />
+            <input type="text" value={personInfo.identity_number || ''} placeholder='Passport/ID..' style={commonInputStyle} />
+
 
             <div><label style={commonLabelStyle}>Contact:</label></div>
             <PeopleInfoContactTable records={records} />
@@ -160,28 +192,32 @@ export default function PeopleInfo() {
 
 
             <h2><label style={commonLabelStyle}>Bank Account: </label></h2>
-          </div>
-          <div style={{ display: 'flex', flex: '0 0 25%' }}>
-            <div>
-              <div><label style={{ fontFamily: 'Kanit' }} htmlFor="start-rental-date">Bank Name: </label></div>
-              <input id="start-rental-date" type="text" placeholder="Bank Name.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
-            </div>
-            <div>
-              <div><label style={{ fontFamily: 'Kanit' }} htmlFor="end-rental-date">Bank Address: </label></div>
-              <input id="end-rental-date" type="text" placeholder="Bank Address.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
-            </div>
-            <div>
-              <div><label style={{ fontFamily: 'Kanit' }} htmlFor="end-rental-date">Account Name: </label></div>
-              <input id="end-rental-date" type="text" placeholder="Account Name.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
-            </div>
-            <div>
-              <div><label style={{ fontFamily: 'Kanit' }} htmlFor="end-rental-date">Account No: </label></div>
-              <input id="end-rental-date" type="text" placeholder="Account No.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
-            </div>
-            <div>
-              <div><label style={{ fontFamily: 'Kanit' }} htmlFor="end-rental-date">Swift Code: </label></div>
-              <input id="end-rental-date" type="text" placeholder="Swift Code.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
-            </div>
+            {personInfo.bank_accounts ? (
+              <div style={{ display: 'flex', flex: '0 0 25%' }}>
+                <div>
+                  <div><label style={{ fontFamily: 'Kanit' }}>Bank Name: </label></div>
+                  <input type="text" value={personInfo.bank_accounts.bank_name || ''} placeholder="Bank Name.." 
+                  style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
+                </div>
+                <div>
+                  <div><label style={{ fontFamily: 'Kanit' }}>Bank Address: </label></div>
+                  <input type="text" value={personInfo.bank_accounts.bank_address || ''} placeholder="Bank Address.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
+                </div>
+                <div>
+                  <div><label style={{ fontFamily: 'Kanit' }}>Account Name: </label></div>
+                  <input type="text" value={personInfo.bank_accounts.account_name || ''} placeholder="Account Name.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
+                </div>
+                <div>
+                  <div><label style={{ fontFamily: 'Kanit' }}>Account No: </label></div>
+                  <input type="text" value={personInfo.bank_accounts.account_number || ''} placeholder="Account No.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
+                </div>
+                <div>
+                  <div><label style={{ fontFamily: 'Kanit' }}>Swift Code: </label></div>
+                  <input type="text" value={personInfo.bank_accounts.swift_code || ''} placeholder="Swift Code.." style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '187px', fontFamily: 'Kanit', outline: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '30px' }} />
+                </div>
+              </div>
+            ) : null}
+
 
           </div>
 

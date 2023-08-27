@@ -9,7 +9,8 @@ const CHANGE_NAME_PLACE = 'https://pattayaavenueproperty.xyz/api/rooms/editplace
 const CONTRACT_ROOM_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts/room';
 const EDIT_ROOM = 'https://pattayaavenueproperty.xyz/api/rooms/editroom';
 const PEOPLE_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles';
-const CONTRACT_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts'
+const CONTRACT_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts';
+const PEOPLE_BAMK_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles/bank';
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -123,6 +124,16 @@ export const getRoomById = async (roomId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching room by ID:', error);
+    throw error; // Propagate the error up so it can be handled by the calling function
+  }
+};
+
+export const getPeoplebyId = async (peopleId) => {
+  try {
+    const response = await axios.get(`${PEOPLE_BAMK_URL}/${peopleId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching People by ID:', error);
     throw error; // Propagate the error up so it can be handled by the calling function
   }
 };

@@ -125,16 +125,4 @@ const secondInputStyle = {
   fontSize: '14px'
 };
 
-// i want to called an API delete contact by id of the contact
-// this is an API
-// const DELETE_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/deletecontact';
-
-// export const DeleltePeopleContact = async (ContactId) => {
-//   try {
-//     const response = await axios.post(`${DELETE_PEOPLE_CONTACT_URL}/${ContactId}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error deleting contact:', error);
-//   }
-// };
-// and the thing that 
+// 

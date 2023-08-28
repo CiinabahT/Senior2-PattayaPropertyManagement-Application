@@ -16,7 +16,7 @@ const EDIT_PERSON_BANK = 'https://pattayaavenueproperty.xyz/api/persons/editbank
 const CONTACT_PERSON_URL = 'https://pattayaavenueproperty.xyz/api/persons/contact';
 const DELETE_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/deletecontact';
 const ADD_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/createcontact';
-const CONTRACT_PAGE_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts';
+
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';

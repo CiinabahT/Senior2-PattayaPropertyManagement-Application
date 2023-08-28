@@ -1602,5 +1602,3 @@ export default function RoomEdit() {
     </>
   );
 }
-
-

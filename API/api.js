@@ -16,7 +16,8 @@ const EDIT_PERSON_BANK = 'https://pattayaavenueproperty.xyz/api/persons/editbank
 const CONTACT_PERSON_URL = 'https://pattayaavenueproperty.xyz/api/persons/contact';
 const DELETE_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/deletecontact';
 const ADD_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/createcontact';
-
+const CREATE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/roomprice';
+const DELETE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/editroomprice';
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -178,6 +179,15 @@ export const editPersonAndBankInfo = async (PersonInfo, BankInfo) => {
     };
   } catch (error) {
     console.error('Error editing person and bank:', error);
+  }
+}
+// api for add room price
+export const addRoomPrice = async (roomPriceData) => {
+  try {
+    const response = await axios.post(`${CREATE_ROOM_PRICE}`, roomPriceData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding room price:', error);
     throw error;
   }
 };
@@ -188,6 +198,15 @@ export const getContactPeople = async (PersonId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Contact by ID:', error);
+  }
+}
+// api for delete room price
+export const deleteRoomPrice = async (roomPriceId) => {
+  try {
+    const response = await axios.post(`${DELETE_ROOM_PRICE}/${roomPriceId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting room price:', error);
     throw error;
   }
 };

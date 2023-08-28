@@ -10,6 +10,8 @@ const CONTRACT_ROOM_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contr
 const EDIT_ROOM = 'https://pattayaavenueproperty.xyz/api/rooms/editroom';
 const PEOPLE_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles';
 const CONTRACT_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts'
+const CREATE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/roomprice';
+const DELETE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/editroomprice';
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -136,6 +138,29 @@ export const getContractRoom = async (roomId) => {
     throw error; // Propagate the error up so it can be handled by the calling function
   }
 };
+
+// api for add room price
+export const addRoomPrice = async (roomPriceData) => {
+  try {
+    const response = await axios.post(`${CREATE_ROOM_PRICE}`, roomPriceData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding room price:', error);
+    throw error;
+  }
+};
+
+// api for delete room price
+export const deleteRoomPrice = async (roomPriceId) => {
+  try {
+    const response = await axios.post(`${DELETE_ROOM_PRICE}/${roomPriceId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting room price:', error);
+    throw error;
+  }
+};
+
 
 
 

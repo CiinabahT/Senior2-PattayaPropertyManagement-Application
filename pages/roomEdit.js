@@ -850,7 +850,7 @@ export default function RoomEdit() {
       const response = await EditRoom(roomID, allRoomData);
       if (response && response.statusCode === 200) {
         setShowModal(true); // Show modal upon successful save
-        setTimeout(() => setShowModal(false), 3000); // Hide modal after 3 seconds
+        setTimeout(() => setShowModal(false), 2000); // Hide modal after 3 seconds
       }
     } catch (error) {
       console.error("Error: ", error);

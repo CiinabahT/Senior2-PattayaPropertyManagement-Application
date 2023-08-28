@@ -40,12 +40,12 @@ function ContractTable({ records }) {
     console.log(info);
   };
 
-  const handleEndContractClick = (info) => {
-    router.push({
-      pathname: '/endContract',
-    });
-    console.log(info);
-  };
+  // const handleEndContractClick = (info) => {
+  //   router.push({
+  //     pathname: '/endContract',
+  //   });
+  //   console.log(info);
+  // };
 
 
   const columns = useMemo(
@@ -97,18 +97,18 @@ function ContractTable({ records }) {
           </button>
         ),
       },
-      {
-        Header: 'End Contract',
-        accessor: 'endContract',
-        Cell: ({ row }) => (
-          <button
-            onClick={() => handleEndContractClick(row.original)}
-            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px' }}
-          >
-            End Contract
-          </button>
-        ),
-      },
+      // {
+      //   Header: 'End Contract',
+      //   accessor: 'endContract',
+      //   Cell: ({ row }) => (
+      //     <button
+      //       onClick={() => handleEndContractClick(row.original)}
+      //       style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px' }}
+      //     >
+      //       End Contract
+      //     </button>
+      //   ),
+      // },
     ],
     [pageNumber]
   );

@@ -9,7 +9,13 @@ const CHANGE_NAME_PLACE = 'https://pattayaavenueproperty.xyz/api/rooms/editplace
 const CONTRACT_ROOM_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts/room';
 const EDIT_ROOM = 'https://pattayaavenueproperty.xyz/api/rooms/editroom';
 const PEOPLE_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles';
-const CONTRACT_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts'
+const CONTRACT_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts';
+const PEOPLE_BAMK_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles/bank';
+const EDIT_PERSON_INFO = 'https://pattayaavenueproperty.xyz/api/persons/editprofiles';
+const EDIT_PERSON_BANK = 'https://pattayaavenueproperty.xyz/api/persons/editbankaccount';
+const CONTACT_PERSON_URL = 'https://pattayaavenueproperty.xyz/api/persons/contact';
+const DELETE_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/deletecontact';
+const ADD_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/createcontact';
 const CREATE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/roomprice';
 const DELETE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/editroomprice';
 
@@ -23,6 +29,17 @@ export const fetchPlaces = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching places:', error);
+    return [];
+  }
+};
+
+export const fetchContractPage = async () => {
+  try {
+    console.log(CONTRACT_PAGE_URL);
+    const response = await axios.get(CONTRACT_PAGE_URL);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Contract Page:', error);
     return [];
   }
 };
@@ -129,6 +146,16 @@ export const getRoomById = async (roomId) => {
   }
 };
 
+export const getPeoplebyId = async (peopleId) => {
+  try {
+    const response = await axios.get(`${PEOPLE_BAMK_URL}/${peopleId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching People by ID:', error);
+    throw error; // Propagate the error up so it can be handled by the calling function
+  }
+};
+
 export const getContractRoom = async (roomId) => {
   try {
     const response = await axios.get(`${CONTRACT_ROOM_URL}/${roomId}`);
@@ -139,6 +166,21 @@ export const getContractRoom = async (roomId) => {
   }
 };
 
+export const editPersonAndBankInfo = async (PersonInfo, BankInfo) => {
+  try {
+    const [personResponse, bankResponse] = await Promise.all([
+      axios.post(EDIT_PERSON_INFO, PersonInfo),
+      axios.post(EDIT_PERSON_BANK, BankInfo)
+    ]);
+
+    return {
+      personResponse: personResponse.data,
+      bankResponse: bankResponse.data
+    };
+  } catch (error) {
+    console.error('Error editing person and bank:', error);
+  }
+}
 // api for add room price
 export const addRoomPrice = async (roomPriceData) => {
   try {
@@ -150,6 +192,14 @@ export const addRoomPrice = async (roomPriceData) => {
   }
 };
 
+export const getContactPeople = async (PersonId) => {
+  try {
+    const response = await axios.get(`${CONTACT_PERSON_URL}/${PersonId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Contact by ID:', error);
+  }
+}
 // api for delete room price
 export const deleteRoomPrice = async (roomPriceId) => {
   try {
@@ -160,6 +210,25 @@ export const deleteRoomPrice = async (roomPriceId) => {
     throw error;
   }
 };
+
+export const DeletePeopleContact = async (ContactId) => {
+  try {
+    const response = await axios.post(`${DELETE_PEOPLE_CONTACT_URL}/${ContactId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting contact:', error);
+  }
+};
+
+export const AddPeopleContact = async (ContactInfo) => {
+  try {
+    const response = await axios.post(ADD_PEOPLE_CONTACT_URL, ContactInfo);
+    return response.data;
+  } catch (error) {
+    console.error('Error Create contact:', error);
+  }
+};
+
 
 
 

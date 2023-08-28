@@ -39,10 +39,10 @@ function PeopleInfoContactTable({ records }) {
     console.log(info);
   };
 
-  const handleDeleteClick = (info) => {
-    setIsDeleteContactModalOpen(true)
-    console.log(info);
-  };
+  // const handleDeleteClick = (info) => {
+  //   setIsDeleteContactModalOpen(true)
+  //   console.log(info);
+  // };
 
 
 
@@ -55,24 +55,24 @@ function PeopleInfoContactTable({ records }) {
       },
       {
         Header: 'Contact',
-        accessor: 'contact',
+        accessor: 'type',
       },
       {
         Header: 'Contact Info',
-        accessor: 'contactInfo',
+        accessor: 'value',
       },
-      {
-        Header: 'Delete',
-        accessor: 'delete',
-        Cell: ({ row }) => (
-          <button
-            onClick={() => handleDeleteClick(row.original)}
-            style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px' }}
-          >
-            Delete
-          </button>
-        ),
-      },
+      // {
+      //   Header: 'Delete',
+      //   accessor: 'delete',
+      //   Cell: ({ row }) => (
+      //     <button
+      //       onClick={() => handleDeleteClick(row.original)}
+      //       style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px' }}
+      //     >
+      //       Delete
+      //     </button>
+      //   ),
+      // },
     ],
     [pageNumber]
   );

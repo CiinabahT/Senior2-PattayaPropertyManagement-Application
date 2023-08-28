@@ -11,6 +11,12 @@ const EDIT_ROOM = 'https://pattayaavenueproperty.xyz/api/rooms/editroom';
 const PEOPLE_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles';
 const CONTRACT_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts';
 const PEOPLE_BAMK_URL = 'https://pattayaavenueproperty.xyz/api/persons/profiles/bank';
+const EDIT_PERSON_INFO = 'https://pattayaavenueproperty.xyz/api/persons/editprofiles';
+const EDIT_PERSON_BANK = 'https://pattayaavenueproperty.xyz/api/persons/editbankaccount';
+const CONTACT_PERSON_URL = 'https://pattayaavenueproperty.xyz/api/persons/contact';
+const DELETE_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/deletecontact';
+const ADD_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/createcontact';
+const CONTRACT_PAGE_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts';
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -22,6 +28,17 @@ export const fetchPlaces = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching places:', error);
+    return [];
+  }
+};
+
+export const fetchContractPage = async () => {
+  try {
+    console.log(CONTRACT_PAGE_URL);
+    const response = await axios.get(CONTRACT_PAGE_URL);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Contract Page:', error);
     return [];
   }
 };
@@ -147,6 +164,53 @@ export const getContractRoom = async (roomId) => {
     throw error; // Propagate the error up so it can be handled by the calling function
   }
 };
+
+export const editPersonAndBankInfo = async (PersonInfo, BankInfo) => {
+  try {
+    const [personResponse, bankResponse] = await Promise.all([
+      axios.post(EDIT_PERSON_INFO, PersonInfo),
+      axios.post(EDIT_PERSON_BANK, BankInfo)
+    ]);
+
+    return {
+      personResponse: personResponse.data,
+      bankResponse: bankResponse.data
+    };
+  } catch (error) {
+    console.error('Error editing person and bank:', error);
+    throw error;
+  }
+};
+
+export const getContactPeople = async (PersonId) => {
+  try {
+    const response = await axios.get(`${CONTACT_PERSON_URL}/${PersonId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Contact by ID:', error);
+    throw error;
+  }
+};
+
+export const DeletePeopleContact = async (ContactId) => {
+  try {
+    const response = await axios.post(`${DELETE_PEOPLE_CONTACT_URL}/${ContactId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting contact:', error);
+  }
+};
+
+export const AddPeopleContact = async (ContactInfo) => {
+  try {
+    const response = await axios.post(ADD_PEOPLE_CONTACT_URL, ContactInfo);
+    return response.data;
+  } catch (error) {
+    console.error('Error Create contact:', error);
+  }
+};
+
+
 
 
 

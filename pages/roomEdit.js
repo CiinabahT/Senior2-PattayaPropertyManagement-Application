@@ -295,7 +295,7 @@ export default function RoomEdit() {
 
     }
     setSelectedFilesForDocument(prevFiles => [...prevFiles, ...base64Files]);
-    
+
     // Reset the value of the file input to allow re-uploading the same file
     // event.target.value = null;
   };
@@ -411,7 +411,7 @@ export default function RoomEdit() {
       console.log("API Response: ", response);
       if (response && response.statusCode === 200) {
         setShowModal(true); // Show modal upon successful save
-        setTimeout(() => setShowModal(false), 3000); // Hide modal after 3 seconds
+        setTimeout(() => setShowModal(false), 2000); // Hide modal after 3 seconds
       }
     } catch (error) {
       console.error("Error: ", error);
@@ -862,26 +862,26 @@ export default function RoomEdit() {
 
                       {/* </button> */}
                       <div>
-                      {selectedFilesForDocument.map((fileObj, index) => (
-                        <div key={index} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} >
-                          <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px' }} />
-                          <img
-                            src="X.png"
-                            alt="Close"
-                            style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              cursor: 'pointer',
-                              width: '23px',
-                              height: '23px',
-                              marginLeft: '5px',
-                              marginTop: '5px'
-                            }}
-                            onClick={() => deleteFileFromAPI(fileObj.id)}
-                          />
-                        </div>
-                      ))}
+                        {selectedFilesForDocument.map((fileObj, index) => (
+                          <div key={index} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} >
+                            <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px' }} />
+                            <img
+                              src="X.png"
+                              alt="Close"
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                cursor: 'pointer',
+                                width: '23px',
+                                height: '23px',
+                                marginLeft: '5px',
+                                marginTop: '5px'
+                              }}
+                              onClick={() => deleteFileFromAPI(fileObj.id)}
+                            />
+                          </div>
+                        ))}
                       </div>
 
                       {showModal && (
@@ -938,8 +938,5 @@ export default function RoomEdit() {
       )}
     </>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> refs/remotes/origin/main
+

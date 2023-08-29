@@ -1399,6 +1399,7 @@ export default function RoomEdit() {
                           options={ownerOptions}
                           value={selectedOwners}
                           onChange={option => setSelectedOwners(option)}
+                          isSearchable={true}
                           placeholder="Owner"
                           styles={{ container: (provided) => ({ ...provided, width: '300px', fontSize: '13px' }) }}
                         />

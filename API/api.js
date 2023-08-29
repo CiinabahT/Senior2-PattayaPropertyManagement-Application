@@ -18,6 +18,10 @@ const DELETE_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons
 const ADD_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/createcontact';
 const CREATE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/roomprice';
 const DELETE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/editroomprice';
+const GET_CONTRACT_BY_ID_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts';
+const GET_FINANCE_URL = 'https://pattayaavenueproperty.xyz/api/transactions/transaction';
+const GET_DELETE_FINANCIAL_URL = 'https://pattayaavenueproperty.xyz/api/transactions/deletedtransaction';
+const GET_ALL_ROOM_NAME = 'https://pattayaavenueproperty.xyz/api/rooms/roomname';
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -29,6 +33,39 @@ export const fetchPlaces = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching places:', error);
+    return [];
+  }
+};
+
+export const fetchAllRoomName = async () => {
+  try {
+    console.log(GET_ALL_ROOM_NAME);
+    const response = await axios.get(GET_ALL_ROOM_NAME);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Room Name:', error);
+    return [];
+  }
+};
+
+export const fetchDeleteFinance = async () => {
+  try {
+    console.log(GET_DELETE_FINANCIAL_URL);
+    const response = await axios.get(GET_DELETE_FINANCIAL_URL);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Delete Finance:', error);
+    return [];
+  }
+};
+
+export const fetchFinance = async () => {
+  try {
+    console.log(GET_FINANCE_URL);
+    const response = await axios.get(GET_FINANCE_URL);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching finance:', error);
     return [];
   }
 };
@@ -198,6 +235,15 @@ export const getContactPeople = async (PersonId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Contact by ID:', error);
+  }
+}
+
+export const getContractByID = async (ContractID) => {
+  try {
+    const response = await axios.get(`${GET_CONTRACT_BY_ID_URL}/${ContractID}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Contract by ID:', error);
   }
 }
 // api for delete room price

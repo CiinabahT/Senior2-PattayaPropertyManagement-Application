@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.js';
 import Head from 'next/head';
 import FinancialRecordTable from '../components/FinanciaHistoryTable.js';
+import { fetchDeleteFinance } from '../API/api.js';
 
 export default function FinancialRecord() {
   const [isAddContractModalOpen, setIsAddContractModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
+
+  const [records, setRecords] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchDeleteFinance();
+      setRecords(data);
+    };
+
+    fetchData();
+  }, []);
 
   const handleCloseModal = () => {
     setIsAddContractModalOpen(false);
@@ -19,90 +31,6 @@ export default function FinancialRecord() {
     { value: 'room1', label: 'Room 1' },
     { value: 'room2', label: 'Room 2' },
   ];
-
-  const records = [
-    {
-      expenseType: 'Rental',
-      roomAddress: '123 Main St',
-      paymentType: 'Credit Card',
-      deletedDate: '2023-08-15',
-      amountofMoney: 1500,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Deposit',
-      roomAddress: '456 Elm St',
-      paymentType: 'Bank Transfer',
-      deletedDate: '2023-08-16',
-      amountofMoney: 600,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Electric Bill',
-      roomAddress: '789 Oak Rd',
-      paymentType: 'Cash',
-      deletedDate: '2023-08-17',
-      amountofMoney: 100,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Water Bill',
-      roomAddress: '101 Pine Ave',
-      paymentType: 'PayPal',
-      deletedDate: '2023-08-18',
-      amountofMoney: 50,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Repair',
-      roomAddress: '222 Maple St',
-      paymentType: 'Credit Card',
-      deletedDate: '2023-08-19',
-      amountofMoney: 300,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Mulct',
-      roomAddress: '333 Cedar Rd',
-      paymentType: 'Cash',
-      deletedDate: '2023-08-20',
-      amountofMoney: 200,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Rental',
-      roomAddress: '444 Birch Ave',
-      paymentType: 'Bank Transfer',
-      deletedDate: '2023-08-21',
-      amountofMoney: 1600,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Electric Bill',
-      roomAddress: '555 Oak Rd',
-      paymentType: 'Cash',
-      deletedDate: '2023-08-22',
-      amountofMoney: 120,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Water Bill',
-      roomAddress: '666 Elm St',
-      paymentType: 'PayPal',
-      deletedDate: '2023-08-23',
-      amountofMoney: 70,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-    {
-      expenseType: 'Repair',
-      roomAddress: '777 Maple Ave',
-      paymentType: 'Credit Card',
-      deletedDate: '2023-08-24',
-      amountofMoney: 250,
-      info: 'Lorem ipsum dolor sit amet...',
-    },
-  ];
-
 
 
   return (

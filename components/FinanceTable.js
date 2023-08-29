@@ -21,25 +21,27 @@ function FinanceTable({ records }) {
     }
     if (filterStatus) {
       filtered = filtered.filter(
-        (record) => record.expenseType.toLowerCase() === filterStatus.toLowerCase()
+        (record) => record.catorgory_type?.toLowerCase() === filterStatus.toLowerCase()
       );
     }
-
-
+  
     setFilteredRecords(filtered);
     setPageNumber(0); // Reset the page number when filtering
   }, [searchTerm, filterStatus, records]);
+  
 
   const currentRows = filteredRecords.slice(
     pageNumber * rowsPerPage,
     (pageNumber + 1) * rowsPerPage
   );
 
-  const handleInfoClick = (info) => {
+  const handleInfoClick = (Infodata) => {
     router.push({
       pathname: '/financeInfo',
+      query: {
+        TransactionID: Infodata.id,
+      },
     });
-    console.log(info);
   };
 
 
@@ -52,19 +54,19 @@ function FinanceTable({ records }) {
       },
       {
         Header: 'Expenses Type',
-        accessor: 'expenseType',
+        accessor: 'catorgory_type',
       },
       {
         Header: 'Room Address',
-        accessor: 'roomAddress',
+        accessor: 'room_address',
       },
       {
         Header: 'Payment Type',
-        accessor: 'paymentType',
+        accessor: 'payment_method',
       },
       {
         Header: 'Amount of Money',
-        accessor: 'amountofMoney',
+        accessor: 'amount',
       },
       {
         Header: 'More Info',
@@ -103,16 +105,18 @@ function FinanceTable({ records }) {
           type="text"
           placeholder=" Search.."
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ marginRight: '10px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', height: '25px' }}
+          style={{ marginRight: '20px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', height: '25px' }}
         />
+        <span>Filter by Expense Type : </span>
         <select onChange={(e) => setFilterStatus(e.target.value)} style={{ fontFamily: 'Kanit', width: '190px', outline: 'none', border: 'none', borderRadius: '5px', height: '28px' }}>
-          <option value="">Filter by Type of Expenses</option>
-          <option value="Rental">Rental</option>
-          <option value="Deposit">Deposit</option>
-          <option value="Electric Bill">Electric Bill</option>
-          <option value="Water Bill">Water Bill</option>
-          <option value="Repair">Repair</option>
-          <option value="Mulct">Mulct</option>
+          <option value="">All</option>
+          <option value="SELL">SELL</option>
+          <option value="RENTAL">RENTAL</option>
+          <option value="DEPOSIT">DEPOSIT</option>
+          <option value="ELECTRIC">ELECTRIC</option>
+          <option value="WATER">WATER</option>
+          <option value="REPAIR">REPAIR</option>
+          <option value="DEPT">DEPT</option>
         </select>
       </div>
       <table style={styles.table} {...getTableProps()}>

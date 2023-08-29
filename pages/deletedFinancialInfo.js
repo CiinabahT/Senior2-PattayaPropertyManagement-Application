@@ -7,6 +7,8 @@ export default function DeletedFinanceInfo() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const router = useRouter();
 
+  
+
   useEffect(() => {
 
     document.body.style.overflow = 'hidden';

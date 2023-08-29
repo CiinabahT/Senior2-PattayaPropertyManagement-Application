@@ -18,6 +18,8 @@ const DELETE_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons
 const ADD_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/createcontact';
 const CREATE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/roomprice';
 const DELETE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/editroomprice';
+const TRANSACTION_INFO_URL = 'https://pattayaavenueproperty.xyz/api/transactions/transaction';
+
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -226,6 +228,15 @@ export const AddPeopleContact = async (ContactInfo) => {
     return response.data;
   } catch (error) {
     console.error('Error Create contact:', error);
+  }
+};
+
+export const getFinancialInfo = async (TransactionId) => {
+  try {
+    const response = await axios.get(`${TRANSACTION_INFO_URL}/${TransactionId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Transaction by ID:', error);
   }
 };
 

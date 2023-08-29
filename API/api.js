@@ -19,6 +19,7 @@ const ADD_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/cr
 const CREATE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/roomprice';
 const DELETE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/editroomprice';
 const TRANSACTION_INFO_URL = 'https://pattayaavenueproperty.xyz/api/transactions/transaction';
+const DELETE_TRANSACTION_URL = 'https://pattayaavenueproperty.xyz/api/transactions/deletedtransaction';
 
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
@@ -240,9 +241,13 @@ export const getFinancialInfo = async (TransactionId) => {
   }
 };
 
-
-
-
+export const deleteTransaction = async (TransactionId) => {
+  try {
+    const response = await axios.post(`${DELETE_TRANSACTION_URL}/${TransactionId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting Transaction:', error);
+  }
+};
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-

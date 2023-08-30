@@ -18,6 +18,8 @@ const DELETE_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons
 const ADD_PEOPLE_CONTACT_URL = 'https://pattayaavenueproperty.xyz/api/persons/createcontact';
 const CREATE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/roomprice';
 const DELETE_ROOM_PRICE = 'https://pattayaavenueproperty.xyz/api/rooms/editroomprice';
+const TRANSACTION_INFO_URL = 'https://pattayaavenueproperty.xyz/api/transactions/transaction';
+const DELETE_TRANSACTION_URL = 'https://pattayaavenueproperty.xyz/api/transactions/deletedtransaction';
 const GET_CONTRACT_BY_ID_URL = 'https://pattayaavenueproperty.xyz/api/contracts/contracts';
 const GET_FINANCE_URL = 'https://pattayaavenueproperty.xyz/api/transactions/transaction';
 const GET_DELETE_FINANCIAL_URL = 'https://pattayaavenueproperty.xyz/api/transactions/deletedtransaction';
@@ -285,9 +287,24 @@ export const AddFinance = async (FinanceInfo) => {
   }
 };
 
+export const getFinancialInfo = async (TransactionId) => {
+  try {
+    const response = await axios.get(`${TRANSACTION_INFO_URL}/${TransactionId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Transaction by ID:', error);
+  }
+};
 
+export const deleteTransaction = async (TransactionId) => {
+  try {
+    const response = await axios.post(`${DELETE_TRANSACTION_URL}/${TransactionId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting Transaction:', error);
+  }
+};
 
 
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-

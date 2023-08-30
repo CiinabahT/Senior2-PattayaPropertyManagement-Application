@@ -106,9 +106,9 @@ export default function RoomEdit() {
           };
 
 
-
           // Your existing logic to populate 'selectedFilesForDocument'
           if (data.room_documents && data.room_documents.length > 0) {
+            console.log("data.room_documents", data.room_documents)
             const roomDoc = data.room_documents.map(document => {
               let preview;
 

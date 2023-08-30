@@ -80,7 +80,7 @@ export default function PeopleInfo() {
       identity_number: editablePersonInfo.identity_number,
     };
     const BankInfo = {
-      id: parseInt(PersonId),
+      id: parseInt(editablePersonInfo.bank_accounts.id),
       bank_name: editablePersonInfo.bank_accounts.bank_name,
       bank_address: editablePersonInfo.bank_accounts.bank_address,
       account_name: editablePersonInfo.bank_accounts.account_name,
@@ -179,21 +179,24 @@ export default function PeopleInfo() {
   };
 
 
-  const commonLabelStyle = {
-    fontFamily: 'Kanit',
-    fontSize: '18px'
-  };
-
-  const commonInputStyle = {
-    marginBottom: '15px',
+  const commonInputaStyle = {
     width: '200px',
-    height: '30px',
+    height: '35px',
     fontFamily: 'Kanit',
     outline: 'none',
-    border: 'none',
     borderRadius: '5px',
-    fontSize: '15px',
-    marginTop: '2px'
+    border: '1px solid #ccc',
+    backgroundColor: 'white',
+    color: 'black',
+    fontWeight: 'bold',
+    marginBottom: '15px',
+  };
+
+  const commonLabelStyles = {
+    display: 'block',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    fontFamily: 'Kanit'
   };
 
   const commonBankStyle = {
@@ -205,7 +208,18 @@ export default function PeopleInfo() {
     outline: 'none',
     borderRadius: '5px',
     fontSize: '14px',
-    marginRight: '30px'
+    marginRight: '30px',
+    fontWeight: 'bold',
+    marginBottom: '15px',
+    color: 'black',
+    backgroundColor: 'white',
+  };
+
+  const commonBankLabelStyles = {
+    display: 'block',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    fontFamily: 'Kanit'
   };
 
   return (
@@ -269,14 +283,14 @@ export default function PeopleInfo() {
           <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginBottom: '40px', marginTop: '10px' }} />
           <div style={{ width: '100%' }}>
 
-            <div><label style={commonLabelStyle}>Name-Surname:</label></div>
-            <input type="text" value={editablePersonInfo.full_name || ''} placeholder='Name - Surname..' onChange={(e) => handleEditableInputChange(e, 'full_name')} style={commonInputStyle} />
+            <div><label style={commonLabelStyles}>Name-Surname:</label></div>
+            <input type="text" value={editablePersonInfo.full_name || ''} placeholder='Name - Surname..' onChange={(e) => handleEditableInputChange(e, 'full_name')} style={commonInputaStyle} />
 
-            <div><label style={commonLabelStyle}>Passport/ID:</label></div>
-            <input type="text" value={editablePersonInfo.identity_number || ''} placeholder='Passport/ID..' onChange={(e) => handleEditableInputChange(e, 'identity_number')} style={commonInputStyle} />
+            <div><label style={commonLabelStyles}>Passport/ID:</label></div>
+            <input type="text" value={editablePersonInfo.identity_number || ''} placeholder='Passport/ID..' onChange={(e) => handleEditableInputChange(e, 'identity_number')} style={commonInputaStyle} />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label style={commonLabelStyle}>Contact:</label>
+              <label style={{display: 'block', fontSize: '25px',fontWeight: 'bold',fontFamily: 'Kanit', marginTop: '30px'}}>Contact:</label>
               <button
                 style={{
                   fontSize: '13px',
@@ -299,11 +313,11 @@ export default function PeopleInfo() {
             <PeopleInfoContactTable records={records} />
 
 
-            <h2><label style={commonLabelStyle}>Bank Account: </label></h2>
+            <h2><label style={{display: 'block', fontSize: '25px',fontWeight: 'bold',fontFamily: 'Kanit'}}>Bank Account: </label></h2>
             {personInfo.bank_accounts ? (
               <div style={{ display: 'flex', flex: '0 0 25%' }}>
                 <div>
-                  <div><label style={{ fontFamily: 'Kanit' }}>Bank Name: </label></div>
+                  <div><label style={commonBankLabelStyles}>Bank Name: </label></div>
                   <input
                     type="text"
                     value={editablePersonInfo.bank_accounts.bank_name || ''}
@@ -319,7 +333,7 @@ export default function PeopleInfo() {
                   />
                 </div>
                 <div>
-                  <div><label style={{ fontFamily: 'Kanit' }}>Bank Address: </label></div>
+                  <div><label style={commonBankLabelStyles}>Bank Address: </label></div>
                   <input
                     type="text"
                     value={editablePersonInfo.bank_accounts.bank_address || ''}
@@ -335,7 +349,7 @@ export default function PeopleInfo() {
                   />
                 </div>
                 <div>
-                  <div><label style={{ fontFamily: 'Kanit' }}>Account Name: </label></div>
+                  <div><label style={commonBankLabelStyles}>Account Name: </label></div>
                   <input
                     type="text"
                     value={editablePersonInfo.bank_accounts.account_name || ''}
@@ -351,7 +365,7 @@ export default function PeopleInfo() {
                   />
                 </div>
                 <div>
-                  <div><label style={{ fontFamily: 'Kanit' }}>Account No: </label></div>
+                  <div><label style={commonBankLabelStyles}>Account No: </label></div>
                   <input
                     type="text"
                     value={editablePersonInfo.bank_accounts.account_number || ''}
@@ -367,7 +381,7 @@ export default function PeopleInfo() {
                   />
                 </div>
                 <div>
-                  <div><label style={{ fontFamily: 'Kanit' }}>Swift Code: </label></div>
+                  <div><label style={commonBankLabelStyles}>Swift Code: </label></div>
                   <input
                     type="text"
                     value={editablePersonInfo.bank_accounts.swift_code || ''}
@@ -413,7 +427,8 @@ export default function PeopleInfo() {
               <option value="WeChat">WeChat</option>
               <option value="Tel">Tel</option>
               <option value="Weibo">Weibo</option>
-              <option value="Shopee">Email</option>
+              <option value="Email">Email</option>
+              <option value="Skype">Skype</option>
             </select>
             {showContactMethodWarning && <div style={{color: 'red'}}>*Please Select the Contact Method</div>}
 

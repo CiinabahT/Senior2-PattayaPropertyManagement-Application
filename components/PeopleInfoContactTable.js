@@ -3,15 +3,22 @@ import { useTable } from 'react-table';
 import { useRouter } from 'next/router';
 
 function PeopleInfoContactTable({ records }) {
+  if (!records) {
+    return <div>Loading...</div>; // or some other fallback UI
+  }
   const rowsPerPage = 3;
   const [pageNumber, setPageNumber] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
-  const [filteredRecords, setFilteredRecords] = useState(records);
+  const [filteredRecords, setFilteredRecords] = useState(records || []);
   const [isDeleteContactModalOpen, setIsDeleteContactModalOpen] = useState(false);
+
   const router = useRouter();
 
+
+
   useEffect(() => {
+    console.log("Records inside useEffect: ", records);
     let filtered = records;
     if (searchTerm) {
       filtered = filtered.filter((record) =>
@@ -29,10 +36,11 @@ function PeopleInfoContactTable({ records }) {
     setPageNumber(0); // Reset the page number when filtering
   }, [searchTerm, filterStatus, records]);
 
-  const currentRows = filteredRecords.slice(
+  const currentRows = (filteredRecords || []).slice(
     pageNumber * rowsPerPage,
     (pageNumber + 1) * rowsPerPage
   );
+
 
   const handleInfoClick = (info) => {
     router.push(`/peopleInfo`);
@@ -132,7 +140,7 @@ function PeopleInfoContactTable({ records }) {
         </tbody>
       </table>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (
+        {Array.from({ length: Math.ceil((filteredRecords || []).length / rowsPerPage) }, (_, k) => (
           <button
             key={k}
             onClick={() => paginate(k + 1)}

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.js';
 import Head from 'next/head';
 import CreatableSelect from 'react-select/creatable';
 import FinanceTable from '../components/FinanceTable.js';
+import { fetchFinance } from '../API/api.js';
 
 export default function Finance() {
   const [isAddContractModalOpen, setIsAddContractModalOpen] = useState(false);
@@ -21,6 +22,16 @@ export default function Finance() {
   };
 
 
+  const [records, setRecords] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchFinance();
+      setRecords(data);
+    };
+
+    fetchData();
+  }, []);
 
   const handleDocumentChange = (e) => {
     // Handle the document changes here
@@ -57,68 +68,7 @@ export default function Finance() {
   ];
 
 
-  const records = [
-    {
-      expenseType: 'Rental',
-      roomAddress: '123 Main St',
-      paymentType: 'Credit Card',
-      amountofMoney: 1500,
-    },
-    {
-      expenseType: 'Deposit',
-      roomAddress: '456 Elm St',
-      paymentType: 'Bank Transfer',
-      amountofMoney: 600,
-    },
-    {
-      expenseType: 'Electric Bill',
-      roomAddress: '789 Oak Rd',
-      paymentType: 'Cash',
-      amountofMoney: 100,
-    },
-    {
-      expenseType: 'Water Bill',
-      roomAddress: '101 Pine Ave',
-      paymentType: 'PayPal',
-      amountofMoney: 50,
-    },
-    {
-      expenseType: 'Repair',
-      roomAddress: '222 Maple St',
-      paymentType: 'Credit Card',
-      amountofMoney: 300,
-    },
-    {
-      expenseType: 'Mulct',
-      roomAddress: '333 Cedar Rd',
-      paymentType: 'Cash',
-      amountofMoney: 200,
-    },
-    {
-      expenseType: 'Rental',
-      roomAddress: '444 Birch Ave',
-      paymentType: 'Bank Transfer',
-      amountofMoney: 1600,
-    },
-    {
-      expenseType: 'Electric Bill',
-      roomAddress: '555 Oak Rd',
-      paymentType: 'Cash',
-      amountofMoney: 120,
-    },
-    {
-      expenseType: 'Water Bill',
-      roomAddress: '666 Elm St',
-      paymentType: 'PayPal',
-      amountofMoney: 70,
-    },
-    {
-      expenseType: 'Repair',
-      roomAddress: '777 Maple Ave',
-      paymentType: 'Credit Card',
-      amountofMoney: 250,
-    },
-  ];
+
 
 
 

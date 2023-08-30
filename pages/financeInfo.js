@@ -265,13 +265,12 @@ export default function FinanceInfo() {
             <div>
               {selectedFilesForDocument.map((fileObj, index) => (
                 <div key={index} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} >
-                  <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px', marginLeft: '650px', marginTop: '-550px' }} />
+                  <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px', marginLeft: '600px', marginTop: '-550px' }} />
                 </div>
               ))}
             </div>
+            {/* SHOW DOC */}
           </div>
-          {/* SHOW DOC */}
-
           <div style={{ width: '100%', height: '500px' }}>
           </div>
         </div>

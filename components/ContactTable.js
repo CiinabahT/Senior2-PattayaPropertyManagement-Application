@@ -7,11 +7,19 @@ function ContractTable({ records }) {
   const [pageNumber, setPageNumber] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
-  const [filteredRecords, setFilteredRecords] = useState(records);
+  const [filteredRecords, setFilteredRecords] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
-    let filtered = records;
+    let filtered = [...records].sort((a, b) => {
+      const aStatus = a.contract_status ? a.contract_status.toLowerCase() : "";
+      const bStatus = b.contract_status ? b.contract_status.toLowerCase() : "";
+  
+      if (aStatus === 'active' && bStatus !== 'active') return -1;
+      if (bStatus === 'active' && aStatus !== 'active') return 1;
+      return 0;  // If both are 'active' or both are 'inactive' or any other status, they remain in their relative order.
+    });
+  
     if (searchTerm) {
       filtered = filtered.filter((record) =>
         Object.values(record).some((value) =>
@@ -19,25 +27,32 @@ function ContractTable({ records }) {
         )
       );
     }
+  
     if (filterStatus) {
-      filtered = filtered.filter(
-        (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
-      );
+      filtered = filtered.filter((record) => {
+        const recordStatus = record.contract_status ? record.contract_status.toLowerCase() : "";
+        return recordStatus === filterStatus.toLowerCase();
+      });
     }
+  
     setFilteredRecords(filtered);
-    setPageNumber(0); // Reset the page number when filtering
+    setPageNumber(0);
   }, [searchTerm, filterStatus, records]);
+  
 
   const currentRows = filteredRecords.slice(
     pageNumber * rowsPerPage,
     (pageNumber + 1) * rowsPerPage
   );
 
-  const handleInfoClick = (info) => {
+
+  const handleInfoClick = (Infodata) => {
     router.push({
       pathname: '/contractInfo',
+      query: {
+        ContractID: Infodata.id,
+      },
     });
-    console.log(info);
   };
 
   // const handleEndContractClick = (info) => {
@@ -136,6 +151,12 @@ function ContractTable({ records }) {
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{ marginRight: '10px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', height: '25px' }}
         />
+        <span>Filter by Contract Status : </span>
+        <select onChange={(e) => setFilterStatus(e.target.value)} style={{ fontFamily: 'Kanit', width: '150px', outline: 'none', border: 'none', borderRadius: '5px', height: '28px' }}>
+          <option value="">All</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
         {/* <select onChange={(e) => setFilterStatus(e.target.value)} style={{ fontFamily: 'Kanit', width: '150px', outline: 'none', border: 'none', borderRadius: '5px', height: '28px'}}>
           <option value="">Filter by Status</option>
           <option value="active">Active</option>

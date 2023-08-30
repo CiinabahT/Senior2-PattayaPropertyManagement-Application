@@ -2,10 +2,98 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar.js';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { getFinancialInfo } from '../API/api.js';
 
 export default function DeletedFinanceInfo() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const router = useRouter();
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  // create state for financial info by each 
+  const [description, setDescription] = useState('');
+  const [note, setNote] = useState('');
+  const [typeOfExpenses, setTypeOfExpenses] = useState('');
+  const [amountOfMoney, setAmountOfMoney] = useState('');
+  const [paymentType, setPaymentType] = useState('');
+  const [office, setOffice] = useState('');
+  const [type, setType] = useState('');
+  const [selectedFilesForDocument, setSelectedFilesForDocument] = useState([]);
+
+  useEffect(() => {
+    const TransactionId = router.query.id;
+
+    getFinancialInfo(TransactionId)
+      .then(data => {
+        console.log('API Response:', data);
+        setDescription(data.description);
+        setNote(data.remark);
+        setTypeOfExpenses(data.catorgory_type);
+        setAmountOfMoney(data.amount);
+        setPaymentType(data.payment_method);
+        setOffice(data.room_address);
+        setType(data.is_receive);
+
+        const base64ToBlob = (base64, mimeType = 'application/pdf') => {
+
+          const byteCharacters = atob(base64);
+          const byteNumbers = new Array(byteCharacters.length);
+
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+
+          const byteArray = new Uint8Array(byteNumbers);
+          return new Blob([byteArray], { type: mimeType });
+        };
+
+        if (data.transaction_document) {
+          console.log([data.transaction_document]);
+          let documents = [data.transaction_document];
+          const roomDoc = documents.map(document => {
+            console.log(document);
+            let preview;
+            const blob = base64ToBlob(document.document_url);
+            preview = URL.createObjectURL(blob);
+            return {
+              id: document.id,
+              name: `PDF-${document.id}`,
+              preview: preview,
+            };
+          });
+          setSelectedFilesForDocument(roomDoc);
+        }
+      })
+  }, []);
+
+  useEffect(() => {
+  }, [selectedFilesForDocument]);
+
+  useEffect(() => {
+    return () => {
+      selectedFilesForDocument.forEach(fileObj => {
+        URL.revokeObjectURL(fileObj.preview);
+      });
+    };
+  }, [selectedFilesForDocument]);
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
 
@@ -77,6 +165,7 @@ export default function DeletedFinanceInfo() {
           <div style={{ width: '100%' }}>
             <div><label style={commonLabelStyle}>Description:</label></div>
             <textarea
+              value={description}
               placeholder="Description..."
               readOnly
               style={{
@@ -94,6 +183,7 @@ export default function DeletedFinanceInfo() {
             />
             <div><label style={commonLabelStyle}>Note:</label></div>
             <textarea
+              value={note}
               placeholder="Note..."
               readOnly
               style={{
@@ -112,22 +202,30 @@ export default function DeletedFinanceInfo() {
             />
 
             <div><label style={commonLabelStyle}>Type of Expenses:</label></div>
-            <input type="text" placeholder='Type of Expense..' style={commonInputStyle} readOnly />
+            <input type="text" value={typeOfExpenses} placeholder='Type of Expense..' style={commonInputStyle} readOnly />
 
             <div><label style={commonLabelStyle}>Amount of Money:</label></div>
-            <input type="text" placeholder='Amount of Money..' style={commonInputStyle} readOnly />
+            <input type="text" value={amountOfMoney} placeholder='Amount of Money..' style={commonInputStyle} readOnly />
 
             <div><label style={commonLabelStyle}>Payment Type:</label></div>
-            <input type="text" placeholder='Payment Type..' style={commonInputStyle} readOnly />
+            <input type="text" value={paymentType} placeholder='Payment Type..' style={commonInputStyle} readOnly />
 
             <div><label style={commonLabelStyle}>Office:</label></div>
-            <input type="text" placeholder='Office..' style={commonInputStyle} readOnly />
+            <input type="text" value={office} placeholder='Office..' style={commonInputStyle} readOnly />
 
             <div><label style={commonLabelStyle}>Type:</label></div>
-            <input type="text" placeholder='Type..' style={commonInputStyle} readOnly />
-
-            <div><button onClick={handleDownloadClick} style={{ width: '100px', height: '40px', fontFamily: 'Kanit', width: '170px', outline: 'none', border: 'none', borderRadius: '5px', backgroundColor: '#326896', fontSize: '15px', marginTop: '10px' }}>Download Document</button></div>
+            <input type="text" value={type} placeholder='Type..' style={commonInputStyle} readOnly />
           </div>
+
+          {/* SHOW DOC */}
+          <div>
+            {selectedFilesForDocument.map((fileObj, index) => (
+              <div key={index} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} >
+                <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px', marginLeft: '600px', marginTop: '-550px' }} />
+              </div>
+            ))}
+          </div>
+          {/* SHOW DOC */}
 
           <div style={{ width: '100%', height: '500px' }}>
           </div>
@@ -155,5 +253,3 @@ export default function DeletedFinanceInfo() {
     </>
   );
 }
-
-

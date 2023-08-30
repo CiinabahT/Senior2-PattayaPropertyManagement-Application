@@ -22,6 +22,7 @@ const GET_CONTRACT_BY_ID_URL = 'https://pattayaavenueproperty.xyz/api/contracts/
 const GET_FINANCE_URL = 'https://pattayaavenueproperty.xyz/api/transactions/transaction';
 const GET_DELETE_FINANCIAL_URL = 'https://pattayaavenueproperty.xyz/api/transactions/deletedtransaction';
 const GET_ALL_ROOM_NAME = 'https://pattayaavenueproperty.xyz/api/rooms/roomname';
+const POST_FINANCE = 'https://pattayaavenueproperty.xyz/api/transactions/transaction';
 
 // Set NODE_TLS_REJECT_UNAUTHORIZED to 0 to temporarily disable SSL certificate validation
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -272,6 +273,15 @@ export const AddPeopleContact = async (ContactInfo) => {
     return response.data;
   } catch (error) {
     console.error('Error Create contact:', error);
+  }
+};
+
+export const AddFinance = async (FinanceInfo) => {
+  try {
+    const response = await axios.post(POST_FINANCE, FinanceInfo);
+    return response.data;
+  } catch (error) {
+    console.error('Error Create Finance:', error);
   }
 };
 

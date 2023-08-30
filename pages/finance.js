@@ -4,21 +4,166 @@ import Head from 'next/head';
 import CreatableSelect from 'react-select/creatable';
 import FinanceTable from '../components/FinanceTable.js';
 import { fetchFinance } from '../API/api.js';
+import { AddFinance } from '../API/api.js';
+import { fetchAllRoomName } from '../API/api.js';
 
 export default function Finance() {
   const [isAddContractModalOpen, setIsAddContractModalOpen] = useState(false);
   const [selectedExpenses, setSelectedExpenses] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [selectedOffice, setSelectedOffice] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
   const [documentObj, setDocumentObj] = useState(null);
 
-  const handleCloseModal = () => {
-    setIsAddContractModalOpen(false);
+  const [description, setDescription] = useState("");
+  const [note, setNote] = useState("");
+  const [amount, setAmount] = useState("");
+
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [roomOptions, setRoomOptions] = useState([]);
+  const [selectedFilesForDocument, setSelectedFilesForDocument] = useState([]);
+  const firstBase64 = selectedFilesForDocument.length ? selectedFilesForDocument[0].base64 : null;
+
+  const [validationErrors, setValidationErrors] = useState({});
+
+
+  const validateForm = () => {
+    const newValidationErrors = {};
+
+    if (!selectedRoom?.value) {
+      newValidationErrors.room = "*Please Select Room";
+    }
+
+    if (!selectedType?.value) {
+      newValidationErrors.type = "*Please Select Type";
+    }
+
+    if (!parseFloat(amount)) {
+      newValidationErrors.amount = "*Please input Amount (Number EX. 100)";
+    }
+
+    if (!selectedPayment?.value) {
+      newValidationErrors.selectedPayment = "*Please Select Payment Type";
+    }
+
+    if (selectedFilesForDocument.length === 0) {
+      newValidationErrors.file = "*Please Select a File";
+    }
+
+    setValidationErrors(newValidationErrors);
+
+    return Object.keys(newValidationErrors).length === 0;
   };
 
-  const handleAddModal = () => {
+  // const LastvalidateForm = () => {
+  //   const newValidationErrors = {};
+
+  //   if (!selectedRoom?.value && !selectedType?.value && !selectedExpenses?.value && !parseFloat(amount) && !selectedPayment?.value && selectedFilesForDocument.length === 0) {
+  //   }
+
+  //   setValidationErrors(newValidationErrors);
+
+  //   return Object.keys(newValidationErrors).length === 0;
+  // };
+
+  const handleCloseModal = () => {
     setIsAddContractModalOpen(false);
+    setSelectedRoom(null);
+    setSelectedType(null);
+    setDescription('');
+    setSelectedPayment(null);
+    setAmount('');
+    setNote('');
+    setSelectedFilesForDocument([]);
+
+    // Reset any validation errors
+    setValidationErrors({});
+  };
+
+
+  const handleFileChangeForDocument = async (event) => {
+    const files = Array.from(event.target.files);
+    setValidationErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      delete newErrors.file;
+      return newErrors;
+    });
+    const base64Files = await Promise.all(files.map(async (file) => {
+      const base64 = await toBase64file(file);
+      return {
+        id: Date.now(),
+        name: file.name,
+        preview: URL.createObjectURL(file),
+        base64
+      };
+    }));
+
+    setSelectedFilesForDocument(prevFiles => [...prevFiles, ...base64Files]);
+  };
+
+
+  const handleDeleteFile = (indexToDelete) => {
+    setSelectedFilesForDocument(prevFiles =>
+      prevFiles.filter((_, index) => index !== indexToDelete)
+    );
+  };
+
+  const toBase64file = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.split(',')[1]); // Get only the Base64 content, not the MIME type
+    reader.onerror = (error) => reject(error);
+  });
+
+  useEffect(() => {
+    // This effect cleans up object URLs to avoid memory leaks.
+    return () => {
+      selectedFilesForDocument.forEach(fileObj => {
+        URL.revokeObjectURL(fileObj.preview);
+      });
+    };
+  }, [selectedFilesForDocument]);
+
+
+  const handleAddDocument = async () => {
+    let lastCheck = false
+
+    if (selectedRoom?.value && selectedType?.value && parseFloat(amount) && selectedPayment?.value && selectedFilesForDocument.length === 0) {
+      lastCheck = true
+    }
+
+  
+    if (validateForm() || lastCheck) {
+    const FinanceInfo = {
+      room_id: selectedRoom?.value,
+      category_type: selectedType?.value,
+      is_receive: false, // or some condition
+      description,
+      payment_method: selectedPayment?.value,
+      amount: parseFloat(amount),
+      remark: note,
+      document_url: firstBase64 // You'll need to actually upload the document and get this URL
+    };
+
+    try {
+      const data = await AddFinance(FinanceInfo);
+      console.log("Success", data);
+
+      setSelectedRoom(null);
+      setSelectedType(null);
+      setDescription('');
+      setSelectedExpenses(null);
+      setSelectedPayment(null);
+      setAmount('');
+      setNote('');
+      setSelectedFilesForDocument([]);
+      window.location.reload();
+    } catch (error) {
+      console.log("Error adding document", error);
+    }
+  }
   };
 
 
@@ -33,13 +178,33 @@ export default function Finance() {
     fetchData();
   }, []);
 
-  const handleDocumentChange = (e) => {
-    // Handle the document changes here
-    // Example:
-    const file = e.target.files[0];
-    const previewUrl = URL.createObjectURL(file);
-    setDocumentObj({ name: file.name, previewUrl });
+  //////////ROOM DROPDOWN DATA
+
+  const fetchRoomData = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchAllRoomName();
+      setRooms(data);
+      setLoading(false);
+
+    } catch (err) {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    const options = rooms.map(room => ({
+      value: room.room_id,
+      label: room.room_address
+    }));
+
+    setRoomOptions(options);
+  }, [rooms]);
+
+  useEffect(() => {
+    fetchRoomData();
+  }, []);
+
 
   const ExpenseOptions = [
     { value: 'rental', label: 'Rental' },
@@ -51,39 +216,22 @@ export default function Finance() {
   ];
 
   const PaymentOptions = [
-    { value: 'cash', label: 'Cash' },
-    { value: 'deposit', label: 'Bank Transfer' },
-    { value: 'electricBill', label: 'Paypal' },
-    { value: 'waterBill', label: 'Credit Card' },
-  ];
-
-  const OfficeOptions = [
-    { value: 'grandCentricSea', label: 'Grand Centric Sea' },
-
+    { value: 'CREDIT', label: 'CREDIT' },
+    { value: 'CASH', label: 'CASH' },
+    { value: 'TRANSFER', label: 'TRANSFER' },
   ];
 
   const TypeOptions = [
-    { value: 'revenue', label: 'Revenue' },
-    { value: 'expense', label: 'Expense' },
+    { value: 'SELL', label: 'SELL' },
+    { value: 'RENTAL', label: 'RENTAL' },
+    { value: 'DEPOSIT', label: 'DEPOSIT' },
+    { value: 'ELECTRIC', label: 'ELECTRIC' },
+    { value: 'WATER', label: 'WATER' },
+    { value: 'REPAIR', label: 'REPAIR' },
+    { value: 'DEPT', label: 'DEPT' },
   ];
 
 
-
-
-
-
-  const commonInputStyle = {
-    width: '100%',
-    padding: '8px',
-    margin: '5px 0',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    width: '372px',
-    fontFamily: 'Kanit',
-    outline: 'none',
-    border: 'none',
-    fontSize: '14px'
-  };
 
   const secondInputStyle = {
     padding: '8px',
@@ -96,7 +244,6 @@ export default function Finance() {
     border: 'none',
     fontSize: '14px'
   };
-
 
   return (
     <>
@@ -148,12 +295,15 @@ export default function Finance() {
         }}>
           <div style={{
             backgroundColor: 'white', width: '400px', padding: '30px', borderRadius: '10px', fontFamily: 'Kanit, sans-serif',
-            boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)'
+            boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
           }}>
+
             <h2>Add Document</h2>
-            <div><label htmlFor="name-surname">Description* </label></div>
+            <div style={{ flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}><label htmlFor="name-surname">Description* </label></div>
             <textarea
               placeholder="Description..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               style={{
                 marginTop: '5px',
                 height: '50px',
@@ -167,9 +317,11 @@ export default function Finance() {
                 fontSize: '16px',
               }}
             />
-            <div><label htmlFor="name-surname">Note* </label></div>
+            <div style={{ flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}><label htmlFor="name-surname">Note* </label></div>
             <textarea
               placeholder="Note..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
               style={{
                 marginTop: '5px',
                 height: '50px',
@@ -183,112 +335,157 @@ export default function Finance() {
                 fontSize: '16px',
               }}
             />
-            <div><label>Type of Expense: </label></div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}>
+                <label>Room: </label>
+                <CreatableSelect
+                  options={roomOptions}
+                  value={selectedRoom}
+                  onChange={(value) => {
+                    setSelectedRoom(value);
+                    setValidationErrors((prevErrors) => {
+                      const newErrors = { ...prevErrors };
+                      delete newErrors.room;
+                      return newErrors;
+                    });
+                  }}
+                  isSearchable={true}
+                  placeholder="Room"
+                  styles={{ container: (provided) => ({ ...provided, width: '184px', fontSize: '13px' }) }}
+                />
+                {validationErrors.room && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.room}</div>}
+              </div>
+
+              <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}>
+                <label>Type: </label>
+                <CreatableSelect
+                  options={TypeOptions}
+                  value={selectedType}
+                  onChange={(value) => {
+                    setSelectedType(value);
+                    setValidationErrors((prevErrors) => {
+                      const newErrors = { ...prevErrors };
+                      delete newErrors.type;
+                      return newErrors;
+                    });
+                  }}
+                  isSearchable={false}
+                  placeholder="Expense/Revenue"
+                  styles={{ container: (provided) => ({ ...provided, width: '184px', fontSize: '13px' }) }}
+                />
+                {validationErrors.type && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.type}</div>}
+              </div>
+            </div>
+{/* 
+            <div style={{ flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}><label>Type of Expense: </label></div>
             <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold', marginTop: '5px', }}>
               <CreatableSelect
                 options={ExpenseOptions}
                 value={selectedExpenses}
-                onChange={setSelectedExpenses}
+                onChange={(value) => {
+                  setSelectedExpenses(value);
+                  setValidationErrors((prevErrors) => {
+                    const newErrors = { ...prevErrors };
+                    delete newErrors.selectedExpenses;
+                    return newErrors;
+                  });
+                }}
                 isSearchable={false}
                 placeholder="Type of Expense"
                 styles={{ container: (provided) => ({ ...provided, width: '387px', fontSize: '13px' }) }}
               />
-            </div>
+              {validationErrors.selectedExpenses && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.selectedExpenses}</div>}
+            </div> */}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
+              <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}>
                 <label htmlFor="start-rental-date">Amount of Money: </label>
-                <input id="start-rental-date" type="text" placeholder="Price.." style={secondInputStyle} />
+                <input value={amount}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setAmount(value);
+                    setValidationErrors((prevErrors) => {
+                      const newErrors = { ...prevErrors };
+                      delete newErrors.amount;
+                      return newErrors;
+                    });
+                  }}
+                  
+                  id="start-rental-date" type="text" placeholder="Price.." style={secondInputStyle} />
+                {validationErrors.amount && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.amount}</div>}
               </div>
+
               <div>
-                <div><label>Payment Type: </label></div>
+                <div style={{ flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}><label>Payment Type: </label></div>
                 <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}>
                   <CreatableSelect
                     options={PaymentOptions}
                     value={selectedPayment}
-                    onChange={setSelectedPayment}
+                    onChange={(value) => {
+                      setSelectedPayment(value);
+                      setValidationErrors((prevErrors) => {
+                        const newErrors = { ...prevErrors };
+                        delete newErrors.selectedPayment;
+                        return newErrors;
+                      });
+                    }}
                     isSearchable={false}
                     placeholder="Payment Type"
                     styles={{ container: (provided) => ({ ...provided, width: '184px', fontSize: '13px' }) }}
                   />
+                  {validationErrors.selectedPayment && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.selectedPayment}</div>}
                 </div>
               </div>
             </div>
 
-            <div><label>Office: </label></div>
-            <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold', marginTop: '5px', }}>
-              <CreatableSelect
-                options={OfficeOptions}
-                value={selectedOffice}
-                onChange={setSelectedOffice}
-                isSearchable={true}
-                placeholder="Select Office or Type a New One"
-                styles={{ container: (provided) => ({ ...provided, width: '387px', fontSize: '13px' }) }}
-              />
-            </div>
-
-            <div><label>Type: </label></div>
-            <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}>
-              <CreatableSelect
-                options={TypeOptions}
-                value={selectedType}
-                onChange={setSelectedType}
-                isSearchable={false}
-                placeholder="Expense/Revenue"
-                styles={{ container: (provided) => ({ ...provided, width: '184px', fontSize: '13px' }) }}
-              />
-            </div>
             <div>
-              <div><label>Document: </label></div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    padding: '10px 15px',
-                    background: '#326896',
-                    color: '#FFF',
-                    cursor: 'pointer',
-                    width: '150px',
-                    textAlign: 'center',
-                    borderRadius: '5px',
-                    marginTop: '2px'
-                  }}
-                >
-                  Choose File
-                  <input
-                    type="file"
-                    accept=".pdf, image/*"
-                    onChange={handleDocumentChange}
-                    style={{ display: 'none' }}
-                  />
-                </label>
-                <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginTop: '-90px', marginLeft: '30px' }}>
-                  <div
-                    style={{
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      width: '150px',
-                    }}
-                  >
-                    {documentObj?.name?.length > 12 ? `${documentObj.name.substring(0, 12)}...` : documentObj?.name}
+              <button
+                style={{ fontFamily: 'Kanit, sans-serif', marginBottom: '30px', backgroundColor: '#326896', outline: 'none', border: 'none', borderRadius: '5px', width: '180px', height: '45px', fontSize: '17px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                onClick={() => document.getElementById('fileInputForDocument').click()}
+              >
+                <img src="upload.png" alt="Upload" style={{ width: '20px', height: '20px', marginRight: '8px', marginLeft: '-5px' }} />
+                Select File
+              </button>
+              <input
+                id="fileInputForDocument"
+                type="file"
+                multiple
+                style={{ display: 'none' }}
+                onChange={handleFileChangeForDocument}
+              />
+              {validationErrors.file && <div style={{ color: "red", fontSize: '14px', marginTop: '-20px', fontWeight: 'bold' }}>{validationErrors.file}</div>}
+
+
+              {/* </button> */}
+              <div>
+                {selectedFilesForDocument.map((fileObj, index) => (
+                  <div key={index} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} >
+                    <embed src={fileObj.preview} type="application/pdf" style={{ marginTop: '-75px', marginLeft: '200px', width: '200px', height: '120px' }} />
+                    <img
+                      src="X.png"
+                      alt="Close"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        cursor: 'pointer',
+                        width: '23px',
+                        height: '23px',
+                        marginLeft: '5px',
+                        marginTop: '5px',
+                        marginLeft: '202px',
+                        marginTop: '-72px'
+                      }}
+                      onClick={() => handleDeleteFile(index)}
+                    />
                   </div>
-                  {documentObj?.previewUrl && (
-                    <img src={documentObj.previewUrl} alt={`preview`} style={{ width: '160px', height: '100px', borderRadius: '5px', marginTop: '10px' }} />
-                  )}
-                </div>
+                ))}
               </div>
             </div>
-
-
-
-
-
-
-
 
             <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '10px', }}>
               <button onClick={handleCloseModal} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', borderRadius: '5px', border: 'none', marginRight: '10px', marginLeft: '1px', width: '60px' }}>Close</button>
-              <button onClick={handleAddModal} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius: '5px', color: 'white', width: '60px' }}>Add</button>
+              <button onClick={handleAddDocument} style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', borderRadius: '5px', color: 'white', width: '60px' }}>Add</button>
             </div>
           </div>
         </div>

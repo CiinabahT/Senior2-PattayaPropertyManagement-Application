@@ -32,7 +32,7 @@ export default function DeletedFinanceInfo() {
   const [selectedFilesForDocument, setSelectedFilesForDocument] = useState([]);
 
   useEffect(() => {
-    const TransactionId = router.query.id;
+    const TransactionId = router.query.TransactionID;
 
     getFinancialInfo(TransactionId)
       .then(data => {
@@ -94,6 +94,7 @@ export default function DeletedFinanceInfo() {
   ////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////
+  
 
   useEffect(() => {
 

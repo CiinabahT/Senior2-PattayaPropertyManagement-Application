@@ -250,4 +250,15 @@ export const deleteTransaction = async (TransactionId) => {
   }
 };
 
+export const fetchDeleteFinance = async () => {
+  try {
+    console.log(GET_DELETE_FINANCIAL_URL);
+    const response = await axios.get(GET_DELETE_FINANCIAL_URL);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching Delete Finance:', error);
+    return [];
+  }
+};
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';

@@ -28,7 +28,7 @@ export default function FinanceInfo() {
   const [typeOfExpenses, setTypeOfExpenses] = useState('');
   const [amountOfMoney, setAmountOfMoney] = useState('');
   const [paymentType, setPaymentType] = useState('');
-  const [office, setOffice] = useState('');
+  const [Address, setAddress] = useState('');
   const [type, setType] = useState('');
   const [selectedFilesForDocument, setSelectedFilesForDocument] = useState([]);
 
@@ -45,7 +45,7 @@ export default function FinanceInfo() {
         setTypeOfExpenses(data.catorgory_type);
         setAmountOfMoney(data.amount);
         setPaymentType(data.payment_method);
-        setOffice(data.room_address);
+        setAddress(data.room_address);
         setType(data.is_receive);
 
         const base64ToBlob = (base64, mimeType = 'application/pdf') => {
@@ -254,8 +254,8 @@ export default function FinanceInfo() {
             <div><label style={commonLabelStyle}>Payment Type:</label></div>
             <input type="text" value={paymentType} placeholder='Payment Type..' style={commonInputStyle} readOnly />
 
-            <div><label style={commonLabelStyle}>Office:</label></div>
-            <input type="text" value={office} placeholder='Office..' style={commonInputStyle} readOnly />
+            <div><label style={commonLabelStyle}>Room Address:</label></div>
+            <input type="text" value={Address} placeholder='Room Address..' style={commonInputStyle} readOnly />
 
             <div><label style={commonLabelStyle}>Type:</label></div>
             <input type="text" value={type} placeholder='Type..' style={commonInputStyle} readOnly />

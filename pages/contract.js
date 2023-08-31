@@ -315,13 +315,14 @@ export default function Contract() {
       console.error("An error occurred:", error);
       // TODO: Add your error handling logic here
     }
-    router.push({
-      pathname: '/contract'
-    });
+    console.log("to refreash page")
+    // router.push({
+    //   pathname: '/contract'
+    // });
+    // router.push('/contract');
+    window.location.reload();
     resetForm();
     resetValidationStates();
-  } else {
-
   }
   };
 

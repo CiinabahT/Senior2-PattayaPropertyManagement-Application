@@ -251,6 +251,28 @@ export default function RoomManagement() {
                 marginTop: '5px'
               }}
             />
+
+            <label htmlFor="owner">Size(sqm):</label>
+            <input
+              id="owner"
+              type="text"
+              placeholder="Size(sqm).."
+              value={roomNumber}
+              onChange={(e) => setRoomNumber(e.target.value)}
+              style={{
+                fontFamily: 'Kanit, sans-serif',
+                color: 'black',
+                backgroundColor: 'white',
+                outline: 'none',
+                border: '1px solid #ccc',
+                width: '98%',
+                marginBottom: '5px',
+                borderRadius: '5px',
+                height: '26px',
+                marginTop: '5px'
+              }}
+            />
+
             <select
               id="floorSelect"
               value={floorId}

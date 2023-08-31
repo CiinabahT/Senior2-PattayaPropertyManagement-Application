@@ -13,7 +13,9 @@ export default function FinancialRecord() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchDeleteFinance();
-      setRecords(data);
+      if (data !== null) {
+        setRecords(data);
+      }
     };
 
     fetchData();

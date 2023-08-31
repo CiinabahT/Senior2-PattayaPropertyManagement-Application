@@ -134,41 +134,41 @@ export default function Finance() {
   const handleAddDocument = async () => {
     let lastCheck = false
 
-    if (selectedRoom?.value && selectedType?.value && selectedReceive?.value &&parseFloat(amount) && selectedPayment?.value && selectedFilesForDocument.length === 0) {
+    if (selectedRoom?.value && selectedType?.value && selectedReceive?.value && parseFloat(amount) && selectedPayment?.value && selectedFilesForDocument.length === 0) {
       lastCheck = true
     }
 
-  
+
     if (validateForm() || lastCheck) {
-    const FinanceInfo = {
-      room_id: selectedRoom?.value,
-      category_type: selectedType?.value,
-      is_receive: selectedReceive?.value, // or some condition
-      description,
-      payment_method: selectedPayment?.value,
-      amount: parseFloat(amount),
-      remark: note,
-      document_url: firstBase64 // You'll need to actually upload the document and get this URL
-    };
+      const FinanceInfo = {
+        room_id: selectedRoom?.value,
+        category_type: selectedType?.value,
+        is_receive: selectedReceive?.value, // or some condition
+        description,
+        payment_method: selectedPayment?.value,
+        amount: parseFloat(amount),
+        remark: note,
+        document_url: firstBase64 // You'll need to actually upload the document and get this URL
+      };
 
-    try {
-      const data = await AddFinance(FinanceInfo);
-      console.log("Success", data);
+      try {
+        const data = await AddFinance(FinanceInfo);
+        console.log("Success", data);
 
-      setSelectedRoom(null);
-      setSelectedType(null);
-      setDescription('');
-      setSelectedReceive(null);
-      setSelectedPayment(null);
-      setSelectedReceive(null);
-      setAmount('');
-      setNote('');
-      setSelectedFilesForDocument([]);
-      window.location.reload();
-    } catch (error) {
-      console.log("Error adding document", error);
+        setSelectedRoom(null);
+        setSelectedType(null);
+        setDescription('');
+        setSelectedReceive(null);
+        setSelectedPayment(null);
+        setSelectedReceive(null);
+        setAmount('');
+        setNote('');
+        setSelectedFilesForDocument([]);
+        window.location.reload();
+      } catch (error) {
+        console.log("Error adding document", error);
+      }
     }
-  }
   };
 
 
@@ -177,7 +177,9 @@ export default function Finance() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchFinance();
-      setRecords(data);
+      if (data !== null) {
+        setRecords(data);
+      }
     };
 
     fetchData();
@@ -411,7 +413,7 @@ export default function Finance() {
                       return newErrors;
                     });
                   }}
-                  
+
                   id="start-rental-date" type="text" placeholder="Price.." style={secondInputStyle} />
                 {validationErrors.amount && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.amount}</div>}
               </div>

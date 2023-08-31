@@ -33,7 +33,9 @@ export default function FinanceInfo() {
   const [selectedFilesForDocument, setSelectedFilesForDocument] = useState([]);
 
   useEffect(() => {
-    const TransactionId = router.query.id;
+    const TransactionId = router.query.TransactionID;
+    console.log(router.query.TransactionID)
+    console.log(TransactionId)
 
     getFinancialInfo(TransactionId)
       .then(data => {
@@ -100,7 +102,7 @@ export default function FinanceInfo() {
 
   const handleDeleteClick = (info) => {
 
-    const TransactionId = router.query.id;
+    const TransactionId = router.query.TransactionID;
 
     deleteTransaction(TransactionId)
       .then(data => {

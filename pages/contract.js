@@ -323,8 +323,6 @@ export default function Contract() {
     window.location.reload();
     resetForm();
     resetValidationStates();
-  } else {
-
   }
   };
 

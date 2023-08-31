@@ -48,9 +48,10 @@ export default function Finance() {
       newValidationErrors.selectedPayment = "*Please Select Payment Type";
     }
 
-    if (!selectedReceive?.value) {
+    if (selectedReceive?.value === null || typeof selectedReceive?.value === 'undefined') {
       newValidationErrors.selectedReceive = "*Please Select Receive Type";
     }
+    
 
     if (selectedFilesForDocument.length === 0) {
       newValidationErrors.file = "*Please Select a File";
@@ -80,6 +81,7 @@ export default function Finance() {
     setSelectedPayment(null);
     setAmount('');
     setNote('');
+    setSelectedReceive(null);
     setSelectedFilesForDocument([]);
 
     // Reset any validation errors
@@ -160,7 +162,6 @@ export default function Finance() {
       setDescription('');
       setSelectedReceive(null);
       setSelectedPayment(null);
-      setSelectedReceive(null);
       setAmount('');
       setNote('');
       setSelectedFilesForDocument([]);

@@ -178,9 +178,9 @@ export default function Finance() {
     useEffect(() => {
       const fetchData = async () => {
         const data = await fetchFinance();
-        // if (data !== null) {
+        if (data !== null) {
           setRecords(data);
-        // }
+        }
       };
 
       fetchData();
@@ -192,8 +192,10 @@ export default function Finance() {
       setLoading(true);
       try {
         const data = await fetchAllRoomName();
+        if (data !== null){
         setRooms(data);
         setLoading(false);
+        }
 
       } catch (err) {
         setLoading(false);

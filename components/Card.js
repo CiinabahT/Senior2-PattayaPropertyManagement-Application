@@ -142,6 +142,7 @@ export default function Cards({ onSaveBuildingName, onCloseModal }) {
               </Card.Body>
             </Card>
           </Grid>
+
           {smt.map((place) => (
             <Grid key={place.place_id} xs={2} style={{ width: '268px', height: '162px', padding: '7px' }}>
               <Buildingcard
@@ -154,9 +155,50 @@ export default function Cards({ onSaveBuildingName, onCloseModal }) {
 
         </Grid.Container>
       ) : (
-        <div className="flex gap-4">
-        <Spinner size="lg" />
-      </div>
+        <Grid.Container gap={0.5}>
+          <Grid key="create" xs={2}>
+            <Card
+              variant="flat"
+              bordered
+              shadow={false}
+              flat
+              isPressable
+              style={{
+                width: '268px',
+                height: '154px',
+                padding: '5px',
+                borderRadius: '30px',
+                border: '2px dashed #D9D9D9',
+                backgroundColor: 'white',
+                boxShadow: 'none',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontFamily: 'Kanit, Arial, sans-serif',
+                fontWeight: 350,
+              }}
+              onClick={handleCardClick}
+            >
+              <Card.Header style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <img
+                  src="Vector.png"
+                  alt="Image"
+                  style={{ maxWidth: '100%', maxHeight: '100%', marginTop: '17px' }}
+                />
+              </Card.Header>
+              <Card.Body
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'hidden' }}
+              >
+                <Text style={{ fontFamily: 'Kanit, Arial, sans-serif', fontSize: '18px', color: 'black' }}>
+                  Create Condo
+                </Text>
+              </Card.Body>
+            </Card>
+          </Grid>
+          <div className="flex gap-4">
+            <Spinner size="lg" />
+          </div>
+        </Grid.Container>
       )}
       {showModal && (
         <div

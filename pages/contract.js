@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from '../components/Sidebar.js';
 import Head from 'next/head';
 import Select from 'react-select';
@@ -49,6 +49,8 @@ export default function Contract() {
   const [waterUsageValid, setWaterUsageValid] = useState(true);
   const [electricValid, setElectricValid] = useState(true);
   const [checkinValid, setCheckinValid] = useState(true);
+
+  const [records, setRecords] = useState([]);
 
   const router = useRouter();
 
@@ -131,13 +133,13 @@ export default function Contract() {
     setElectricValid(true);
     setCheckinValid(true);
   };
-  
+
 
   const handleCloseModal = () => {
     setIsAddContractModalOpen(false);
     resetValidationStates();
     resetForm();
-    
+
   };
   const handleEndCloseModal = () => {
     setShowEndContractModal(false);
@@ -171,7 +173,7 @@ export default function Contract() {
       setRoomValid(true);
     }
   };
-  
+
 
   //////PERSON DROPDOWN DATA
 
@@ -179,7 +181,7 @@ export default function Contract() {
     setLoading(true);
     try {
       const data = await fetchPeople();
-      setPersons(data); 
+      setPersons(data);
       setLoading(false);
 
     } catch (err) {
@@ -206,7 +208,7 @@ export default function Contract() {
     setLoading(true);
     try {
       const data = await fetchAllRoomName();
-      setRooms(data); 
+      setRooms(data);
       setLoading(false);
 
     } catch (err) {
@@ -258,8 +260,8 @@ export default function Contract() {
     setCheckInElectricNumber(null);
   };
 
-  
-  
+
+
 
 
 
@@ -283,53 +285,61 @@ export default function Contract() {
   const handleAddModal = async () => {
     if (validateForms()) {
       setIsAddContractModalOpen(false);
-    try {
-      const response = await fetch("https://pattayaavenueproperty.xyz/api/contracts/createcontracts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          room_id: selectRoomID?.value,
-          person_id: selectPersonID?.value,
-          person_contract_type: "Tenant",
-          start_contract_date: startContractDate,
-          end_contract_date: endContractDate,
-          rental : parseFloat(rental),
-          deposit : parseFloat(deposit),
-          check_in_date: checkInDate,
-          check_in_water_number: parseInt(checkInWaterNumber),
-          check_in_electric_number: parseInt(checkInElectricNumber),
-        }),
-      });
+      try {
+        const response = await fetch("https://pattayaavenueproperty.xyz/api/contracts/createcontracts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            room_id: selectRoomID?.value,
+            person_id: selectPersonID?.value,
+            person_contract_type: "Tenant",
+            start_contract_date: startContractDate,
+            end_contract_date: endContractDate,
+            rental: parseFloat(rental),
+            deposit: parseFloat(deposit),
+            check_in_date: checkInDate,
+            check_in_water_number: parseInt(checkInWaterNumber),
+            check_in_electric_number: parseInt(checkInElectricNumber),
+          }),
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Successfully added contract:", data);
-        // TODO: Add your success handling logic here
-      } else {
-        console.log("Failed to add contract:", response.status, response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Successfully added contract:", data);
+          // TODO: Add your success handling logic here
+        } else {
+          console.log("Failed to add contract:", response.status, response.statusText);
+          // TODO: Add your error handling logic here
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
         // TODO: Add your error handling logic here
       }
-    } catch (error) {
-      console.error("An error occurred:", error);
-      // TODO: Add your error handling logic here
+      console.log("to refreash page")
+      // router.push({
+      //   pathname: '/contract'
+      // });
+      // router.push('/contract');
+      window.location.reload();
+      resetForm();
+      resetValidationStates();
     }
-    console.log("to refreash page")
-    // router.push({
-    //   pathname: '/contract'
-    // });
-    // router.push('/contract');
-    window.location.reload();
-    resetForm();
-    resetValidationStates();
-  }
   };
+  const contractOptions = useMemo(() => {
+    if (records && records.length > 0) {
+      return records
+        .filter(record => record.contract_status === 'active')
+        .map(record => ({
+          value: record.id,
+          label: `${record.tenant_name} (${record.room_address})`
+        }));
+    } else {
+      return [];
+    }
+  }, [records]);
 
-  
-
-
-  const [records, setRecords] = useState([]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -562,11 +572,11 @@ export default function Contract() {
                   type="date"
                   placeholder="Start Rental Date.."
                   style={secondInputStyle}
-                  onChange={e => { 
-                    setStartContractDate(e.target.value); 
+                  onChange={e => {
+                    setStartContractDate(e.target.value);
                     setStartRentValid(true);  // This line sets the field as valid
-                }}
-                
+                  }}
+
                 />
                 {!startRentValid && <div style={{ color: 'red' }}>*Please fill Date</div>}
               </div>
@@ -577,10 +587,10 @@ export default function Contract() {
                   type="date"
                   placeholder="End Rental Date.."
                   style={secondInputStyle}
-                  onChange={e => { 
-                    setEndContractDate(e.target.value); 
+                  onChange={e => {
+                    setEndContractDate(e.target.value);
                     setEndRentValid(true);  // This line sets the field as valid
-                }}
+                  }}
                 />
                 {!endRentValid && <div style={{ color: 'red' }}>*Please fill Date</div>}
               </div>
@@ -594,10 +604,10 @@ export default function Contract() {
                   type="text"
                   placeholder="Rental Price.."
                   style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '167px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '-26px' }}
-                  onChange={e => { 
-                    setRental(e.target.value); 
+                  onChange={e => {
+                    setRental(e.target.value);
                     setRentalValid(true);  // This line sets the field as valid
-                }}
+                  }}
                 />
                 {!rentalPriceValid && <div style={{ color: 'red' }}>*Please fill Rental</div>}
               </div>
@@ -608,10 +618,10 @@ export default function Contract() {
                   type="text"
                   placeholder="Deposit.."
                   style={secondInputStyle}
-                  onChange={e => { 
-                    setDeposit(e.target.value); 
+                  onChange={e => {
+                    setDeposit(e.target.value);
                     setDepositValid(true);  // This line sets the field as valid
-                }}
+                  }}
                 />
                 {!depositValid && <div style={{ color: 'red' }}>*Please fill Deposit</div>}
               </div>
@@ -625,10 +635,10 @@ export default function Contract() {
                   type="text"
                   placeholder="Water Usage Amount.."
                   style={{ padding: '8px', margin: '5px 0', border: '1px solid #ccc', width: '167px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px', marginRight: '14px' }}
-                  onChange={e => { 
-                    setCheckInWaterNumber(e.target.value); 
+                  onChange={e => {
+                    setCheckInWaterNumber(e.target.value);
                     setWaterUsageValid(true);  // This line sets the field as valid
-                }}
+                  }}
                 />
                 {!waterUsageValid && <div style={{ color: 'red' }}>*Please fill Usage</div>}
               </div>
@@ -639,10 +649,10 @@ export default function Contract() {
                   type="text"
                   placeholder="Electric Usage Amount.."
                   style={secondInputStyle}
-                  onChange={e => { 
-                    setCheckInElectricNumber(e.target.value); 
+                  onChange={e => {
+                    setCheckInElectricNumber(e.target.value);
                     setElectricValid(true);  // This line sets the field as valid
-                }}
+                  }}
                 />
                 {!electricValid && <div style={{ color: 'red' }}>*Please fill Usage</div>}
               </div>
@@ -656,10 +666,10 @@ export default function Contract() {
                   type="date"
                   placeholder="Check-in Date.."
                   style={secondInputStyle}
-                  onChange={e => { 
-                    setCheckInDate(e.target.value); 
+                  onChange={e => {
+                    setCheckInDate(e.target.value);
                     setCheckinValid(true);  // This line sets the field as valid
-                }}
+                  }}
                 />
                 {!checkinValid && <div style={{ color: 'red' }}>*Please fill Date</div>}
               </div>
@@ -700,28 +710,35 @@ export default function Contract() {
           }}>
             <h2 style={{ fontFamily: 'Kanit, sans-serif' }}>End Contract</h2>
             <div>
-              <div><span style={{ fontFamily: 'Kanit, sans-serif' }}>Contract: </span></div>
-              <select
-                onChange={e => {
-                  setSelectedContract(e.target.value);
-                  setIsValidContract(true);
-                }}
-                value={selectedContract}
-                style={{ width: '80%', fontFamily: 'Kanit, sans-serif', outline: 'none', border: 'none', borderRadius: '5px', height: '30px' }}
-              >
-                <option value="" hidden>Please select the Contract</option>
-                {records && records.length > 0 ? (
-                  records
-                    .filter(record => record.contract_status === 'active')
-                    .map((record) => (
-                      <option key={record.id} value={record.id} style={{ fontFamily: 'Kanit, sans-serif' }}>
-                        {record.tenant_name} ({record.room_number})
-                      </option>
-                    ))
-                ) : (
-                  <option disabled>No contracts available</option>
-                )}
-              </select>
+              <div>
+                <label>Contract: </label>
+              </div>
+              <div style={{
+                marginBottom: '10px',
+                flex: '0 0 21%',
+                marginRight: '1%',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                marginTop: '5px',
+              }}>
+                <Select
+                  options={contractOptions}
+                  value={contractOptions.find(option => option.value === selectedContract)}
+                  onChange={e => {
+                    setSelectedContract(e.value);
+                    setIsValidContract(true);
+                  }}
+                  isSearchable={true}
+                  placeholder="Select Contract"
+                  styles={{
+                    container: (provided) => ({
+                      ...provided,
+                      width: '320px',
+                      fontSize: '13px'
+                    })
+                  }}
+                />
+              </div>
               {!isValidContract && <div style={{ color: 'red' }}>*You need to select a contract.</div>}
 
 
@@ -802,9 +819,9 @@ export default function Contract() {
           </div>
         </div>
       )}
-      
+
     </>
-    
+
   );
 }
 

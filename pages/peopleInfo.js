@@ -139,12 +139,12 @@ export default function PeopleInfo() {
       setShowContactMethodWarning(true);
       valid = false;
     }
-  
+
     if (!contactInfo) {
       setShowWarning(true);
       valid = false;
     }
-  
+
     if (!valid) return;
 
     const ContactInfo = {
@@ -282,7 +282,7 @@ export default function PeopleInfo() {
           </div>
           <hr style={{ border: 'none', borderBottom: '1px solid #ccc', margin: '0', marginLeft: '0px', marginRight: '0px', marginBottom: '40px', marginTop: '10px' }} />
           <div style={{ width: '100%' }}>
-
+            
             <div><label style={commonLabelStyles}>Name-Surname:</label></div>
             <input type="text" value={editablePersonInfo.full_name || ''} placeholder='Name - Surname..' onChange={(e) => handleEditableInputChange(e, 'full_name')} style={commonInputaStyle} />
 
@@ -290,7 +290,7 @@ export default function PeopleInfo() {
             <input type="text" value={editablePersonInfo.identity_number || ''} placeholder='Passport/ID..' onChange={(e) => handleEditableInputChange(e, 'identity_number')} style={commonInputaStyle} />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label style={{display: 'block', fontSize: '25px',fontWeight: 'bold',fontFamily: 'Kanit', marginTop: '30px'}}>Contact:</label>
+              <label style={{ display: 'block', fontSize: '25px', fontWeight: 'bold', fontFamily: 'Kanit', marginTop: '30px' }}>Contact:</label>
               <button
                 style={{
                   fontSize: '13px',
@@ -313,7 +313,7 @@ export default function PeopleInfo() {
             <PeopleInfoContactTable records={records} />
 
 
-            <h2><label style={{display: 'block', fontSize: '25px',fontWeight: 'bold',fontFamily: 'Kanit'}}>Bank Account: </label></h2>
+            <h2><label style={{ display: 'block', fontSize: '25px', fontWeight: 'bold', fontFamily: 'Kanit' }}>Bank Account: </label></h2>
             {personInfo.bank_accounts ? (
               <div style={{ display: 'flex', flex: '0 0 25%' }}>
                 <div>
@@ -430,7 +430,7 @@ export default function PeopleInfo() {
               <option value="Email">Email</option>
               <option value="Skype">Skype</option>
             </select>
-            {showContactMethodWarning && <div style={{color: 'red'}}>*Please Select the Contact Method</div>}
+            {showContactMethodWarning && <div style={{ color: 'red' }}>*Please Select the Contact Method</div>}
 
 
             <div><label htmlFor="passport-id">Contact Info: </label></div>
@@ -504,6 +504,9 @@ export default function PeopleInfo() {
                 onChange={e => setSelectedContact(e.target.value)}
                 style={{ width: '80%', fontFamily: 'Kanit, sans-serif', outline: 'none', border: 'none', borderRadius: '5px', height: '30px' }}
               >
+                <option value=""  hidden style={{ fontFamily: 'Kanit, sans-serif' }}>
+                  Please Select the Contact
+                </option>
                 {records.map(record => (
                   <option key={record.id} value={record.id} style={{ fontFamily: 'Kanit, sans-serif' }}>
                     {record.value} ({record.type})

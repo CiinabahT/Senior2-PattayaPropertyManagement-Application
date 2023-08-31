@@ -101,7 +101,7 @@ export default function Cards({ onSaveBuildingName, onCloseModal }) {
 
   return (
     <>
-      {Object.keys(smt).length > 0 ? (
+      {smt && smt.length > 0 ? (
         <Grid.Container gap={0.5}>
           <Grid key="create" xs={2}>
             <Card
@@ -155,8 +155,8 @@ export default function Cards({ onSaveBuildingName, onCloseModal }) {
         </Grid.Container>
       ) : (
         <div className="flex gap-4">
-          <Spinner size="lg" />
-        </div>
+        <Spinner size="lg" />
+      </div>
       )}
       {showModal && (
         <div

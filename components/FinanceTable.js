@@ -11,7 +11,8 @@ function FinanceTable({ records }) {
   const router = useRouter();
 
   useEffect(() => {
-    let filtered = records;
+    let filtered = [...records]; // Create a shallow copy
+  
     if (searchTerm) {
       filtered = filtered.filter((record) =>
         Object.values(record).some((value) =>
@@ -19,15 +20,21 @@ function FinanceTable({ records }) {
         )
       );
     }
+  
     if (filterStatus) {
       filtered = filtered.filter(
         (record) => record.catorgory_type?.toLowerCase() === filterStatus.toLowerCase()
       );
     }
   
+    // Reverse the array so that the latest records appear first
+    filtered = filtered.reverse();
+  
     setFilteredRecords(filtered);
     setPageNumber(0); // Reset the page number when filtering
   }, [searchTerm, filterStatus, records]);
+  
+  
   
 
   const currentRows = filteredRecords.slice(

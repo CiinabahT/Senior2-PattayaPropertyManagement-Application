@@ -347,7 +347,9 @@ export default function Contract() {
 
     try {
       const data = await fetchContract();
-      setRecords(data);
+      if (data !== null) {
+        setRecords(data);
+      }
     } catch (error) {
       setError(error.message);
     }

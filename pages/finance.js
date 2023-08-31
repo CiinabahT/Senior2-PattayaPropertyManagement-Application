@@ -212,8 +212,8 @@ export default function Finance() {
 
 
   const IsRecieveOptions = [
-    { value: 'Receive', label: 'Receive' },
-    { value: 'Pay', label: 'Pay' },
+    { value: true , label: 'Receive' },
+    { value: false , label: 'Pay' },
   ];
 
   const PaymentOptions = [

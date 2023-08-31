@@ -170,6 +170,7 @@ export default function Finance() {
         console.log("Error adding document", error);
       }
     };
+  }
 
 
     const [records, setRecords] = useState([]);
@@ -177,9 +178,9 @@ export default function Finance() {
     useEffect(() => {
       const fetchData = async () => {
         const data = await fetchFinance();
-        if (data !== null) {
+        // if (data !== null) {
           setRecords(data);
-        }
+        // }
       };
 
       fetchData();
@@ -496,6 +497,6 @@ export default function Finance() {
       </>
     );
   }
-}
+
 
 

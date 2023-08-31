@@ -15,6 +15,27 @@ export default function People() {
   const [identityNumberError, setIdentityNumberError] = useState('');
   const [contactValueError, setContactValueError] = useState('');
 
+  // const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  // const [fullNameError, setFullNameError] = useState('');
+
+  useEffect(() => {
+    const newFullName = `${firstName} ${lastName}`.trim();
+    setFullName(newFullName);
+  }, [firstName, lastName]);
+
+  const commonInputStyle = {
+    width: '93%',
+    padding: '8px',
+    margin: '5px 0',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    fontFamily: 'Kanit',
+    outline: 'none',
+    fontSize: '14px'
+  };
+
   const resetFields = () => {
     setFullName('');
     setIdentityNumber('');
@@ -146,10 +167,42 @@ export default function People() {
           }}>
             <h2>Add People</h2>
             <div style={{ color: 'red', marginBottom: '15px' }}>* Warning * The data that Created can not be deleted</div>
-            <div><label htmlFor="name-surname">Name-Surname: </label></div>
-            <input id="name-surname" type="text" placeholder="Name-Surname.." value={fullName}
-              onChange={(e) => setFullName(e.target.value)} style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', width: '372px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px' }} />
-            {fullNameError && <div style={{ color: 'red' }}>{fullNameError}</div>}
+            <div>
+        <label htmlFor="first-name">Name:</label>
+        <input
+          id="first-name"
+          type="text"
+          placeholder="Name..."
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          style={commonInputStyle}
+        />
+      </div>
+      <div>
+        <label htmlFor="last-name">Surname:</label>
+        <input
+          id="last-name"
+          type="text"
+          placeholder="Surname..."
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          style={commonInputStyle}
+        />
+      </div>
+      {/* This input field is not editable. It's just for displaying the combined full name. */}
+      <div>
+        <label hidden htmlFor="name-surname">Full Name:</label>
+        <input
+        hidden
+          id="name-surname"
+          type="text"
+          placeholder="Name-Surname..."
+          value={fullName}
+          readOnly 
+          style={commonInputStyle}
+        />
+      </div>
+      {fullNameError && <div style={{ color: 'red' }}>{fullNameError}</div>}
             <div><label htmlFor="passport-id">Passport/ID: </label></div>
             <input id="passport-id" type="text" placeholder="Passport/ID.." value={identityNumber}
               onChange={(e) => setIdentityNumber(e.target.value)} style={{ width: '100%', padding: '8px', margin: '5px 0', borderRadius: '5px', border: '1px solid #ccc', width: '372px', fontFamily: 'Kanit', outline: 'none', border: 'none', borderRadius: '5px', fontSize: '14px' }} />

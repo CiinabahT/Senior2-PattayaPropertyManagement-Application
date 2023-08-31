@@ -25,9 +25,10 @@ function RecordTable({ records }) {
     }
     if (filterStatus) {
       filtered = filtered.filter(
-        (record) => record.status.toLowerCase() === filterStatus.toLowerCase()
+        (record) => record.contract_status && record.contract_status.toLowerCase() === filterStatus.toLowerCase()
       );
     }
+    
     setFilteredRecords(filtered);
     setPageNumber(0); // Reset the page number when filtering
   }, [searchTerm, filterStatus, records]);
@@ -105,9 +106,8 @@ function RecordTable({ records }) {
         />
         <select onChange={(e) => setFilterStatus(e.target.value)} style={{ fontFamily: 'Kanit', width: '150px', outline: 'none', border: 'none', borderRadius: '5px', height: '28px' }}>
           <option value="">Filter by Status</option>
-          <option value="active">Active</option>
-          <option value="pending">Pending</option>
-          <option value="expired">Expired</option>
+          <option value="active">active</option>
+          <option value="inactive">inactive</option>
           {/* Add more options based on your available statuses */}
         </select>
       </div>

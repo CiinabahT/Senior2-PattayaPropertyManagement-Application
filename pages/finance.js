@@ -9,7 +9,7 @@ import { fetchAllRoomName } from '../API/api.js';
 
 export default function Finance() {
   const [isAddContractModalOpen, setIsAddContractModalOpen] = useState(false);
-  const [selectedExpenses, setSelectedExpenses] = useState(null);
+  const [selectedReceive, setSelectedReceive] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
@@ -46,6 +46,10 @@ export default function Finance() {
 
     if (!selectedPayment?.value) {
       newValidationErrors.selectedPayment = "*Please Select Payment Type";
+    }
+
+    if (!selectedReceive?.value) {
+      newValidationErrors.selectedReceive = "*Please Select Receive Type";
     }
 
     if (selectedFilesForDocument.length === 0) {
@@ -130,7 +134,7 @@ export default function Finance() {
   const handleAddDocument = async () => {
     let lastCheck = false
 
-    if (selectedRoom?.value && selectedType?.value && parseFloat(amount) && selectedPayment?.value && selectedFilesForDocument.length === 0) {
+    if (selectedRoom?.value && selectedType?.value && selectedReceive?.value &&parseFloat(amount) && selectedPayment?.value && selectedFilesForDocument.length === 0) {
       lastCheck = true
     }
 
@@ -139,7 +143,7 @@ export default function Finance() {
     const FinanceInfo = {
       room_id: selectedRoom?.value,
       category_type: selectedType?.value,
-      is_receive: false, // or some condition
+      is_receive: selectedReceive?.value, // or some condition
       description,
       payment_method: selectedPayment?.value,
       amount: parseFloat(amount),
@@ -154,8 +158,9 @@ export default function Finance() {
       setSelectedRoom(null);
       setSelectedType(null);
       setDescription('');
-      setSelectedExpenses(null);
+      setSelectedReceive(null);
       setSelectedPayment(null);
+      setSelectedReceive(null);
       setAmount('');
       setNote('');
       setSelectedFilesForDocument([]);
@@ -206,13 +211,9 @@ export default function Finance() {
   }, []);
 
 
-  const ExpenseOptions = [
-    { value: 'rental', label: 'Rental' },
-    { value: 'deposit', label: 'Deposit' },
-    { value: 'electricBill', label: 'Electric Bill' },
-    { value: 'waterBill', label: 'Water Bill' },
-    { value: 'repair', label: 'Repair' },
-    { value: 'mulct', label: 'Mulct' },
+  const IsRecieveOptions = [
+    { value: 'Receive', label: 'Receive' },
+    { value: 'Pay', label: 'Pay' },
   ];
 
   const PaymentOptions = [
@@ -377,26 +378,26 @@ export default function Finance() {
                 {validationErrors.type && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.type}</div>}
               </div>
             </div>
-{/* 
-            <div style={{ flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}><label>Type of Expense: </label></div>
+
+            <div style={{ flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}><label>Is Receive: </label></div>
             <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '20px', fontWeight: 'bold', marginTop: '5px', }}>
               <CreatableSelect
-                options={ExpenseOptions}
-                value={selectedExpenses}
+                options={IsRecieveOptions}
+                value={selectedReceive}
                 onChange={(value) => {
-                  setSelectedExpenses(value);
+                  setSelectedReceive(value);
                   setValidationErrors((prevErrors) => {
                     const newErrors = { ...prevErrors };
-                    delete newErrors.selectedExpenses;
+                    delete newErrors.selectedReceive;
                     return newErrors;
                   });
                 }}
                 isSearchable={false}
-                placeholder="Type of Expense"
+                placeholder="Type of Receive"
                 styles={{ container: (provided) => ({ ...provided, width: '387px', fontSize: '13px' }) }}
               />
-              {validationErrors.selectedExpenses && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.selectedExpenses}</div>}
-            </div> */}
+              {validationErrors.selectedReceive && <div style={{ color: "red", fontSize: '14px' }}>{validationErrors.selectedReceive}</div>}
+            </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div style={{ marginBottom: '10px', flex: '0 0 21%', marginRight: '1%', fontSize: '17px', fontWeight: 'bold', marginTop: '5px', marginRight: '13px' }}>
                 <label htmlFor="start-rental-date">Amount of Money: </label>

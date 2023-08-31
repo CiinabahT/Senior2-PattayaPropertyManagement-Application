@@ -16,6 +16,9 @@ function RecordTable({ records }) {
 
   useEffect(() => {
     let filtered = records;
+    if (filtered !== null) {
+
+
     if (searchTerm) {
       filtered = filtered.filter((record) =>
         Object.values(record).some((value) =>
@@ -31,6 +34,7 @@ function RecordTable({ records }) {
     
     setFilteredRecords(filtered);
     setPageNumber(0); // Reset the page number when filtering
+  }
   }, [searchTerm, filterStatus, records]);
 
   const currentRows = (filteredRecords || []).slice(

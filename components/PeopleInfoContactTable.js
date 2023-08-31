@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 function PeopleInfoContactTable({ records }) {
   if (!records) {
-    return <div>Loading...</div>; // or some other fallback UI
+    return <div style={{ fontFamily: 'Kanit', fontWeight: 'bold', fontSize: '14px', color: 'red' }}><div>Don't have any Contact</div></div>; // or some other fallback UI
   }
   const rowsPerPage = 3;
   const [pageNumber, setPageNumber] = useState(0);

@@ -129,14 +129,15 @@ export default function RoomEdit() {
 
           for (let i = 0; i < data.room_prices.length; i++) {
             if (data.room_prices[i].type === "SELL") {
-              let amountPriceForSell = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountPriceForSell)) {
-                amountPriceForSell = formatPriceWithCommas(amountPriceForSell);
-              }
+              // let amountPriceForSell = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountPriceForSell)) {
+              //   amountPriceForSell = formatPriceWithCommas(amountPriceForSell);
+              // }
               const updatedPriceForSell = {
                 ...priceForSell, // Spread the existing state to keep other values unchanged
                 id: data.room_prices[i].id,
-                amount: amountPriceForSell,
+                // amount: amountPriceForSell,
+                amount: data.room_prices[i].amount,
                 unit_type: data.room_prices[i].unit_type,
                 min_duration: data.room_prices[i].min_duration,
                 max_duration: data.room_prices[i].max_duration,
@@ -146,14 +147,15 @@ export default function RoomEdit() {
               setPriceForSell(updatedPriceForSell)
             }
             if (data.room_prices[i].type === "SHOW") {
-              let amountPriceForRent = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountPriceForRent)) {
-                amountPriceForRent = formatPriceWithCommas(amountPriceForRent);
-              }
+              // let amountPriceForRent = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountPriceForRent)) {
+              //   amountPriceForRent = formatPriceWithCommas(amountPriceForRent);
+              // }
               const updatedPriceForRent = {
                 ...priceForRent, // Spread the existing state to keep other values unchanged
                 id: data.room_prices[i].id,
-                amount: amountPriceForRent,
+                // amount: amountPriceForRent,
+                amount: data.room_prices[i].amount,
                 unit_type: data.room_prices[i].unit_type,
                 min_duration: data.room_prices[i].min_duration,
                 max_duration: data.room_prices[i].max_duration,
@@ -163,158 +165,98 @@ export default function RoomEdit() {
               setPriceForRent(updatedPriceForRent)
             }
             if (data.room_prices[i].type === "RENT" && data.room_prices[i].unit_type === "DAY") {
-              let amountPrice1m = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountPrice1m)) {
-                amountPrice1m = formatPriceWithCommas(amountPrice1m);
-              }
-              let amountDeposit1m = parseInt(data.room_prices[i].deposit_amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountDeposit1m)) {
-                amountDeposit1m = formatPriceWithCommas(amountDeposit1m);
-              }
+              // let amountPrice1m = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountPrice1m)) {
+              //   amountPrice1m = formatPriceWithCommas(amountPrice1m);
+              // }
+              // let amountDeposit1m = parseInt(data.room_prices[i].deposit_amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountDeposit1m)) {
+              //   amountDeposit1m = formatPriceWithCommas(amountDeposit1m);
+              // }
               const updatedPrice1m = {
                 ...price1m, // Spread the existing state to keep other values unchanged
                 id: data.room_prices[i].id,
-                amount: amountPrice1m,
+                // amount: amountPrice1m,
+                amount: data.room_prices[i].amount,
                 unit_type: data.room_prices[i].unit_type,
                 min_duration: data.room_prices[i].min_duration,
                 max_duration: data.room_prices[i].max_duration,
                 deposit_unit_type: data.room_prices[i].deposit_unit_type,
-                deposit_amount: amountDeposit1m
+                // deposit_amount: amountDeposit1m
+                deposit_amount: data.room_prices[i].deposit_amount
               };
               setPrice1m(updatedPrice1m)
             }
             if (data.room_prices[i].type === "RENT" && data.room_prices[i].unit_type === "MONTH" && data.room_prices[i].min_duration === 2 && data.room_prices[i].max_duration === 5) {
-              let amountPrice25m = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountPrice25m)) {
-                amountPrice25m = formatPriceWithCommas(amountPrice25m);
-              }
-              let amountDeposit25m = parseInt(data.room_prices[i].deposit_amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountDeposit25m)) {
-                amountDeposit25m = formatPriceWithCommas(amountDeposit25m);
-              }
+              // let amountPrice25m = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountPrice25m)) {
+              //   amountPrice25m = formatPriceWithCommas(amountPrice25m);
+              // }
+              // let amountDeposit25m = parseInt(data.room_prices[i].deposit_amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountDeposit25m)) {
+              //   amountDeposit25m = formatPriceWithCommas(amountDeposit25m);
+              // }
               const updatedPrice25m = {
                 ...price25m, // Spread the existing state to keep other values unchanged
                 id: data.room_prices[i].id,
-                amount: amountPrice25m,
+                // amount: amountPrice1m,
+                amount: data.room_prices[i].amount,
                 unit_type: data.room_prices[i].unit_type,
                 min_duration: data.room_prices[i].min_duration,
                 max_duration: data.room_prices[i].max_duration,
                 deposit_unit_type: data.room_prices[i].deposit_unit_type,
-                deposit_amount: amountDeposit25m
+                // deposit_amount: amountDeposit1m
+                deposit_amount: data.room_prices[i].deposit_amount
               };
               setPrice25m(updatedPrice25m)
             }
             if (data.room_prices[i].type === "RENT" && data.room_prices[i].unit_type === "MONTH" && data.room_prices[i].min_duration === 6 && data.room_prices[i].max_duration === 11) {
-              let amountPrice611m = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountPrice611m)) {
-                amountPrice611m = formatPriceWithCommas(amountPrice611m);
-              }
-              let amountDeposit611m = parseInt(data.room_prices[i].deposit_amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountDeposit611m)) {
-                amountDeposit611m = formatPriceWithCommas(amountDeposit611m);
-              }
+              // let amountPrice611m = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountPrice611m)) {
+              //   amountPrice611m = formatPriceWithCommas(amountPrice611m);
+              // }
+              // let amountDeposit611m = parseInt(data.room_prices[i].deposit_amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountDeposit611m)) {
+              //   amountDeposit611m = formatPriceWithCommas(amountDeposit611m);
+              // }
               const updatedPrice611m = {
                 ...price611m, // Spread the existing state to keep other values unchanged
                 id: data.room_prices[i].id,
-                amount: amountPrice611m,
+                // amount: amountPrice1m,
+                amount: data.room_prices[i].amount,
                 unit_type: data.room_prices[i].unit_type,
                 min_duration: data.room_prices[i].min_duration,
                 max_duration: data.room_prices[i].max_duration,
                 deposit_unit_type: data.room_prices[i].deposit_unit_type,
-                deposit_amount: amountDeposit611m
+                // deposit_amount: amountDeposit1m
+                deposit_amount: data.room_prices[i].deposit_amount
               };
               setPrice611m(updatedPrice611m)
             }
             if (data.room_prices[i].type === "RENT" && data.room_prices[i].unit_type === "YEAR") {
-              let amountPrice12m = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountPrice12m)) {
-                amountPrice12m = formatPriceWithCommas(amountPrice12m);
-              }
-              let amountDeposit12m = parseInt(data.room_prices[i].deposit_amount.toString().replace(/,/g, ""), 10);
-              if (!isNaN(amountDeposit12m)) {
-                amountDeposit12m = formatPriceWithCommas(amountDeposit12m);
-              }
+              // let amountPrice12m = parseInt(data.room_prices[i].amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountPrice12m)) {
+              //   amountPrice12m = formatPriceWithCommas(amountPrice12m);
+              // }
+              // let amountDeposit12m = parseInt(data.room_prices[i].deposit_amount.toString().replace(/,/g, ""), 10);
+              // if (!isNaN(amountDeposit12m)) {
+              //   amountDeposit12m = formatPriceWithCommas(amountDeposit12m);
+              // }
               const updatedPrice12m = {
                 ...price12m, // Spread the existing state to keep other values unchanged
                 id: data.room_prices[i].id,
-                amount: amountPrice12m,
+                // amount: amountPrice1m,
+                amount: data.room_prices[i].amount,
                 unit_type: data.room_prices[i].unit_type,
                 min_duration: data.room_prices[i].min_duration,
                 max_duration: data.room_prices[i].max_duration,
                 deposit_unit_type: data.room_prices[i].deposit_unit_type,
-                deposit_amount: amountDeposit12m
+                // deposit_amount: amountDeposit1m
+                deposit_amount: data.room_prices[i].deposit_amount
               };
               setPrice12m(updatedPrice12m)
             }
           }
-            
-            // if (data.room_prices[i].type === "SHOW") {
-            //   const updatedPriceForRent = {
-            //     ...priceForRent, // Spread the existing state to keep other values unchanged
-            //     id: data.room_prices[i].id,
-            //     amount: data.room_prices[i].amount,
-            //     unit_type: data.room_prices[i].unit_type,
-            //     min_duration: data.room_prices[i].min_duration,
-            //     max_duration: data.room_prices[i].max_duration,
-            //     deposit_unit_type: data.room_prices[i].deposit_unit_type,
-            //     deposit_amount: data.room_prices[i].deposit_amount
-            //   };
-            //   setPriceForRent(updatedPriceForRent)
-            // }
-            // if (data.room_prices[i].type === "RENT" && data.room_prices[i].unit_type === "DAY") {
-            //   const updatedPrice1m = {
-            //     ...price1m, // Spread the existing state to keep other values unchanged
-            //     id: data.room_prices[i].id,
-            //     amount: data.room_prices[i].amount,
-            //     unit_type: data.room_prices[i].unit_type,
-            //     min_duration: data.room_prices[i].min_duration,
-            //     max_duration: data.room_prices[i].max_duration,
-            //     deposit_unit_type: data.room_prices[i].deposit_unit_type,
-            //     deposit_amount: data.room_prices[i].deposit_amount
-            //   };
-            //   setPrice1m(updatedPrice1m)
-            // }
-            // if (data.room_prices[i].type === "RENT" && data.room_prices[i].unit_type === "MONTH" && data.room_prices[i].min_duration === 2 && data.room_prices[i].max_duration === 5) {
-            //   const updatedPrice25m = {
-            //     ...price25m, // Spread the existing state to keep other values unchanged
-            //     id: data.room_prices[i].id,
-            //     amount: data.room_prices[i].amount,
-            //     unit_type: data.room_prices[i].unit_type,
-            //     min_duration: data.room_prices[i].min_duration,
-            //     max_duration: data.room_prices[i].max_duration,
-            //     deposit_unit_type: data.room_prices[i].deposit_unit_type,
-            //     deposit_amount: data.room_prices[i].deposit_amount
-            //   };
-            //   setPrice25m(updatedPrice25m)
-            // }
-            // if (data.room_prices[i].type === "RENT" && data.room_prices[i].unit_type === "MONTH" && data.room_prices[i].min_duration === 6 && data.room_prices[i].max_duration === 11) {
-            //   const updatedPrice611m = {
-            //     ...price611m, // Spread the existing state to keep other values unchanged
-            //     id: data.room_prices[i].id,
-            //     amount: data.room_prices[i].amount,
-            //     unit_type: data.room_prices[i].unit_type,
-            //     min_duration: data.room_prices[i].min_duration,
-            //     max_duration: data.room_prices[i].max_duration,
-            //     deposit_unit_type: data.room_prices[i].deposit_unit_type,
-            //     deposit_amount: data.room_prices[i].deposit_amount
-            //   };
-            //   setPrice611m(updatedPrice611m)
-            // }
-            // if (data.room_prices[i].type === "RENT" && data.room_prices[i].unit_type === "YEAR") {
-            //   const updatedPrice12m = {
-            //     ...price12m, // Spread the existing state to keep other values unchanged
-            //     id: data.room_prices[i].id,
-            //     amount: data.room_prices[i].amount,
-            //     unit_type: data.room_prices[i].unit_type,
-            //     min_duration: data.room_prices[i].min_duration,
-            //     max_duration: data.room_prices[i].max_duration,
-            //     deposit_unit_type: data.room_prices[i].deposit_unit_type,
-            //     deposit_amount: data.room_prices[i].deposit_amount
-            //   };
-            //   setPrice12m(updatedPrice12m)
-            // }
-          
-
           setSelectedStatus({ label: data.status_of_room, value: data.room_id })
           setSelectedOwners({ label: data.owner_name, value: data.owner_id });
           setSelectedViews({ label: data.type_of_view, value: data.room_id })
@@ -343,17 +285,6 @@ export default function RoomEdit() {
   }, [router.query.roomNumber, router.query.roomId,]);
 
   useEffect(() => {
-    // console.log("priceForSell", priceForSell)
-    // console.log("priceForRent", priceForRent)
-    // console.log("price1m", price1m)
-    // console.log("price25m", price25m)
-    // console.log("price611m", price611m)
-    // console.log("price12m", price12m)
-    // console.log("deposit1m", deposit1m)
-    // console.log("deposit25m", deposit25m)
-    // console.log("deposit611m", deposit611m)
-    // console.log("deposit12m", deposit12m)
-
   }, [priceForSell, priceForRent, price1m, price25m, price611m, price12m]);
 
   useEffect(() => {
@@ -599,7 +530,8 @@ export default function RoomEdit() {
       }
       const priceForSellData = {
         room_id: parseInt(roomID, 10),
-        amount: parseInt(priceForSell.amount.replace(/,/g, ''), 10),
+        // amount: parseInt(priceForSell.amount.replace(/,/g, ''), 10),
+        amount: parseInt(priceForSell.amount, 10),
         type: "SELL",
       }
       try {
@@ -636,7 +568,8 @@ export default function RoomEdit() {
       }
       const priceForRentData = {
         room_id: parseInt(roomID, 10),
-        amount: parseInt(priceForRent.amount.replace(/,/g, ''), 10),
+        // amount: parseInt(priceForRent.amount.replace(/,/g, ''), 10),
+        amount: parseInt(priceForRent.amount, 10),
         type: "SHOW",
       }
       try {
@@ -673,12 +606,14 @@ export default function RoomEdit() {
       }
       const price1mData = {
         room_id: parseInt(roomID, 10),
-        amount: parseInt(price1m.amount.replace(/,/g, ''), 10),
+        // amount: parseInt(price1m.amount.replace(/,/g, ''), 10),
+        amount: parseInt(price1m.amount, 10),
         type: "RENT",
         unit_type: "DAY",
         min_duration: 1,
         max_duration: 31,
-        deposit_amount: parseInt(price1m.deposit_amount.replace(/,/g, ''), 10),
+        // deposit_amount: parseInt(price1m.deposit_amount.replace(/,/g, ''), 10),
+        deposit_amount: parseInt(price1m.deposit_amount, 10),
         deposit_unit_type: "BAHT"
       }
       try {
@@ -715,12 +650,14 @@ export default function RoomEdit() {
       }
       const price25mData = {
         room_id: parseInt(roomID, 10),
-        amount: parseInt(price25m.amount.replace(/,/g, ''), 10),
+        // amount: parseInt(price25m.amount.replace(/,/g, ''), 10),
+        amount: parseInt(price25m.amount, 10),
         type: "RENT",
         unit_type: "MONTH",
         min_duration: 2,
         max_duration: 5,
-        deposit_amount: parseInt(price25m.deposit_amount.replace(/,/g, ''), 10),
+        // deposit_amount: parseInt(price25m.deposit_amount.replace(/,/g, ''), 10),
+        deposit_amount: parseInt(price25m.deposit_amount, 10),
         deposit_unit_type: "MONTH"
       }
       try {
@@ -757,12 +694,14 @@ export default function RoomEdit() {
       }
       const price611mData = {
         room_id: parseInt(roomID, 10),
-        amount: parseInt(price611m.amount.replace(/,/g, ''), 10),
+        // amount: parseInt(price611m.amount.replace(/,/g, ''), 10),
+        amount: parseInt(price611m.amount, 10),
         type: "RENT",
         unit_type: "MONTH",
         min_duration: 6,
         max_duration: 11,
-        deposit_amount: parseInt(price611m.deposit_amount.replace(/,/g, ''), 10),
+        // deposit_amount: parseInt(price611m.deposit_amount.replace(/,/g, ''), 10),
+        deposit_amount: parseInt(price611m.deposit_amount, 10),
         deposit_unit_type: "MONTH"
       }
       try {
@@ -799,12 +738,14 @@ export default function RoomEdit() {
       }
       const price12mData = {
         room_id: parseInt(roomID, 10),
-        amount: parseInt(price12m.amount.replace(/,/g, ''), 10),
+        // amount: parseInt(price12m.amount.replace(/,/g, ''), 10),
+        amount: parseInt(price12m.amount, 10),
         type: "RENT",
         unit_type: "YEAR",
         min_duration: 1,
         max_duration: 1,
-        deposit_amount: parseInt(price12m.deposit_amount.replace(/,/g, ''), 10),
+        // deposit_amount: parseInt(price12m.deposit_amount.replace(/,/g, ''), 10),
+        deposit_amount: parseInt(price12m.deposit_amount, 10),
         deposit_unit_type: "MONTH"
       }
       try {
@@ -965,216 +906,216 @@ export default function RoomEdit() {
   };
 
   // create hadele price and deposit for each price
-  // const handlePriceForSellChange = (event) => {
-  //   const updatedPriceForSell = {
-  //     ...priceForSell, // Spread the existing state to keep other values unchanged
-  //     amount: event.target.value,
-  //   };
-  //   setPriceForSell(updatedPriceForSell);
-  //   setIsPriceForSellChange(true);
-  // };
-
   const handlePriceForSellChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedPriceForSell = {
-        ...priceForSell,
-        amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPriceForSell(updatedPriceForSell);
-      setIsPriceForSellChange(true);
-    }
-  };
-  const handlePriceForRentChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedPriceForRent = {
-        ...priceForRent,
-        amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPriceForRent(updatedPriceForRent);
-      setIsPriceForRentChange(true);
-    }
-  };
-  const handlePrice1mChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedPrice1m = {
-        ...price1m,
-        amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPrice1m(updatedPrice1m);
-      setIsPrice1mChange(true);
-    }
-  };
-  const handlePrice25mChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedPrice25m = {
-        ...price25m,
-        amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPrice25m(updatedPrice25m);
-      setIsPrice25mChange(true);
-    }
-  };
-  const handlePrice611mChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedPrice611m = {
-        ...price611m,
-        amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPrice611m(updatedPrice611m);
-      setIsPrice611mChange(true);
-    }
-  };
-  const handlePrice12mChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedPrice12m = {
-        ...price12m,
-        amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPrice12m(updatedPrice12m);
-      setIsPrice12mChange(true);
-    }
-  };
-  const handleDeposit1mChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedDeposit1m = {
-        ...price1m,
-        deposit_amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPrice1m(updatedDeposit1m);
-      setIsPrice1mChange(true);
-    }
-  };
-  const handleDeposit25mChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedDeposit25m = {
-        ...price25m,
-        deposit_amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPrice25m(updatedDeposit25m);
-      setIsPrice25mChange(true);
-    }
-  };
-  const handleDeposit611mChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedDeposit611m = {
-        ...price611m,
-        deposit_amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPrice611m(updatedDeposit611m);
-      setIsPrice611mChange(true);
-    }
-  };
-  const handleDeposit12mChange = (event) => {
-    const inputPrice = event.target.value;
-    const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
-    if (!isNaN(numericPrice)) {
-      const updatedDeposit12m = {
-        ...price12m,
-        deposit_amount: formatPriceWithCommas(numericPrice), // Format the numeric value
-      };
-      setPrice12m(updatedDeposit12m);
-      setIsPrice12mChange(true);
-    }
+    const updatedPriceForSell = {
+      ...priceForSell, // Spread the existing state to keep other values unchanged
+      amount: event.target.value,
+    };
+    setPriceForSell(updatedPriceForSell);
+    setIsPriceForSellChange(true);
   };
 
+  // const handlePriceForSellChange = (event) => {
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedPriceForSell = {
+  //       ...priceForSell,
+  //       amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPriceForSell(updatedPriceForSell);
+  //     setIsPriceForSellChange(true);
+  //   }
+  // };
   // const handlePriceForRentChange = (event) => {
-  //   const updatedPriceForRent = {
-  //     ...priceForRent, // Spread the existing state to keep other values unchanged
-  //     amount: event.target.value,
-  //   };
-  //   setPriceForRent(updatedPriceForRent);
-  //   setIsPriceForRentChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedPriceForRent = {
+  //       ...priceForRent,
+  //       amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPriceForRent(updatedPriceForRent);
+  //     setIsPriceForRentChange(true);
+  //   }
   // };
   // const handlePrice1mChange = (event) => {
-  //   const updatedPrice1m = {
-  //     ...price1m, // Spread the existing state to keep other values unchanged
-  //     amount: event.target.value,
-  //   };
-  //   setPrice1m(updatedPrice1m);
-  //   setIsPrice1mChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedPrice1m = {
+  //       ...price1m,
+  //       amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPrice1m(updatedPrice1m);
+  //     setIsPrice1mChange(true);
+  //   }
   // };
   // const handlePrice25mChange = (event) => {
-  //   const updatedPrice25m = {
-  //     ...price25m, // Spread the existing state to keep other values unchanged
-  //     amount: event.target.value,
-  //   };
-  //   setPrice25m(updatedPrice25m);
-  //   setIsPrice25mChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedPrice25m = {
+  //       ...price25m,
+  //       amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPrice25m(updatedPrice25m);
+  //     setIsPrice25mChange(true);
+  //   }
   // };
   // const handlePrice611mChange = (event) => {
-  //   const updatedPrice611m = {
-  //     ...price611m, // Spread the existing state to keep other values unchanged
-  //     amount: event.target.value,
-  //   };
-  //   setPrice611m(updatedPrice611m);
-  //   setIsPrice611mChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedPrice611m = {
+  //       ...price611m,
+  //       amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPrice611m(updatedPrice611m);
+  //     setIsPrice611mChange(true);
+  //   }
   // };
   // const handlePrice12mChange = (event) => {
-  //   const updatedPrice12m = {
-  //     ...price12m, // Spread the existing state to keep other values unchanged
-  //     deposit_amount: event.target.value,
-  //   };
-  //   setPrice12m(updatedPrice12m);
-  //   setIsPrice12mChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedPrice12m = {
+  //       ...price12m,
+  //       amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPrice12m(updatedPrice12m);
+  //     setIsPrice12mChange(true);
+  //   }
   // };
   // const handleDeposit1mChange = (event) => {
-  //   const updatedDeposit1m = {
-  //     ...price1m, // Spread the existing state to keep other values unchanged
-  //     deposit_amount: event.target.value
-  //   };
-  //   setPrice1m(updatedDeposit1m);
-  //   setIsPrice1mChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedDeposit1m = {
+  //       ...price1m,
+  //       deposit_amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPrice1m(updatedDeposit1m);
+  //     setIsPrice1mChange(true);
+  //   }
   // };
   // const handleDeposit25mChange = (event) => {
-  //   const updatedDeposit25m = {
-  //     ...price25m, // Spread the existing state to keep other values unchanged
-  //     deposit_amount: event.target.value
-  //   };
-  //   setPrice25m(updatedDeposit25m);
-  //   setIsPrice25mChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedDeposit25m = {
+  //       ...price25m,
+  //       deposit_amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPrice25m(updatedDeposit25m);
+  //     setIsPrice25mChange(true);
+  //   }
   // };
   // const handleDeposit611mChange = (event) => {
-  //   const updatedDeposit611m = {
-  //     ...price611m, // Spread the existing state to keep other values unchanged
-  //     deposit_amount: event.target.value
-  //   };
-  //   setPrice611m(updatedDeposit611m);
-  //   setIsPrice611mChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedDeposit611m = {
+  //       ...price611m,
+  //       deposit_amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPrice611m(updatedDeposit611m);
+  //     setIsPrice611mChange(true);
+  //   }
   // };
   // const handleDeposit12mChange = (event) => {
-  //   const updatedDeposit12m = {
-  //     ...price12m, // Spread the existing state to keep other values unchanged
-  //     deposit_amount: event.target.value
-  //   };
-  //   setPrice12m(updatedDeposit12m);
-  //   setIsPrice12mChange(true);
+  //   const inputPrice = event.target.value;
+  //   const numericPrice = parseFloat(inputPrice.replace(/,/g, ""));
+  //   if (!isNaN(numericPrice)) {
+  //     const updatedDeposit12m = {
+  //       ...price12m,
+  //       deposit_amount: formatPriceWithCommas(numericPrice), // Format the numeric value
+  //     };
+  //     setPrice12m(updatedDeposit12m);
+  //     setIsPrice12mChange(true);
+  //   }
   // };
 
+  const handlePriceForRentChange = (event) => {
+    const updatedPriceForRent = {
+      ...priceForRent, // Spread the existing state to keep other values unchanged
+      amount: event.target.value,
+    };
+    setPriceForRent(updatedPriceForRent);
+    setIsPriceForRentChange(true);
+  };
+  const handlePrice1mChange = (event) => {
+    const updatedPrice1m = {
+      ...price1m, // Spread the existing state to keep other values unchanged
+      amount: event.target.value,
+    };
+    setPrice1m(updatedPrice1m);
+    setIsPrice1mChange(true);
+  };
+  const handlePrice25mChange = (event) => {
+    const updatedPrice25m = {
+      ...price25m, // Spread the existing state to keep other values unchanged
+      amount: event.target.value,
+    };
+    setPrice25m(updatedPrice25m);
+    setIsPrice25mChange(true);
+  };
+  const handlePrice611mChange = (event) => {
+    const updatedPrice611m = {
+      ...price611m, // Spread the existing state to keep other values unchanged
+      amount: event.target.value,
+    };
+    setPrice611m(updatedPrice611m);
+    setIsPrice611mChange(true);
+  };
+  const handlePrice12mChange = (event) => {
+    const updatedPrice12m = {
+      ...price12m, // Spread the existing state to keep other values unchanged
+      amount: event.target.value,
+    };
+    setPrice12m(updatedPrice12m);
+    setIsPrice12mChange(true);
+  };
+  const handleDeposit1mChange = (event) => {
+    const updatedDeposit1m = {
+      ...price1m, // Spread the existing state to keep other values unchanged
+      deposit_amount: event.target.value
+    };
+    setPrice1m(updatedDeposit1m);
+    setIsPrice1mChange(true);
+  };
+  const handleDeposit25mChange = (event) => {
+    const updatedDeposit25m = {
+      ...price25m, // Spread the existing state to keep other values unchanged
+      deposit_amount: event.target.value
+    };
+    setPrice25m(updatedDeposit25m);
+    setIsPrice25mChange(true);
+  };
+  const handleDeposit611mChange = (event) => {
+    const updatedDeposit611m = {
+      ...price611m, // Spread the existing state to keep other values unchanged
+      deposit_amount: event.target.value
+    };
+    setPrice611m(updatedDeposit611m);
+    setIsPrice611mChange(true);
+  };
+  const handleDeposit12mChange = (event) => {
+    const updatedDeposit12m = {
+      ...price12m, // Spread the existing state to keep other values unchanged
+      deposit_amount: event.target.value
+    };
+    setPrice12m(updatedDeposit12m);
+    setIsPrice12mChange(true);
+  };
+
   // Define a function to format a number with commas
-  function formatPriceWithCommas(price) {
-    if (typeof price !== "undefined") {
-      return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-    return "";
-  }
+  // function formatPriceWithCommas(price) {
+  //   if (typeof price !== "undefined") {
+  //     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  //   }
+  //   return "";
+  // }
 
 
   useEffect(() => {

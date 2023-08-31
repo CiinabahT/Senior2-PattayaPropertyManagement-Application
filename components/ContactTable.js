@@ -12,12 +12,14 @@ function ContractTable({ records }) {
 
   useEffect(() => {
     let filtered = [...records].sort((a, b) => {
+      console.log(a)
+      console.log(b)
       const aStatus = a.contract_status ? a.contract_status.toLowerCase() : "";
       const bStatus = b.contract_status ? b.contract_status.toLowerCase() : "";
   
       if (aStatus === 'active' && bStatus !== 'active') return -1;
       if (bStatus === 'active' && aStatus !== 'active') return 1;
-      return 0;  // If both are 'active' or both are 'inactive' or any other status, they remain in their relative order.
+      return records.indexOf(b) - records.indexOf(a);
     });
   
     if (searchTerm) {
@@ -34,7 +36,7 @@ function ContractTable({ records }) {
         return recordStatus === filterStatus.toLowerCase();
       });
     }
-  
+    console.log(filtered)
     setFilteredRecords(filtered);
     setPageNumber(0);
   }, [searchTerm, filterStatus, records]);
@@ -112,18 +114,6 @@ function ContractTable({ records }) {
           </button>
         ),
       },
-      // {
-      //   Header: 'End Contract',
-      //   accessor: 'endContract',
-      //   Cell: ({ row }) => (
-      //     <button
-      //       onClick={() => handleEndContractClick(row.original)}
-      //       style={{ padding: '5px 10px', cursor: 'pointer', fontFamily: 'Kanit, sans-serif', backgroundColor: '#A91B0D', border: 'none', borderRadius: '5px', outline: 'none', marginTop: '5px' }}
-      //     >
-      //       End Contract
-      //     </button>
-      //   ),
-      // },
     ],
     [pageNumber]
   );

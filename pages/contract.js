@@ -49,6 +49,7 @@ export default function Contract() {
   const [waterUsageValid, setWaterUsageValid] = useState(true);
   const [electricValid, setElectricValid] = useState(true);
   const [checkinValid, setCheckinValid] = useState(true);
+  
 
   const [records, setRecords] = useState([]);
 

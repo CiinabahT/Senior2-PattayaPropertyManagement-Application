@@ -79,7 +79,10 @@ export default function RoomEdit() {
     if (router.query.roomId) {
       setLoading(true);
       getRoomById(router.query.roomId)
+
         .then(data => {
+          console.log (data.owner_id)
+          console.log (data.owner_name)
           console.log('API Response:', data);
           setRoomData(data);
 
@@ -257,9 +260,6 @@ export default function RoomEdit() {
               setPrice12m(updatedPrice12m)
             }
           }
-          setSelectedStatus({ label: data.status_of_room, value: data.room_id })
-          setSelectedOwners({ label: data.owner_name, value: data.owner_id });
-          setSelectedViews({ label: data.type_of_view, value: data.room_id })
           setPictureID(data.room_picture.id)
           setLoading(false); // End loading after processing data
 
@@ -315,6 +315,23 @@ export default function RoomEdit() {
     if (roomData && roomData.amount_of_living_room) {
       setLivingRoomAmount(roomData.amount_of_living_room);
     }
+    if (roomData && roomData.amount_of_living_room) {
+      setLivingRoomAmount(roomData.amount_of_living_room);
+    }
+    if (roomData && roomData.owner_name) {
+      setSelectedOwners({ label: roomData.owner_name, value: roomData.owner_id });
+    }
+    if (roomData && roomData.status_of_room) {
+      setSelectedStatus({ label: roomData.status_of_room, value: roomData.room_id });
+    }
+    if (roomData && roomData.type_of_view) {
+      setSelectedViews({ label: roomData.type_of_view, value: roomData.room_id });
+    }
+
+
+
+    // setSelectedStatus({ label: data.status_of_room, value: data.room_id });
+    // setSelectedOwners({ label: data.owner_name, value: data.owner_id });
 
   }, [roomData]);
 
@@ -511,6 +528,8 @@ export default function RoomEdit() {
       console.error('There was a problem uploading the document:', error.message);
     }
   };
+
+  
 
 
 
@@ -813,8 +832,8 @@ export default function RoomEdit() {
   useEffect(() => {
     const savedStatus = JSON.parse(localStorage.getItem('selectedStatus'));
     const savedViews = JSON.parse(localStorage.getItem('selectedViews'));
-    if (savedStatus) setSelectedStatus(savedStatus);
-    if (savedViews) setSelectedViews(savedViews);
+    // if (savedStatus) setSelectedStatus(savedStatus);
+    // if (savedViews) setSelectedViews(savedViews);
   }, []);
 
 
@@ -827,6 +846,10 @@ export default function RoomEdit() {
     cursor: 'pointer',
     color: activeTab === 'room' ? 'black' : '#666',
   };
+
+
+
+  const defaultOption = { value: '', label: 'Select View' }; // The default 'empty' option
 
   const viewOptions = [
     { value: 'Sea', label: 'Sea' },
@@ -1361,7 +1384,7 @@ export default function RoomEdit() {
                         <input type="text" value={priceForSell.amount} onChange={handlePriceForSellChange} placeholder=" Price.." style={commonInputStyleForSellAndShow} />
                       </div>
                       <div style={{ marginBottom: '30px', flex: '0 0 60%', marginRight: '1%' }}>
-                        <label style={commonLabelStyle}>Price For Rent:</label>
+                        <label style={commonLabelStyle}>Price For Rent (Show):</label>
                         <input type="text" value={priceForRent.amount} onChange={handlePriceForRentChange} placeholder=" Price.." style={commonInputStyleForSellAndShow} />
                       </div>
 

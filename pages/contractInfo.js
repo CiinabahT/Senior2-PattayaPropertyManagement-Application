@@ -205,8 +205,15 @@ export default function ContractInfo() {
                 style={commonInputaStyle}
               />
             </div>
+
             <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-              <label style={commonLabelStyles}>Water Usage Check-out:</label>
+              <label style={{
+                display: 'block',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                fontFamily: 'Kanit',
+                color: '#A91B0D'
+              }}>Water Usage Check-out:</label>
               <input
                 type="text"
                 placeholder=" Water Usage Check-out.."
@@ -215,7 +222,13 @@ export default function ContractInfo() {
               />
             </div>
             <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-              <label style={commonLabelStyles}>Electric Usage Check-out:</label>
+              <label style={{
+                display: 'block',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                fontFamily: 'Kanit',
+                color: '#A91B0D'
+              }}>Electric Usage Check-out:</label>
               <input
                 type="text"
                 placeholder=" Electric Usage Check-out.."
@@ -224,7 +237,13 @@ export default function ContractInfo() {
               />
             </div>
             <div style={{ marginBottom: '30px', flex: '0 0 21%', marginRight: '1%' }}>
-              <label style={commonLabelStyles}>End Contract Date:</label>
+              <label style={{
+                display: 'block',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                fontFamily: 'Kanit',
+                color: '#A91B0D'
+              }}>End Contract Date:</label>
               <input
                 type="text"
                 placeholder=" End Contract Date.."

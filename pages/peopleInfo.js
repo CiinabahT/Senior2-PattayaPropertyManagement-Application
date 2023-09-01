@@ -132,6 +132,8 @@ export default function PeopleInfo() {
     console.log(info);
   };
 
+  
+
   const handleAddContact = async () => {
     let valid = true;
 
@@ -235,7 +237,9 @@ export default function PeopleInfo() {
       <div style={{ display: 'flex' }}>
         <div style={{ flex: '0 0 250px', position: 'fixed' }}>
           <Sidebar />
+          
         </div>
+        
         <div style={{ marginLeft: '300px', marginRight: '30px', marginTop: '40px', flex: '1' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>

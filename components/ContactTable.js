@@ -16,12 +16,12 @@ function ContractTable({ records }) {
       console.log(b)
       const aStatus = a.contract_status ? a.contract_status.toLowerCase() : "";
       const bStatus = b.contract_status ? b.contract_status.toLowerCase() : "";
-  
+
       if (aStatus === 'active' && bStatus !== 'active') return -1;
       if (bStatus === 'active' && aStatus !== 'active') return 1;
       return records.indexOf(b) - records.indexOf(a);
     });
-  
+
     if (searchTerm) {
       filtered = filtered.filter((record) =>
         Object.values(record).some((value) =>
@@ -29,7 +29,7 @@ function ContractTable({ records }) {
         )
       );
     }
-  
+
     if (filterStatus) {
       filtered = filtered.filter((record) => {
         const recordStatus = record.contract_status ? record.contract_status.toLowerCase() : "";
@@ -40,7 +40,7 @@ function ContractTable({ records }) {
     setFilteredRecords(filtered);
     setPageNumber(0);
   }, [searchTerm, filterStatus, records]);
-  
+
 
   const currentRows = filteredRecords.slice(
     pageNumber * rowsPerPage,
@@ -96,7 +96,7 @@ function ContractTable({ records }) {
       },
       {
         Header: 'Room Address',
-        accessor: 'room_number',
+        accessor: 'room_address',
       },
       {
         Header: 'Contract Status',
@@ -171,12 +171,27 @@ function ContractTable({ records }) {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  return <td style={styles.td} {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                  // Check if the column is "Contract Status" and set the font color accordingly
+                  const isContractStatusColumn = cell.column.id === 'contract_status';
+                  const fontColor = isContractStatusColumn && cell.value === 'active' ? 'green' : 'red';
+
+                  return (
+                    <td
+                      style={{
+                        ...styles.td,
+                        color: isContractStatusColumn ? fontColor : 'inherit',  // Only change color for the "Contract Status" column
+                      }}
+                      {...cell.getCellProps()}
+                    >
+                      {cell.render('Cell')}
+                    </td>
+                  );
                 })}
               </tr>
             );
           })}
         </tbody>
+
       </table>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         {Array.from({ length: Math.ceil(filteredRecords.length / rowsPerPage) }, (_, k) => (

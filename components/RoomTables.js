@@ -138,12 +138,18 @@ function RoomTable({ rooms, buildingName, globalFilter, statusFilter }) {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  return <td style={styles.td} {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                  return (
+                    <td style={styles.td} {...cell.getCellProps()}>
+                      {/* Check if the cell value is null and replace it with "-" */}
+                      {cell.value === null || cell.value === "" ? "-" : cell.render('Cell')}
+                    </td>
+                  );
                 })}
               </tr>
             );
           })}
         </tbody>
+
       </table>
     </div>
   );

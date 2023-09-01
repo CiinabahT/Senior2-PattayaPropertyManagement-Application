@@ -76,6 +76,15 @@ function FinanceTable({ records }) {
         accessor: 'amount',
       },
       {
+        Header: 'Type',
+        accessor: (row) => row.is_receive ? "Receive" : "Pay",
+        Cell: ({ value }) => (
+          <span style={{ color: value === 'Receive' ? 'green' : 'red' }}>
+            {value}
+          </span>
+        ),
+      },
+      {
         Header: 'More Info',
         accessor: 'info',
         Cell: ({ row }) => (

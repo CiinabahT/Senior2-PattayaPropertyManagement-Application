@@ -191,13 +191,16 @@ export default function Contract() {
   };
 
   useEffect(() => {
-    const options = persons.map(person => ({
-      value: person.id,
-      label: person.full_name
-    }));
-
-    setPersonOptions(options);
+    if (persons) {
+      const options = persons.map(person => ({
+        value: person.id,
+        label: person.full_name
+      }));
+  
+      setPersonOptions(options);
+    }
   }, [persons]);
+  
 
   useEffect(() => {
     fetchPersonData();
@@ -218,14 +221,16 @@ export default function Contract() {
   };
 
   useEffect(() => {
-    const options = rooms.map(room => ({
-      value: room.room_id,
-      label: room.room_address
-    }));
-
-    setRoomOptions(options);
+    if (rooms) {
+      const options = rooms.map(room => ({
+        value: room.room_id,
+        label: room.room_address
+      }));
+  
+      setRoomOptions(options);
+    }
   }, [rooms]);
-
+  
   useEffect(() => {
     fetchRoomData();
   }, []);

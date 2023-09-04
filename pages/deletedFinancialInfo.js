@@ -150,7 +150,7 @@ export default function DeletedFinanceInfo() {
           rel="stylesheet"
         />
       </Head>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', height: '100vh', width: '100vw', overflowY: 'auto' }}>
         <div style={{ flex: '0 0 250px', position: 'fixed' }}>
           <Sidebar />
         </div>

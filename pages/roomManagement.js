@@ -80,13 +80,15 @@ export default function RoomManagement() {
   }, []);
 
   useEffect(() => {
-    const options = persons.map(person => ({
-      value: person.id,
-      label: person.full_name
-    }));
-
-    setPersonOptions(options);
+    if (persons !== null) {
+      const options = persons.map(person => ({
+        value: person.id,
+        label: person.full_name
+      }));
+      setPersonOptions(options);
+    }
   }, [persons]);
+  
 
   const handleNameChange = (option) => {
     setSelectPersonID(option);

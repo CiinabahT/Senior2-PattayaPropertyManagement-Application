@@ -28,6 +28,7 @@ export default function DeletedFinanceInfo() {
   const [amountOfMoney, setAmountOfMoney] = useState('');
   const [paymentType, setPaymentType] = useState('');
   const [roomAddress, setRoomAddress] = useState('');
+  const [createAt, setCreateAt] = useState('');
   const [type, setType] = useState('');
   const [selectedFilesForDocument, setSelectedFilesForDocument] = useState([]);
 
@@ -44,6 +45,7 @@ export default function DeletedFinanceInfo() {
         setPaymentType(data.payment_method);
         setRoomAddress(data.room_address);
         setType(data.is_receive);
+        setCreateAt(data.create_at);
 
         const base64ToBlob = (base64, mimeType = 'application/pdf') => {
 
@@ -216,13 +218,16 @@ export default function DeletedFinanceInfo() {
 
             <div><label style={commonLabelStyle}>Type:</label></div>
             <input type="text" value={type} placeholder='Type..' style={commonInputStyle} readOnly />
+
+            <div><label style={commonLabelStyle}>Create at:</label></div>
+            <input type="text" value={createAt.split(' ')[0]} placeholder='Create at..' style={commonInputStyle} readOnly />
           </div>
 
           {/* SHOW DOC */}
           <div>
             {selectedFilesForDocument.map((fileObj, index) => (
               <div key={index} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} >
-                <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px', marginLeft: '600px', marginTop: '-550px' }} />
+                <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px', marginLeft: '600px', marginTop: '-800px' }} />
               </div>
             ))}
           </div>

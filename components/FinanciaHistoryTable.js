@@ -57,6 +57,11 @@ function FinancialRecordTable({ records }) {
         accessor: 'catorgory_type',
       },
       {
+        Header: 'Create at',
+        accessor: (row) => row.create_at.split(' ')[0],
+        id: 'create_at',
+      },
+      {
         Header: 'Room Address',
         accessor: 'room_address',
       },

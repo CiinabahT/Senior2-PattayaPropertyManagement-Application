@@ -30,6 +30,7 @@ export default function FinanceInfo() {
   const [paymentType, setPaymentType] = useState('');
   const [Address, setAddress] = useState('');
   const [type, setType] = useState('');
+  const [createAt, setCreateAt] = useState('');
   const [selectedFilesForDocument, setSelectedFilesForDocument] = useState([]);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function FinanceInfo() {
         setPaymentType(data.payment_method);
         setAddress(data.room_address);
         setType(data.is_receive);
+        setCreateAt(data.create_at);
 
         const base64ToBlob = (base64, mimeType = 'application/pdf') => {
 
@@ -260,6 +262,9 @@ export default function FinanceInfo() {
             <div><label style={commonLabelStyle}>Type:</label></div>
             <input type="text" value={type} placeholder='Type..' style={commonInputStyle} readOnly />
 
+            <div><label style={commonLabelStyle}>Create at:</label></div>
+            <input type="text" value={createAt.split(' ')[0]} placeholder='Create at..' style={commonInputStyle} readOnly />
+
 
 
             {/* <div><button onClick={handleDownloadClick} style={{ width: '100px', height: '40px', fontFamily: 'Kanit', width: '170px', outline: 'none', border: 'none', borderRadius: '5px', backgroundColor: '#326896', fontSize: '15px', marginTop: '10px' }}>Download Document</button></div> */}
@@ -267,7 +272,7 @@ export default function FinanceInfo() {
             <div>
               {selectedFilesForDocument.map((fileObj, index) => (
                 <div key={index} style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} >
-                  <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px', marginLeft: '600px', marginTop: '-550px' }} />
+                  <embed src={fileObj.preview} type="application/pdf" style={{ width: '500px', height: '600px', marginLeft: '600px', marginTop: '-800px' }} />
                 </div>
               ))}
             </div>

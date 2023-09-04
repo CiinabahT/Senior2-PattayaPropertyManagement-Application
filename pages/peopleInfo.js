@@ -223,6 +223,7 @@ export default function PeopleInfo() {
     fontWeight: 'bold',
     fontFamily: 'Kanit'
   };
+  
 
   return (
     <>
@@ -234,11 +235,13 @@ export default function PeopleInfo() {
           rel="stylesheet"
         />
       </Head>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', height: '100vh', width: '100vw', overflowY: 'auto' }}>
         <div style={{ flex: '0 0 250px', position: 'fixed' }}>
           <Sidebar />
           
         </div>
+        
+        
         
         <div style={{ marginLeft: '300px', marginRight: '30px', marginTop: '40px', flex: '1' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>

@@ -37,6 +37,8 @@ export default function People() {
   };
 
   const resetFields = () => {
+    setFirstName('');         
+    setLastName('');           
     setFullName('');
     setIdentityNumber('');
     setContactType('Line');
@@ -45,6 +47,7 @@ export default function People() {
     setIdentityNumberError('');
     setContactValueError('');
   };
+  
 
   const handleCloseModal = () => {
     setIsAddPeopleModalOpen(false);

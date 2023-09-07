@@ -83,7 +83,7 @@ export default function Building() {
               <h1 style={{ fontSize: '35px', marginLeft: '10px' }}>Building</h1>
             </div>
             <button onClick={openModal} style={{ padding: '10px 20px', fontSize: '16px', fontFamily: 'Kanit, sans-serif', backgroundColor: '#326896', border: 'none', outline: 'none', borderRadius: '5px' }}>
-              Change Condo's Name
+              Change Place's Name
             </button>
           </div>
           <p style={{ fontSize: '20px', color: '#666' }}>{buildingName || "Your custom text here"}</p>
@@ -96,9 +96,9 @@ export default function Building() {
       {showModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', width: '400px', textAlign: 'left', fontFamily: 'Kanit, sans-serif' }}>
-            <h2>Change Condo's Name</h2>
+            <h2>Change Place's Name</h2>
             <div>
-              <label>New Condo Name:</label>
+              <label>New Place's Name:</label>
             </div>
             <div>
               <input type="text" value={newBuildingName} placeholder={buildingName} onChange={e => setNewBuildingName(e.target.value)} style={{ width: '95%', height: '20px', padding: '5px', fontSize: '16px', fontFamily: 'Kanit, sans-serif', marginTop: '5px', backgroundColor: 'white', borderRadius: '10px', color: 'black', outline: 'none', border: '1px solid #ccc' }} />

@@ -20,7 +20,7 @@ export default function Home() {
           <Sidebar />
         </div>
         <div style={{ marginLeft: '300px', marginRight: '30px', marginTop: '40px', flex: '1' }}>
-          <h1 style={{ fontSize: '35px', fontFamily: 'Kanit, sans-serif' }}>Condo</h1>
+          <h1 style={{ fontSize: '35px', fontFamily: 'Kanit, sans-serif' }}>Places</h1>
           <div style={{ width: '100%', height: '500px' }}>
             <Cards />
           </div>

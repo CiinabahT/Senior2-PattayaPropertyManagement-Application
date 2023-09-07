@@ -137,7 +137,7 @@ export default function Cards({ onSaveBuildingName, onCloseModal }) {
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'hidden' }}
               >
                 <Text style={{ fontFamily: 'Kanit, Arial, sans-serif', fontSize: '18px', color: 'black' }}>
-                  Create Condo
+                  Create Place
                 </Text>
               </Card.Body>
             </Card>
@@ -227,7 +227,7 @@ export default function Cards({ onSaveBuildingName, onCloseModal }) {
               alignItems: '',
             }}
           >
-            <h1 style={{ fontSize: '25px', fontFamily: 'Kanit, sans-serif', marginBottom: '10px', marginTop: '10px' }}>Create Condo</h1>
+            <h1 style={{ fontSize: '25px', fontFamily: 'Kanit, sans-serif', marginBottom: '10px', marginTop: '10px' }}>Create Place</h1>
 
             <textarea
               value={buildingName}

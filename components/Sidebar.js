@@ -26,7 +26,7 @@ const Sidebar = () => {
           <button style={buttonStyle}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img src="/Home.png" style={{ marginRight: '18px', width: '20px', height: '20px' }} />
-              Condo
+              Places
             </div>
           </button>
         </Link>

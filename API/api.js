@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as Sentry from '@sentry/nextjs';
 
 const BASE_URL = 'https://pattayaavenueproperty.xyz/api/rooms/places'; //www.pattayaavenueproperty.xyz/api/rooms/places
 const BUILDING_URL = 'https://pattayaavenueproperty.xyz/api/rooms/building';
@@ -36,6 +37,7 @@ export const fetchPlaces = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching places:', error);
+    Sentry.captureException(error);
     return [];
   }
 };
@@ -47,6 +49,7 @@ export const fetchAllRoomName = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Room Name:', error);
+    Sentry.captureException(error);
     return [];
   }
 };
@@ -58,6 +61,7 @@ export const fetchDeleteFinance = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Delete Finance:', error);
+    Sentry.captureException(error);
     return [];
   }
 };
@@ -69,6 +73,7 @@ export const fetchFinance = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching finance:', error);
+    Sentry.captureException(error);
     return [];
   }
 };
@@ -80,6 +85,7 @@ export const fetchContractPage = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Contract Page:', error);
+    Sentry.captureException(error);
     return [];
   }
 };
@@ -91,6 +97,7 @@ export const fetchPeople = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching people:', error);
+    Sentry.captureException(error);
     return [];
   }
 };
@@ -102,6 +109,7 @@ export const fetchContract = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching contract:', error);
+    Sentry.captureException(error);
     throw error;
   }
 };
@@ -114,6 +122,7 @@ export const fetchOwner = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Owner:', error);
+    Sentry.captureException(error);
     return [];
   }
 };
@@ -124,6 +133,7 @@ export const createPlace = async (input) => {
     return response.data;
   } catch (error) {
     console.error('Error creating place:', error);
+    Sentry.captureException(error);
   }
 };
 
@@ -133,6 +143,7 @@ export const ChangePlaceName = async (placeid, newBuidingName) => {
     return response.data;
   } catch (error) {
     console.error('Error creating place:', error);
+    Sentry.captureException(error);
   }
 };
 
@@ -142,6 +153,7 @@ export const EditRoom = async (roomID, allRoomData) => {
     return response.data;
   } catch (error) {
     console.error('Error editing room:', error);
+    Sentry.captureException(error);
   }
 };
 
@@ -152,6 +164,7 @@ export const createBuilding = async (buildingData) => {
     return response.data;
   } catch (error) {
     console.error('Error adding Buiding:', error);
+    Sentry.captureException(error);
     throw error;
   }
 };
@@ -162,6 +175,7 @@ export const addRoom = async (roomData) => {
     return response.data;
   } catch (error) {
     console.error('Error adding room:', error);
+    Sentry.captureException(error);
     throw error;
   }
 };
@@ -172,6 +186,7 @@ export const addFloor = async (floorData) => {
     return response.data;
   } catch (error) {
     console.error('Error adding floor:', error);
+    Sentry.captureException(error);
     throw error;
   }
 };
@@ -182,7 +197,8 @@ export const getRoomById = async (roomId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching room by ID:', error);
-    throw error; // Propagate the error up so it can be handled by the calling function
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
@@ -192,7 +208,8 @@ export const getPeoplebyId = async (peopleId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching People by ID:', error);
-    throw error; // Propagate the error up so it can be handled by the calling function
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
@@ -202,7 +219,8 @@ export const getContractRoom = async (roomId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Contract by ID:', error);
-    throw error; // Propagate the error up so it can be handled by the calling function
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
@@ -219,6 +237,7 @@ export const editPersonAndBankInfo = async (PersonInfo, BankInfo) => {
     };
   } catch (error) {
     console.error('Error editing person and bank:', error);
+    Sentry.captureException(error);
   }
 }
 // api for add room price
@@ -228,6 +247,7 @@ export const addRoomPrice = async (roomPriceData) => {
     return response.data;
   } catch (error) {
     console.error('Error adding room price:', error);
+    Sentry.captureException(error);
     throw error;
   }
 };
@@ -238,6 +258,7 @@ export const getContactPeople = async (PersonId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Contact by ID:', error);
+    Sentry.captureException(error);
   }
 }
 
@@ -247,6 +268,7 @@ export const getContractByID = async (ContractID) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Contract by ID:', error);
+    Sentry.captureException(error);
   }
 }
 // api for delete room price
@@ -256,6 +278,7 @@ export const deleteRoomPrice = async (roomPriceId) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting room price:', error);
+    Sentry.captureException(error);
     throw error;
   }
 };
@@ -266,6 +289,7 @@ export const DeletePeopleContact = async (ContactId) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting contact:', error);
+    Sentry.captureException(error);
   }
 };
 
@@ -275,6 +299,7 @@ export const AddPeopleContact = async (ContactInfo) => {
     return response.data;
   } catch (error) {
     console.error('Error Create contact:', error);
+    Sentry.captureException(error);
   }
 };
 
@@ -284,6 +309,7 @@ export const AddFinance = async (FinanceInfo) => {
     return response.data;
   } catch (error) {
     console.error('Error Create Finance:', error);
+    Sentry.captureException(error);
   }
 };
 
@@ -293,6 +319,7 @@ export const getFinancialInfo = async (TransactionId) => {
     return response.data.data;
   } catch (error) {
     console.error('Error fetching Transaction by ID:', error);
+    Sentry.captureException(error);
   }
 };
 
@@ -302,6 +329,7 @@ export const deleteTransaction = async (TransactionId) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting Transaction:', error);
+    Sentry.captureException(error);
   }
 };
 
